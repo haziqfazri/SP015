@@ -605,6 +605,7 @@ class UIManager {
   constructor() {
     this.system = 'spring'; // 'spring' | 'pendulum'
     this.isPlaying = false;
+    this.playbackState = null;
 
     // Assigned by SimulationController after construction.
     this.onSystemChange = null;   // (system) => {}
@@ -775,21 +776,31 @@ class UIManager {
   }
 
   _bindPlaybackButtons() {
+    this.playbackState = new PlaybackState({
+      buttonEl: this.els.playPauseButton,
+      playLabel: '▶ Play',
+      pauseLabel: '⏸ Pause',
+      onPlay: () => {
+        this.isPlaying = true;
+        if (this.onPlayToggle) this.onPlayToggle(true);
+      },
+      onPause: () => {
+        this.isPlaying = false;
+        if (this.onPlayToggle) this.onPlayToggle(false);
+      }
+    });
+
     this.els.playPauseButton.addEventListener('click', () => {
-      this.isPlaying = !this.isPlaying;
-      this.setPlayLabel(this.isPlaying);
-      if (this.onPlayToggle) this.onPlayToggle(this.isPlaying);
+      this.playbackState.toggle();
     });
 
     this.els.resetButton.addEventListener('click', () => {
-      this.isPlaying = false;
-      this.setPlayLabel(false);
+      this.playbackState.pause();
       if (this.onReset) this.onReset();
     });
 
     this.els.stepButton.addEventListener('click', () => {
-      this.isPlaying = false;
-      this.setPlayLabel(false);
+      this.playbackState.pause();
       if (this.onStep) this.onStep(0.05);
     });
   }

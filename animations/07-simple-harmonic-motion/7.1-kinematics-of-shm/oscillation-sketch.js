@@ -116,11 +116,13 @@ class SimulationController {
   }
 
   _requestRedrawIfPaused() {
-    if (!this.ui.isPlaying) redraw();
+    const isPlaying = this.ui.playbackState?.isPlaying ?? this.ui.isPlaying;
+    if (!isPlaying) redraw();
   }
 
   update() {
-    if (!this.ui.isPlaying) return;
+    const isPlaying = this.ui.playbackState?.isPlaying ?? this.ui.isPlaying;
+    if (!isPlaying) return;
     const dt = Math.min(deltaTime / 1000, 0.03); // clamp so tab-switch stalls don't blow up the integration
     this._stepActive(dt);
   }
@@ -149,7 +151,8 @@ function setup() {
 
 function windowResized() {
   simulation.resize();
-  if (!simulation.ui.isPlaying) redraw();
+  const isPlaying = simulation.ui.playbackState?.isPlaying ?? simulation.ui.isPlaying;
+  if (!isPlaying) redraw();
 }
 
 function draw() {
