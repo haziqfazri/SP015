@@ -143,3 +143,53 @@ function updateReadout(store, key, el, formattedValue) {
     store[key] = formattedValue;
   }
 }
+
+// -------------------------------------------------------------------------
+// Playback State
+// -------------------------------------------------------------------------
+
+class PlaybackState {
+  constructor({ buttonEl, playLabel = '▶ Play', pauseLabel = '⏸ Pause', onPlay, onPause }) {
+    this.isPlaying = false;
+    this.buttonEL = buttonEl;
+    this.playLabel = playLabel;
+    this.pauseLabel = pauseLabel;
+    this.onPlay = onPlay || (() => {});
+    this.onPause = onPause || (() => {});
+    this._setLabel();
+  }
+
+  _setLabel() {
+    if (this.buttonEL) {
+      this.buttonEL.textContent = this.isPlaying ? this.pauseLabel : this.playLabel;
+    }
+  }
+
+  toggle() {
+    this.isPlaying = !this.isPlaying;
+    this._setLabel();
+    if (this.isPlaying) {
+      this.onPlay();
+    } else {
+      this.onPause();
+    }
+    return this.isPlaying;
+  }
+
+  // Used by reset and Step handlers - both force a pause without toggling
+  // from a possibly-already-paused-state (toggle() would incorrectly resume if called twice)
+  pause() {
+    if (!this.isPlaying) return;
+    this.isPlaying = false;
+    this._setLabel();
+    this.onPause();
+  }
+
+  // For sims that need to force play state on (rare, but keeps symmetry)
+  play() {
+    if (this.isPlaying) return;
+    this.isPlaying = true;
+    this._setLabel();
+    this.onPlay();
+  }
+}

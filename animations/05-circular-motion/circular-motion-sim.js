@@ -275,6 +275,7 @@ class UIManager {
 
     this.isPlaying = false;
     this.stopAfterOneRev = false;
+    this.playbackState = null;
 
     this.showVector = false;
     this.showVelocity = false;
@@ -458,31 +459,33 @@ class UIManager {
         const btnReset = document.getElementById('btn-reset');
         this.btnPlayEl = btnPlay;
 
-        btnPlay.textContent = 'Play';
-        btnPlay.addEventListener('click', () => {
-            this.isPlaying = !this.isPlaying;
-            btnPlay.textContent = this.isPlaying ? 'Pause' : 'Play';
-
-            if (this.isPlaying) {
+        this.playbackState = new PlaybackState({
+            buttonEl: btnPlay,
+            onPlay: () => {
+                this.isPlaying = true;
                 loop();
-            } else {
+                redraw();
+            },
+            onPause: () => {
+                this.isPlaying = false;
                 noLoop();
                 redraw(); // catch any final frame after pausing so the canvas doesn't freeze mid-frame
             }
         });
 
+        btnPlay.addEventListener('click', () => {
+            this.playbackState.toggle();
+        });
+
         btnReset.addEventListener('click', () => {
             this.activeParticles().forEach(p => p.reset());
-            this.isPlaying = false;
-            btnPlay.textContent = 'Play';
-            noLoop();
+            this.playbackState.pause();
             redraw();
         });
     }
 
     stopPlayback() {
-        this.isPlaying = false;
-        if (this.btnPlayEl) this.btnPlayEl.textContent = 'Play';
+        this.playbackState?.pause();
         noLoop();
     }
 
