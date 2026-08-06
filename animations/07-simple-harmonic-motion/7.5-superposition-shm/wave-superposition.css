@@ -1,0 +1,125 @@
+/* =========================================================================
+   WAVE-SUPERPOSITION.CSS — topic-specific overrides for Topic 7.5
+   (Superposition of Waves), Mode 1: Pulse Superposition. Load AFTER
+   ../shared/sim-style.css. Only rules unique to this sim's layout live
+   here — buttons, readouts, controls, topbar, theory-strip all come from
+   shared/. Add Mode 2/3-specific rules here only once those modes exist;
+   don't speculatively style markup that isn't in index.html yet.
+   ========================================================================= */
+
+/* -------------------------------------------------------------------------
+   Mode nav — disabled placeholders
+   Interference and Standing Waves are visible-but-inert in the nav until
+   built (see index.html comment). The shared .system-option has no
+   :disabled treatment since no existing sim needed one — every prior
+   system-switch only ever contained buttons that all worked. Without
+   this, the disabled placeholders read as clickable, which is misleading.
+   ------------------------------------------------------------------------- */
+
+.system-option:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+.system-option:disabled:hover {
+  transform: none;
+}
+
+/* -------------------------------------------------------------------------
+   Interference: stacked canvas panels
+   Three separate .canvas-shell elements (Wave A / Wave B / Resultant)
+   stack vertically inside #interferenceStage. The shared default
+   .canvas-shell height (350px) is sized for a single full-stage canvas —
+   three of those stacked would blow well past the viewport, so each
+   panel here gets a much shorter height, similar in spirit to
+   shm-graphs.css's .graph-cell override for the same reason (multiple
+   small-multiple canvases sharing one stage).
+   ------------------------------------------------------------------------- */
+
+.interference-panel {
+  height: 150px;
+  margin-bottom: 14px;
+}
+
+.interference-panel:last-of-type {
+  margin-bottom: 0;
+}
+
+.interference-panel .graph-holder {
+  width: 100%;
+  height: 100%;
+}
+
+.interference-panel .graph-holder canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* -------------------------------------------------------------------------
+   Curve visibility checks
+   #curveChecks reuses .control-checks.stage-checks as-is (same pattern as
+   circular-motion's #controlChecks) — no override needed, this comment
+   just documents that the shared row-of-checkboxes layout already fits
+   three items without adjustment.
+   ------------------------------------------------------------------------- */
+
+/* -------------------------------------------------------------------------
+   Amplitude step groups (Wave A / Wave B)
+   Six buttons (−0.3 … +0.3) need to stay legible on one row without the
+   minus-sign glyphs crowding into their neighbours. The default
+   .system-switch.compact assumes fewer, wider options (e.g. 2-way
+   CW/CCW), so this sim's larger option count gets a tighter min-width
+   instead of flex:1 fighting for space.
+   ------------------------------------------------------------------------- */
+
+.amp-step-group {
+  flex-wrap: nowrap;
+}
+
+.amp-step-group .system-option {
+  flex: 1 1 0;
+  min-width: 0;
+  padding: 7px 4px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* -------------------------------------------------------------------------
+   Time scrubber row
+   #scrubberRow reuses .control-row as-is for spacing/label layout — this
+   rule only nudges it visually closer to the canvas it controls (rather
+   than reading as "just another control" down in the sidebar list, since
+   it sits in the stage column, not the controls sidebar).
+   ------------------------------------------------------------------------- */
+
+#scrubberRow {
+  margin-top: 14px;
+  margin-bottom: 0;
+}
+
+/* -------------------------------------------------------------------------
+   Canvas
+   The default .canvas-shell height (350px) is fine for a single y-x plot.
+   This sim always draws a horizontal equilibrium axis with tick labels
+   near the edges on canvas (not as HTML/CSS) — no override needed here,
+   this note just documents that the axis lives in the renderer.
+   ------------------------------------------------------------------------- */
+
+/* -------------------------------------------------------------------------
+   Responsive
+   Shared breakpoints already stack .sim-grid and shrink .canvas-shell. At
+   narrow widths, six amplitude-step buttons need a bit more breathing
+   room than the shared compact-switch default provides.
+   ------------------------------------------------------------------------- */
+
+@media (max-width: 800px) {
+  .amp-step-group .system-option {
+    font-size: 11px;
+    padding: 6px 2px;
+  }
+
+  .interference-panel {
+    height: 120px;
+    margin-bottom: 10px;
+  }
+}

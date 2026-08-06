@@ -1,0 +1,83 @@
+/* =========================================================================
+   WAVE-PROPERTIES.CSS — topic-specific overrides/extensions for the
+   Properties of Waves (SP015 Topic 7.4) simulation.
+
+   Load AFTER ../shared/sim-style.css. Only rules specific to this sim's
+   stacked dual-canvas layout live here — everything else (topbar,
+   system-bar, controls, readouts, buttons, theory strip) comes from
+   shared/sim-style.css unmodified.
+   ========================================================================= */
+
+/* -------------------------------------------------------------------------
+   Stacked y-x / y-t canvases
+   Shared .canvas-shell assumes a single canvas filling the stage. Here we
+   need two, stacked with a visible gap, each shorter than the shared
+   default height so together they still fit comfortably in the stage.
+   ------------------------------------------------------------------------- */
+
+#canvas-shell-yx,
+#canvas-shell-yt {
+  height: 200px;
+}
+
+#canvas-shell-yx {
+  margin-bottom: 14px;
+}
+
+/* Slightly dimmer label + hairline top border on the second panel so it
+   reads as "derived from / linked to" the panel above it, not a second
+   unrelated canvas. */
+#canvas-shell-yt {
+  border-top: 2px solid var(--ink);
+}
+
+@media (max-width: 800px) {
+  #canvas-shell-yx,
+  #canvas-shell-yt {
+    height: 160px;
+  }
+}
+
+/* -------------------------------------------------------------------------
+   Canvas holder sizing
+   Shared sim-style.css only sizes the generic #canvas-holder id (used by
+   single-canvas sims). This sim uses two holders with its own ids, so
+   they need the same width/height:100% rule applied explicitly here.
+   ------------------------------------------------------------------------- */
+
+#canvas-holder-yx,
+#canvas-holder-yt {
+  width: 100%;
+  height: 100%;
+}
+
+#canvas-holder-yx canvas,
+#canvas-holder-yt canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* -------------------------------------------------------------------------
+   Particle-count slider disabled state
+   When "Show particles" is unchecked, the UI manager disables this slider
+   rather than hiding it (its value is preserved). Needs a visible disabled
+   affordance beyond the browser default.
+   ------------------------------------------------------------------------- */
+
+#slider-particle-count:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  accent-color: var(--muted);
+}
+
+.control-row:has(#slider-particle-count:disabled) .control-value,
+.control-row:has(#slider-particle-count:disabled) label {
+  color: var(--muted);
+}
+
+/* -------------------------------------------------------------------------
+   Direction switch — reuse of .system-switch, no new class needed beyond
+   what shared/sim-style.css already provides. Nothing to add here; kept
+   as a comment so future edits don't duplicate .system-option rules.
+   ------------------------------------------------------------------------- */

@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Oscillation Laboratory — SP015</title>
+
+<!-- Fonts: DM Sans for display/labels, Space Mono for instrument readouts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- p5.js latest -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.4/p5.min.js"></script>
+
+<link rel="stylesheet" href="../../../shared/sim-style.css">
+<link rel="stylesheet" href="oscillation.css">
+</head>
+<body>
+
+<div class="app-shell">
+ <div class="lab-frame">
+
+  <header class="topbar">
+   <div>
+    <p class="kicker">SP015 · Topic 7 Simple Harmonic Motion</p>
+    <h1>Oscillation Laboratory</h1>
+   </div>
+   <div class="live-chip"><span class="pulse" aria-hidden="true"></span><span>Simulating</span></div>
+  </header>
+
+  <nav class="system-bar" aria-label="Simulation system selection">
+   <span class="system-label">System</span>
+   <div class="system-switch">
+    <button id="springSystemButton" class="system-option is-active" type="button" aria-pressed="true">Spring–Mass</button>
+    <button id="pendulumSystemButton" class="system-option" type="button" aria-pressed="false">Simple Pendulum</button>
+    <button id="referenceSystemButton" class="system-option" type="button" aria-pressed="false">Spring-Mass (Vertical)</button>
+   </div>
+  </nav>
+
+  <main class="sim-grid" id="simGrid">
+
+   <section class="stage" aria-labelledby="simulation-heading">
+    <div class="stage-top">
+     <h2 id="simulation-heading">Live motion</h2>
+     <span id="unitHint" class="mono" style="font-size:12px;color:var(--muted)">x(t) / metres</span>
+    </div>
+
+    <div class="canvas-shell">
+     <span class="canvas-label" id="canvasLabel">horizontal mass-spring system</span>
+     <div id="canvas-holder"></div>
+    </div>
+
+    <section class="readouts" id="readoutsPanel" aria-label="Live simulation values">
+     <div class="readout">
+      <span class="readout-label">Time</span>
+      <output id="timeValue" class="readout-value">0.00 s</output>
+     </div>
+     <div class="readout">
+      <span class="readout-label" id="positionLabel">Position</span>
+      <output id="positionValue" class="readout-value">+0.00 m</output>
+     </div>
+     <div class="readout">
+      <span class="readout-label" id="velocityLabel">Velocity</span>
+      <output id="velocityValue" class="readout-value">+0.00 m/s</output>
+     </div>
+     <div class="readout">
+      <span class="readout-label">Total energy</span>
+      <output id="energyValue" class="readout-value">0.00 J</output>
+     </div>
+    </section>
+   </section>
+
+   <aside class="controls" aria-labelledby="controls-heading">
+    <h2 class="control-title" id="controls-heading">Parameters</h2>
+    <p class="control-intro">Adjust the sliders and watch the period, energy and motion respond in real time.</p>
+
+    <div class="control-row-group" id="springPendulumControls">
+     <div class="control-row">
+      <div class="control-meta">
+       <label for="massControl">Mass</label>
+       <output id="massOutput" class="control-value">1.0 kg</output>
+      </div>
+      <input id="massControl" type="range" min="0.2" max="5" step="0.1" value="1">
+      <p class="control-note">Heavier objects accelerate more slowly for the same restoring force.</p>
+     </div>
+
+     <div class="control-row">
+      <div class="control-meta">
+       <label for="parameterControl" id="parameterLabel">Spring constant, k</label>
+       <output id="parameterOutput" class="control-value">20 N/m</output>
+      </div>
+      <input id="parameterControl" type="range" min="2" max="80" step="1" value="20">
+      <p class="control-note" id="parameterNote">A stiffer spring pulls the mass back harder, shortening the period.</p>
+     </div>
+
+     <div class="control-row">
+      <div class="control-meta">
+       <label for="displacementControl" id="displacementLabel">Initial displacement</label>
+       <output id="displacementOutput" class="control-value">0.35 m</output>
+      </div>
+      <input id="displacementControl" type="range" min="-0.7" max="0.7" step="0.05" value="0.35">
+      <p class="control-note" id="displacementNote">Starting distance from equilibrium — sets the amplitude.</p>
+     </div>
+    </div>
+
+    <div class="control-row-group hidden" id="referenceControls">
+     <div class="control-row">
+      <div class="control-meta">
+       <label for="ampControl">Amplitude, A</label>
+       <output id="ampOutput" class="control-value">1.50 m</output>
+      </div>
+      <input id="ampControl" type="range" min="1" max="2" step="0.05" value="1.5">
+      <p class="control-note">Maximum displacement from equilibrium — sets the radius of the reference circle.</p>
+     </div>
+
+     <div class="control-row">
+      <div class="control-meta">
+       <label for="refPeriodControl">Period, T</label>
+       <output id="refPeriodOutput" class="control-value">2.00 s</output>
+      </div>
+      <input id="refPeriodControl" type="range" min="0.5" max="6" step="0.05" value="2">
+      <p class="control-note">Time for one full revolution of the reference circle / one full cycle of the sine curve.</p>
+     </div>
+    </div>
+
+    <div class="button-grid">
+     <button id="playPauseButton" class="action primary" type="button"><span id="playPauseLabel">▶ Play</span></button>
+     <button id="resetButton" class="action" type="button">⟲ Reset</button>
+     <button id="stepButton" class="action col-span-2" type="button">⏭ Step +0.05 s</button>
+    </div>
+   </aside>
+
+  </main>
+
+  <footer class="theory-strip">
+   <section class="theory-card">
+    <div id="springTheory">
+     <h2>Restoring force</h2>
+     <p>Hooke's Law: the spring pulls the mass back toward equilibrium in proportion to its displacement, in the opposite direction.</p>
+     <span class="formula">F = −kx</span>
+    </div>
+    <div id="pendulumTheory" style="display:none">
+     <h2>Restoring torque</h2>
+     <p>Gravity supplies the restoring torque. For large swing angles the motion is only approximately simple harmonic — this simulation uses the exact sine term, not the small-angle approximation.</p>
+     <span class="formula">a = −(g/L)·sin θ</span>
+    </div>
+   </section>
+   <section class="theory-card">
+    <div id="periodTheoryContent">
+     <h2>Period (undamped, ideal)</h2>
+     <p><span id="periodValue" class="mono" style="font-weight:700;color:var(--orange)">1.40 s</span></p>
+     <p id="periodNote" style="margin-top:8px">T = 2π√(m/k) — independent of amplitude for an ideal spring.</p>
+    </div>
+   </section>
+  </footer>
+
+ </div>
+</div>
+
+<script src="../../../shared/sim-utils.js"></script>
+<script src="oscillation-sim.js"></script>
+<script src="oscillation-sketch.js"></script>
+</body>
+</html>

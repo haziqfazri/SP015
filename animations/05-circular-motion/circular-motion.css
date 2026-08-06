@@ -1,0 +1,13 @@
+/* =========================================================================
+   style.css — circular-motion topic-specific overrides.
+
+   Everything this sim previously defined (readouts, particle sections,
+   compact direction toggle, compare-tall canvas, stage checkboxes) turned
+   out to be generically reusable and now lives in ../shared/sim-style.css,
+   which is linked before this file in index.html.
+
+   Nothing circular-motion-specific remains right now — this file is a
+   placeholder for the next time this sim needs its own tweak. Add rules
+   here only if they're truly one-off; if you find yourself repeating a
+   rule in a future sim's topic.css, move it up to sim-style.css instead.
+   ========================================================================= */

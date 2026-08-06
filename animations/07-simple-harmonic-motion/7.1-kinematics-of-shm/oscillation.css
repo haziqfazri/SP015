@@ -1,0 +1,48 @@
+/* =========================================================================
+   oscillation.css — oscillation-topic-specific overrides.
+
+   Everything this sim shared with circular-motion (readouts, controls,
+   buttons, theory strip, responsive rules, etc.) now lives in
+   ../shared/sim-style.css, which is linked before this file in
+   oscillation.html.
+
+   What's left here is specific to this sim's three-tab layout (Spring–
+   Mass / Pendulum / Reference Circle), where the "Reference Circle" tab
+   switches the stage to a full-width stacked layout instead of the
+   default two-column grid.
+   ========================================================================= */
+
+/* Reference Circle tab: canvas goes full-width on top, controls move below
+   and expand to fill the space the second column used to occupy. */
+.sim-grid.stacked-layout {
+  grid-template-columns: 1fr;
+}
+
+.sim-grid.stacked-layout .stage {
+  border-right: 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.sim-grid.stacked-layout .canvas-shell {
+  height: 480px;
+}
+
+/* Scoped to the row of sliders only — control-title, control-intro, and
+   button-grid stay block-level and simply span the full width beneath. */
+.sim-grid.stacked-layout .control-row-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+}
+
+.sim-grid.stacked-layout .control-row-group .control-row {
+  flex: 1 1 220px;
+  margin-bottom: 0;
+}
+
+/* Beats .sim-grid.stacked-layout .control-row-group's specificity (3
+   classes) so a hidden control-row-group actually stays hidden even while
+   the Reference tab's stacked layout is active. */
+.sim-grid.stacked-layout .control-row-group.hidden {
+  display: none;
+}

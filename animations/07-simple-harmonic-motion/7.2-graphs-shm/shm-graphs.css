@@ -1,0 +1,74 @@
+/* =========================================================================
+   SHM-GRAPHS.CSS — topic-specific overrides for Topic 7.2 (Graphs of SHM).
+   Load AFTER ../shared/sim-style.css. Only rules that are unique to this
+   sim's 2x2 synced-graph layout live here — everything else (buttons,
+   readouts, controls, topbar, theory-strip) comes from shared/.
+   ========================================================================= */
+
+/* -------------------------------------------------------------------------
+   Oscillator strip
+   The default .canvas-shell is 350px tall (sized for a full simulation
+   stage). This sim's oscillator is a secondary visual, so its height is
+   overridden inline in the HTML (90px) — this rule just keeps its inner
+   holder filling that reduced height without touching the shared default.
+   ------------------------------------------------------------------------- */
+
+#oscillator-shell {
+  margin-bottom: 18px;
+}
+
+#oscillator-holder {
+  width: 100%;
+  height: 100%;
+}
+
+#oscillator-holder canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* -------------------------------------------------------------------------
+   Graph quad — 2x2 grid of small-multiple graphs (x-t, v-t, a-t, E-x).
+   New pattern, not yet promoted to shared/ (see sim-checklist.md: promote
+   only once a second sim needs the same synced-multi-graph layout).
+   ------------------------------------------------------------------------- */
+
+.graph-quad {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  margin-bottom: 4px;
+}
+
+/* Each graph cell reuses .canvas-shell for its border/background but needs
+   a shorter, non-350px height since four have to fit on screen at once. */
+.graph-cell {
+  height: 190px;
+}
+
+.graph-holder {
+  width: 100%;
+  height: 100%;
+}
+
+.graph-holder canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* -------------------------------------------------------------------------
+   Responsive: stack the quad into a single column on narrow viewports,
+   matching the breakpoint already used by shared/sim-style.css.
+   ------------------------------------------------------------------------- */
+
+@media (max-width: 800px) {
+  .graph-quad {
+    grid-template-columns: 1fr;
+  }
+
+  .graph-cell {
+    height: 220px;
+  }
+}

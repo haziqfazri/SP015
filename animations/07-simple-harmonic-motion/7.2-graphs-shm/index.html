@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SHM Graphs — Topic 7.2 | SP015</title>
+
+  <!-- Shared styles first so topic CSS can override -->
+  <link rel="stylesheet" href="../../../shared/sim-style.css" />
+  <link rel="stylesheet" href="shm-graphs.css" />
+
+  <!-- Google Fonts used by sim-style.css -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <div class="app-shell">
+    <div class="lab-frame">
+
+      <!-- ================= Topbar ================= -->
+      <header class="topbar">
+        <div>
+          <p class="kicker">SP015 &middot; Topic 7.2</p>
+          <h1>Graphs of Simple Harmonic Motion</h1>
+        </div>
+        <div class="live-chip">
+          <span class="pulse"></span>
+          <span>Live Simulation</span>
+        </div>
+      </header>
+
+      <!-- ================= Main grid: stage + controls ================= -->
+      <div class="sim-grid">
+
+        <!-- ---------- Stage ---------- -->
+        <section class="stage">
+          <div class="stage-top">
+            <h2>Oscillator &amp; Synced Graphs</h2>
+            <span class="mono" id="time-label">t = 0.00 s</span>
+          </div>
+
+          <!-- Small oscillator strip: particle on a horizontal track -->
+          <div class="canvas-shell" id="oscillator-shell" style="height: 90px;">
+            <span class="canvas-label">OSCILLATOR</span>
+            <div id="oscillator-holder"></div>
+          </div>
+
+          <!-- Four synced graphs: x-t, v-t, a-t, Energy-x -->
+          <div class="graph-quad">
+            <div class="canvas-shell graph-cell" id="xt-shell">
+              <span class="canvas-label">DISPLACEMENT–TIME</span>
+              <div class="graph-holder" id="xt-holder"></div>
+            </div>
+            <div class="canvas-shell graph-cell" id="vt-shell">
+              <span class="canvas-label">VELOCITY–TIME</span>
+              <div class="graph-holder" id="vt-holder"></div>
+            </div>
+            <div class="canvas-shell graph-cell" id="at-shell">
+              <span class="canvas-label">ACCELERATION–TIME</span>
+              <div class="graph-holder" id="at-holder"></div>
+            </div>
+            <div class="canvas-shell graph-cell" id="ex-shell">
+              <span class="canvas-label">ENERGY–DISPLACEMENT</span>
+              <div class="graph-holder" id="ex-holder"></div>
+            </div>
+          </div>
+
+          <!-- Readouts: dense variant since we have 6 values -->
+          <div class="readouts readouts--dense">
+            <div class="readout">
+              <span class="readout-label">Displacement, x</span>
+              <span class="readout-value mono" id="readout-x">+0.00 m</span>
+            </div>
+            <div class="readout">
+              <span class="readout-label">Velocity, v</span>
+              <span class="readout-value mono" id="readout-v">+0.00 m/s</span>
+            </div>
+            <div class="readout">
+              <span class="readout-label">Acceleration, a</span>
+              <span class="readout-value mono" id="readout-a">+0.00 m/s&sup2;</span>
+            </div>
+            <div class="readout">
+              <span class="readout-label">Kinetic Energy, E<sub>K</sub></span>
+              <span class="readout-value mono" id="readout-ek">0.00 J</span>
+            </div>
+            <div class="readout">
+              <span class="readout-label">Potential Energy, E<sub>P</sub></span>
+              <span class="readout-value mono" id="readout-ep">0.00 J</span>
+            </div>
+            <div class="readout">
+              <span class="readout-label">Total Energy, E</span>
+              <span class="readout-value mono" id="readout-etotal">0.00 J</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- ---------- Controls ---------- -->
+        <aside class="controls">
+          <h2 class="control-title">Controls</h2>
+          <p class="control-intro">
+            Adjust amplitude and angular frequency to see how each SHM graph responds.
+          </p>
+
+          <div class="control-row">
+            <div class="control-meta">
+              <label for="amplitude-slider">Amplitude, A</label>
+              <span class="control-value" id="amplitude-value">0.20 m</span>
+            </div>
+            <input type="range" id="amplitude-slider" min="0.05" max="0.30" step="0.01" value="0.20" />
+          </div>
+
+          <div class="control-row">
+            <div class="control-meta">
+              <label for="omega-slider">Angular Frequency, &omega;</label>
+              <span class="control-value" id="omega-value">4.0 rad/s</span>
+            </div>
+            <input type="range" id="omega-slider" min="2" max="12" step="0.1" value="4.0" />
+            <p class="control-note">m assumed = 1.00 kg for energy readouts (ideal spring/oscillator, no damping)</p>
+          </div>
+
+          <!-- Energy-x curve visibility toggles -->
+          <div class="control-checks">
+            <label class="check">
+              <input type="checkbox" id="check-ek" checked />
+              Show Kinetic Energy, E<sub>K</sub>
+            </label>
+            <label class="check">
+              <input type="checkbox" id="check-ep" checked />
+              Show Potential Energy, E<sub>P</sub>
+            </label>
+            <label class="check">
+              <input type="checkbox" id="check-etotal" checked />
+              Show Total Energy, E
+            </label>
+          </div>
+
+          <div class="button-grid">
+            <button class="action primary" id="btn-play">Play</button>
+            <button class="action" id="btn-reset">Reset</button>
+            <button class="action col-span-2" id="btn-step">Step +&Delta;t</button>
+          </div>
+        </aside>
+      </div>
+
+      <!-- ================= Theory strip ================= -->
+      <div class="theory-strip">
+        <div class="theory-card">
+          <h2>Learning Outcome — 7.2</h2>
+          <p>
+            Analyse the displacement–time, velocity–time, acceleration–time, and
+            energy–displacement graphs of simple harmonic motion, and relate their
+            shapes to one another at any given instant.
+          </p>
+        </div>
+        <div class="theory-card">
+          <h2>Key Equations</h2>
+          <p>
+            x = A sin(&omega;t) &nbsp;|&nbsp; v = &plusmn;&omega;&radic;(A&sup2; &minus; x&sup2;) &nbsp;|&nbsp; a = &minus;&omega;&sup2;x
+            <span class="formula">E = E<sub>K</sub> + E<sub>P</sub> = &frac12;m&omega;&sup2;A&sup2; (constant)</span>
+          </p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- p5.js library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.4/p5.min.js"></script>
+
+  <!-- Shared helpers before topic-specific script -->
+  <script src="../../../shared/sim-utils.js"></script>
+  <script src="shm-graphs-sim.js"></script>
+</body>
+</html>

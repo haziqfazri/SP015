@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Properties of Waves — SP015</title>
+
+<!-- Shared styles first, topic-specific overrides after -->
+<link rel="stylesheet" href="../../../shared/sim-style.css">
+<link rel="stylesheet" href="wave-properties.css">
+</head>
+<body>
+
+<div class="app-shell">
+  <div class="lab-frame">
+
+    <!-- ============================ Topbar ============================ -->
+    <header class="topbar">
+      <div>
+        <p class="kicker">SP015 &middot; Topic 7.4</p>
+        <h1>Properties of Waves</h1>
+      </div>
+      <div class="live-chip">
+        <span class="pulse"></span>
+        <span>Simulation Live</span>
+      </div>
+    </header>
+
+    <!-- ========================== System bar =========================== -->
+    <div class="system-bar">
+      <span class="system-label">Propagation Direction</span>
+      <div class="system-switch" id="direction-switch">
+        <button class="system-option is-active" data-direction="positive" type="button">+x direction</button>
+        <button class="system-option" data-direction="negative" type="button">&minus;x direction</button>
+      </div>
+    </div>
+
+    <!-- ============================ Main grid =========================== -->
+    <div class="sim-grid">
+
+      <!-- ------------------------------ Stage ------------------------------ -->
+      <section class="stage">
+
+        <div class="stage-top">
+          <h2>y&ndash;x Snapshot &amp; y&ndash;t Trace</h2>
+          <span class="mono" id="time-readout">t = 0.00 s</span>
+        </div>
+
+        <!-- Toggles that affect what's drawn on stage (not a slider value) -->
+        <div class="stage-checks">
+          <label class="check">
+            <input type="checkbox" id="toggle-particles">
+            <span>Show particles</span>
+          </label>
+          <label class="check">
+            <input type="checkbox" id="toggle-vy-arrow">
+            <span>Show reference particle velocity, v<sub>y</sub></span>
+          </label>
+          <label class="check">
+            <input type="checkbox" id="toggle-guides">
+            <span>Show amplitude guides</span>
+          </label>
+        </div>
+
+        <!-- Panel 1: y-x snapshot -->
+        <div class="canvas-shell" id="canvas-shell-yx">
+          <span class="canvas-label">y&ndash;x &nbsp;(displacement vs. position, snapshot at time t)</span>
+          <div id="canvas-holder-yx"></div>
+        </div>
+
+        <!-- Panel 2: y-t trace of the reference particle, stacked below -->
+        <div class="canvas-shell" id="canvas-shell-yt">
+          <span class="canvas-label">y&ndash;t &nbsp;(reference particle displacement vs. time)</span>
+          <div id="canvas-holder-yt"></div>
+        </div>
+
+        <!-- Readouts -->
+        <div class="readouts readouts--dense" id="readouts">
+          <div class="readout">
+            <span class="readout-label">Wavelength, &lambda; (derived)</span>
+            <span class="readout-value mono" id="readout-lambda">&mdash; m</span>
+          </div>
+          <div class="readout">
+            <span class="readout-label">Frequency, f</span>
+            <span class="readout-value mono" id="readout-f">&mdash; Hz</span>
+          </div>
+          <div class="readout">
+            <span class="readout-label">Period, T</span>
+            <span class="readout-value mono" id="readout-T">&mdash; s</span>
+          </div>
+          <div class="readout">
+            <span class="readout-label">Wave speed, v</span>
+            <span class="readout-value mono" id="readout-v">&mdash; m/s</span>
+          </div>
+          <div class="readout">
+            <span class="readout-label">Wave number, k</span>
+            <span class="readout-value mono" id="readout-k">&mdash; rad/m</span>
+          </div>
+          <div class="readout">
+            <span class="readout-label">Angular frequency, &omega;</span>
+            <span class="readout-value mono" id="readout-omega">&mdash; rad/s</span>
+          </div>
+          <div class="readout">
+            <span class="readout-label">Reference particle y</span>
+            <span class="readout-value mono" id="readout-y">&mdash; m</span>
+          </div>
+          <div class="readout">
+            <span class="readout-label">Particle velocity, v<sub>y</sub></span>
+            <span class="readout-value mono" id="readout-vy">&mdash; m/s</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ----------------------------- Controls ----------------------------- -->
+      <aside class="controls">
+        <h2 class="control-title">Controls</h2>
+        <p class="control-intro">
+          Adjust the wave's properties and compare how the wave pattern moves
+          along x against how one particle moves up and down in y.
+        </p>
+
+        <div class="control-row">
+          <div class="control-meta">
+            <label for="slider-amplitude">Amplitude, A</label>
+            <span class="control-value" id="value-amplitude">&mdash; m</span>
+          </div>
+          <input type="range" id="slider-amplitude">
+        </div>
+
+        <div class="control-row">
+          <div class="control-meta">
+            <label for="slider-wave-speed">Wave speed (medium), v</label>
+            <span class="control-value" id="value-wave-speed">&mdash; m/s</span>
+          </div>
+          <input type="range" id="slider-wave-speed">
+          <p class="control-note">A property of the medium. Wavelength (&lambda;) is derived from v and f — see the readouts below.</p>
+        </div>
+
+        <div class="control-row">
+          <div class="control-meta">
+            <label for="slider-frequency">Frequency, f</label>
+            <span class="control-value" id="value-frequency">&mdash; Hz</span>
+          </div>
+          <input type="range" id="slider-frequency">
+        </div>
+
+        <div class="control-row">
+          <div class="control-meta">
+            <label for="slider-particle-count">Number of particles, n</label>
+            <span class="control-value" id="value-particle-count">&mdash;</span>
+          </div>
+          <input type="range" id="slider-particle-count">
+          <p class="control-note">Evenly spaced along the visible wave. Disabled when "Show particles" is off.</p>
+        </div>
+
+        <div class="button-grid">
+          <button class="action primary" id="btn-play-pause" type="button">Play</button>
+          <button class="action" id="btn-step" type="button">Step</button>
+          <button class="action col-span-2" id="btn-reset" type="button">Reset</button>
+        </div>
+      </aside>
+    </div>
+
+    <!-- ========================== Theory strip =========================== -->
+    <div class="theory-strip">
+      <div class="theory-card">
+        <h2>Learning Outcome</h2>
+        <p>
+          Distinguish between the velocity of the wave pattern travelling
+          through the medium and the velocity of a single particle
+          oscillating about its equilibrium position.
+        </p>
+      </div>
+      <div class="theory-card">
+        <h2>Key Equations</h2>
+        <span class="formula" id="equation-yxt">y(x,t) = A sin(&omega;t &plusmn; kx)</span>
+        <span class="formula" id="equation-vy">v<sub>y</sub> = A&omega; cos(&omega;t &plusmn; kx)</span>
+        <span class="formula">v = f&lambda;,&nbsp; k = 2&pi;/&lambda;</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- p5.js library -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
+
+<!-- Shared helpers before topic-specific scripts -->
+<script src="../../../shared/sim-utils.js"></script>
+
+<!-- Topic-specific scripts (physics, UI, controller, renderer, sketch) -->
+<script src="wave-physics.js"></script>
+<script src="wave-ui-manager.js"></script>
+<script src="wave-controller.js"></script>
+<script src="wave-renderer.js"></script>
+<script src="wave-sketch.js"></script>
+
+</body>
+</html>
