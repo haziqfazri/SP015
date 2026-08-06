@@ -128,6 +128,7 @@ class UIManager {
   constructor(callbacks) {
     this.callbacks = callbacks;
     this._lastReadout = {}; // diffing store for updateReadout()
+    this.playbackState = null;
     this._cacheElements();
     this._applyLimits(); // LIMITS is the single source of truth for slider
                          // ranges/defaults; index.html's static min/max/value
@@ -207,9 +208,21 @@ class UIManager {
     this.el.checkEtotal.addEventListener('change', (e) =>
       this.callbacks.onToggleCurve('Etotal', e.target.checked));
 
-    this.el.btnPlay.addEventListener('click', () => this.callbacks.onPlayToggle());
-    this.el.btnReset.addEventListener('click', () => this.callbacks.onReset());
-    this.el.btnStep.addEventListener('click', () => this.callbacks.onStep());
+    this.playbackState = new PlaybackState({
+      buttonEl: this.el.btnPlay,
+      onPlay: () => this.callbacks.onPlayToggle(true),
+      onPause: () => this.callbacks.onPlayToggle(false),
+    });
+
+    this.el.btnPlay.addEventListener('click', () => this.playbackState.toggle());
+    this.el.btnReset.addEventListener('click', () => {
+      this.playbackState.pause();
+      this.callbacks.onReset();
+    });
+    this.el.btnStep.addEventListener('click', () => {
+      this.playbackState.pause();
+      this.callbacks.onStep();
+    });
   }
 
   // Called once per frame by the controller with the latest physics state.
@@ -227,7 +240,7 @@ class UIManager {
   }
 
   setPlayButtonLabel(isPlaying) {
-    this.el.btnPlay.textContent = isPlaying ? 'Pause' : 'Play';
+    this.el.btnPlay.textContent = isPlaying ? '⏸ Pause' : '▶ Play';
   }
 }
 
@@ -470,8 +483,8 @@ class SimulationController {
     this._renderAll();
   }
 
-  _onPlayToggle() {
-    this.isPlaying = !this.isPlaying;
+  _onPlayToggle(isPlaying = !this.isPlaying) {
+    this.isPlaying = isPlaying;
     this.ui.setPlayButtonLabel(this.isPlaying);
   }
 
