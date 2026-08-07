@@ -1,0 +1,57 @@
+/* =========================================================================
+   STANDING-WAVES.CSS — topic-specific overrides for Topic 7.6
+   (Application of Standing Waves). Load AFTER ../../../shared/sim-style.css.
+   Only rules unique to this sim's layout live here — buttons, readouts,
+   controls, topbar, theory-strip all come from shared/.
+   ========================================================================= */
+
+/* -------------------------------------------------------------------------
+   Harmonic-number stepper groups
+   Six buttons (n = 1..6, or the odd set 1,3,5,7,9,11 for the closed
+   column) need to stay legible on one row without fighting for space —
+   same reasoning as 7.5's .amp-step-group, reused here under a
+   sim-specific name since the values are integers, not signed decimals.
+   ------------------------------------------------------------------------- */
+
+.harmonic-group {
+  flex-wrap: nowrap;
+}
+
+.harmonic-group .system-option {
+  flex: 1 1 0;
+  min-width: 0;
+  padding: 8px 4px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* -------------------------------------------------------------------------
+   Wave-speed readout visibility
+   Only the stretched-string mode has a live v = sqrt(T/mu) readout — air
+   columns use the fixed SPEED_OF_SOUND constant instead (stated in the
+   theory strip, not a live number). #wave-speed-readout reuses the
+   shared .hidden utility as-is; this comment documents why it's toggled
+   rather than styled here.
+   ------------------------------------------------------------------------- */
+
+/* -------------------------------------------------------------------------
+   Control panel spacing
+   #stringControls / #openControls / #closedControls each reuse
+   .control-row / .control-meta / .control-note as-is (same pattern as
+   every other sim's sidebar) — no override needed, this note just
+   documents that the three panels are permanent siblings toggled via
+   .hidden (UIManager.setMode), matching 7.5's mode-panel pattern.
+   ------------------------------------------------------------------------- */
+
+/* -------------------------------------------------------------------------
+   Responsive
+   Shared breakpoints already stack .sim-grid and shrink .canvas-shell. At
+   narrow widths, six harmonic-stepper buttons need a bit more breathing
+   room than the shared compact-switch default provides.
+   ------------------------------------------------------------------------- */
+
+@media (max-width: 800px) {
+  .harmonic-group .system-option {
+    font-size: 11px;
+    padding: 7px 2px;
+  }
+}

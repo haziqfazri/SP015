@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Application of Standing Waves — Topic 7.6 | SP015</title>
+
+<!-- Fonts: DM Sans for display/labels, Space Mono for instrument readouts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- p5.js latest -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.4/p5.min.js"></script>
+
+<!-- Shared styles first so topic CSS can override -->
+<link rel="stylesheet" href="../../../shared/sim-style.css">
+<link rel="stylesheet" href="standing-waves.css">
+</head>
+<body>
+
+<div class="app-shell">
+ <div class="lab-frame">
+
+  <header class="topbar">
+   <div>
+    <p class="kicker">SP015 &middot; Topic 7.6</p>
+    <h1>Application of Standing Waves</h1>
+   </div>
+   <div class="live-chip"><span class="pulse" aria-hidden="true"></span><span>Live Simulation</span></div>
+  </header>
+
+  <!-- ================= Mode toggle ================= -->
+  <nav class="system-bar" aria-label="Standing wave system selection">
+   <span class="system-label">System</span>
+   <div class="system-switch">
+    <button id="stringModeButton" class="system-option is-active" type="button" aria-pressed="true">Stretched String</button>
+    <button id="openModeButton" class="system-option" type="button" aria-pressed="false">Open Air Column</button>
+    <button id="closedModeButton" class="system-option" type="button" aria-pressed="false">Closed Air Column</button>
+   </div>
+  </nav>
+
+  <main class="sim-grid">
+
+   <!-- ---------- Stage (shared across all 3 modes — only the active
+        physics object drawn changes, not the canvas itself) ---------- -->
+   <section class="stage" aria-labelledby="stage-heading">
+    <div class="stage-top">
+     <h2 id="stage-heading">Standing Wave Pattern</h2>
+    </div>
+
+    <div class="canvas-shell" id="canvasShell">
+     <div id="canvas-holder"></div>
+    </div>
+
+    <section class="readouts" aria-label="Live simulation values">
+     <div class="readout">
+      <span class="readout-label">Harmonic / Overtone</span>
+      <output id="val-harmonic-label" class="readout-value">Fundamental (1st Harmonic)</output>
+     </div>
+     <div class="readout">
+      <span class="readout-label">Frequency, f</span>
+      <output id="val-frequency" class="readout-value">0.0 Hz</output>
+     </div>
+     <div class="readout">
+      <span class="readout-label">Wavelength, &lambda;</span>
+      <output id="val-wavelength" class="readout-value">0.00 m</output>
+     </div>
+     <div class="readout" id="wave-speed-readout">
+      <span class="readout-label">Wave Speed, v</span>
+      <output id="val-wave-speed" class="readout-value">0.0 m/s</output>
+     </div>
+    </section>
+   </section>
+
+   <!-- ---------- Controls sidebar ---------- -->
+   <aside class="controls" aria-labelledby="controls-heading">
+    <h2 class="control-title" id="controls-heading">Parameters</h2>
+    <p class="control-intro">
+     Adjust the physical parameters and pick a harmonic to see the
+     resulting standing wave pattern and its frequency.
+    </p>
+
+    <!-- ---- Stretched String controls ---- -->
+    <div id="stringControls">
+     <div class="control-row">
+      <div class="control-meta">
+       <label for="tension-slider">Tension, T</label>
+       <output id="tension-live" class="control-value">10.0 N</output>
+      </div>
+      <input id="tension-slider" type="range" min="1" max="50" step="0.5" value="10">
+     </div>
+
+     <div class="control-row">
+      <div class="control-meta">
+       <label for="mu-slider">Linear Density, &mu;</label>
+       <output id="mu-live" class="control-value">2.00 g/m</output>
+      </div>
+      <input id="mu-slider" type="range" min="0.0005" max="0.01" step="0.0005" value="0.002">
+     </div>
+
+     <div class="control-row">
+      <div class="control-meta">
+       <label for="string-length-slider">Length, L</label>
+       <output id="string-length-live" class="control-value">1.00 m</output>
+      </div>
+      <input id="string-length-slider" type="range" min="0.2" max="2.0" step="0.05" value="1.0">
+     </div>
+
+     <div class="control-row">
+      <div class="control-meta"><label>Harmonic Number, n</label></div>
+      <div class="system-switch compact harmonic-group" id="string-harmonic-group" role="group" aria-label="String harmonic selection"></div>
+      <p class="control-note">Both ends fixed &mdash; every integer n is allowed.</p>
+     </div>
+    </div>
+
+    <!-- ---- Open Air Column controls ---- -->
+    <div id="openControls" class="hidden">
+     <div class="control-row">
+      <div class="control-meta">
+       <label for="open-length-slider">Length, L</label>
+       <output id="open-length-live" class="control-value">1.00 m</output>
+      </div>
+      <input id="open-length-slider" type="range" min="0.2" max="2.0" step="0.05" value="1.0">
+     </div>
+
+     <div class="control-row">
+      <div class="control-meta"><label>Harmonic Number, n</label></div>
+      <div class="system-switch compact harmonic-group" id="open-harmonic-group" role="group" aria-label="Open column harmonic selection"></div>
+      <p class="control-note">Both ends open (antinodes) &mdash; every integer n is allowed.</p>
+     </div>
+    </div>
+
+    <!-- ---- Closed Air Column controls ---- -->
+    <div id="closedControls" class="hidden">
+     <div class="control-row">
+      <div class="control-meta">
+       <label for="closed-length-slider">Length, L</label>
+       <output id="closed-length-live" class="control-value">1.00 m</output>
+      </div>
+      <input id="closed-length-slider" type="range" min="0.2" max="2.0" step="0.05" value="1.0">
+     </div>
+
+     <div class="control-row">
+      <div class="control-meta"><label>Harmonic Number, n</label></div>
+      <div class="system-switch compact harmonic-group" id="closed-harmonic-group" role="group" aria-label="Closed column harmonic selection"></div>
+      <p class="control-note">One end closed (node), one end open (antinode) &mdash; only odd n exist.</p>
+     </div>
+    </div>
+
+    <div class="button-grid">
+     <button id="btn-play" class="action primary col-span-2" type="button">▶ Play</button>
+    </div>
+   </aside>
+
+  </main>
+
+  <!-- ================= Theory strip ================= -->
+  <!-- Two permanent .theory-card slots (same pattern as 7.5's
+       pulseTheoryContent/interferenceTheoryContent), extended to three
+       mode variants per card, toggled via display, not swapped DOM. -->
+  <footer class="theory-strip">
+   <section class="theory-card">
+    <div id="stringTheoryContent">
+     <h2>Learning Outcome — 7.6(a.i), 7.6(b)</h2>
+     <p>
+      A string fixed at both ends supports standing waves only at
+      frequencies where both ends are displacement nodes. Wave speed
+      depends on the string's tension and mass per unit length.
+     </p>
+     <span class="formula">f<sub>n</sub> = nv / 2L &nbsp;&nbsp; v = &radic;(T/&mu;)</span>
+    </div>
+    <div id="openTheoryContent" style="display:none">
+     <h2>Learning Outcome — 7.6(a.ii)</h2>
+     <p>
+      An air column open at both ends supports standing waves where both
+      ends are displacement antinodes, so every harmonic (n = 1, 2, 3, ...)
+      is possible &mdash; the same frequency pattern as the fixed-fixed string.
+     </p>
+     <span class="formula">f<sub>n</sub> = nv / 2L &nbsp;&nbsp; v = 343 m/s</span>
+    </div>
+    <div id="closedTheoryContent" style="display:none">
+     <h2>Learning Outcome — 7.6(a.ii)</h2>
+     <p>
+      An air column closed at one end has a displacement node at the
+      closed end and an antinode at the open end. This boundary condition
+      only fits odd-numbered harmonics &mdash; even harmonics cannot exist.
+     </p>
+     <span class="formula">f<sub>n</sub> = nv / 4L &nbsp; (n = 1, 3, 5, ...)</span>
+    </div>
+   </section>
+   <section class="theory-card">
+    <div id="stringTheoryContent2">
+     <h2>What to notice</h2>
+     <p>
+      Higher tension or lower linear density increases wave speed, which
+      raises every harmonic's frequency together &mdash; the harmonic pattern
+      (node/antinode spacing) itself doesn't change, only the pitch.
+     </p>
+    </div>
+    <div id="openTheoryContent2" style="display:none">
+     <h2>What to notice</h2>
+     <p>
+      Because both ends are antinodes, the open column's harmonic series
+      matches the stretched string's exactly &mdash; same formula, same
+      allowed n values, just a different physical system.
+     </p>
+    </div>
+    <div id="closedTheoryContent2" style="display:none">
+     <h2>What to notice</h2>
+     <p>
+      The 2nd overtone of a closed column is the 5th harmonic (n = 5), not
+      the 3rd &mdash; overtone numbering always counts upward from the
+      fundamental among only the frequencies that actually exist.
+     </p>
+    </div>
+   </section>
+  </footer>
+
+ </div>
+</div>
+
+<script src="../../../shared/sim-utils.js"></script>
+<script src="standing-waves-physics.js"></script>
+<script src="standing-waves-renderer.js"></script>
+<script src="standing-waves-controller.js"></script>
+<script src="standing-waves-ui.js"></script>
+<script src="standing-waves-sketch.js"></script>
+</body>
+</html>
