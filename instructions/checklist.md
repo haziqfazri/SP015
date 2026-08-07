@@ -1,4 +1,4 @@
-# Checklist — Before Calling a Simulation "Done"
+A# Checklist — Before Calling a Simulation "Done"
 
 ## Functionality
 - [ ] Play/Pause/Reset/Step all work and update button labels correctly
@@ -54,6 +54,11 @@
 - [ ] Multi-canvas sims share one clock/ticker rather than independent
       free-running loops
 - [ ] No console errors/warnings on load, slider drag, or mode switch
+- [ ] `SimulationController.update(dt)` should only call `ui.updateReadouts(...)` 
+      (or equivalent) if the readouts being updated actually depend on time-varying 
+      state (`t`, integrated position/velocity, etc.). Readouts driven purely by 
+      slider/param values belong in the param's `on*Change` callback, not in the 
+      per-frame update loop.
 
 ## Final pass
 - [ ] `docs/architecture.md` updated if this sim introduced a new pattern,
