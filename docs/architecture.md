@@ -36,7 +36,7 @@ SP015/
 │       ├── 7.2-graphs-shm                      (Contains sim and sketch files)
 │       ├── 7.4-progressive-wave-shm            (Contains physics, ui, controller, renderer, sketch)
 │       ├── 7.5-superposition-shm               (Contains physics, ui, controller, renderer, sketch)
-│       ├── 7.6-application-of-standing-waves   (Not implemented yet, just empty folder)
+│       ├── 7.6-standing-waves                  (Contains physics, ui, controller, renderer, sketch — global mode)
 │       └── 7.7-doppler-effect                  (Not implemented yet, just empty folder)
 ├── docs
 │   └── architecture.md   <- this file
@@ -98,7 +98,8 @@ Observed sequence for every sim in the repo so far:
    attributes are just a cosmetic fallback for viewing the markup alone"*).
 3. **Write the physics class(es).** Pure state + derivation, no DOM/canvas
    (`SHMOscillator`, `WaveState`, `Oscillator`/`SpringOscillator`/
-   `PendulumOscillator`, `PulseWave`/`ProgressiveWave`, `Particle`/`Orbit`).
+   `PendulumOscillator`, `PulseWave`/`ProgressiveWave`,
+   `StretchedString`/`AirColumn`, `Particle`/`Orbit`).
 4. **Write UIManager.** Cache DOM elements once, bind events, expose a
    `callbacks` object the controller fills in — UIManager never calls
    physics or renderer functions directly.
@@ -110,6 +111,15 @@ Observed sequence for every sim in the repo so far:
    decides when to redraw.
 7. **Write the sketch entry point** (`setup`/`draw`/`windowResized`, or a
    `DOMContentLoaded` bootstrap for instance mode).
+
+   Canvas-mode choice at this step is about **cross-canvas sync**, not
+   physics complexity: global mode remains the right call even for a sim
+   with several physics classes and well over 150 lines of physics (7.6 has
+   three physics classes and no single canvas needing to stay in lockstep
+   with another) as long as it's a single canvas. Instance mode's value is
+   specifically coordinating multiple canvases off one shared clock — don't
+   reach for it just because a sim is "advanced." See §4 for the full
+   canvas-mode decision guidance.
 8. **Wire the theory strip / readouts** to match the LO text and correct
    units, cross-checking against the curriculum spec PDF.
 9. **Check for duplication against existing sims** — anything that's now
@@ -140,36 +150,84 @@ What each stage actually does, based on the code:
   *what* to pass to the renderer. It owns playback state (`isPlaying`),
   history/trail buffers (`SignalHistory`, `yHistory`, `trail[]`), and (in
   multi-canvas sims) the p5 instance(s).
+
+  **Readout updates must be triggered by the state that actually changes
+  them, not blanket-called every frame.** If a sim's readouts are driven
+  purely by slider/parameter values (not by `t`/`dt` or any time-integrated
+  quantity), call `ui.updateReadouts(...)` from the parameter's `on*Change`
+  callback — never from inside `update(dt)`/the per-frame loop. Calling it
+  every frame recomputes and reformats values that cannot have changed,
+  wasting work even though `updateReadout()`'s diffing still prevents the
+  resulting DOM write. If a sim's readouts genuinely depend on `t` (e.g. a
+  live "t = 2.34 s" readout, or a per-frame peak/envelope sweep), calling
+  `updateReadouts()` every frame is correct and expected — 7.5's
+  `_interferenceLoop()` is the reference example of this legitimate case.
+  7.6 is the reference example of the bug: its readouts depend only on
+  `T`/`μ`/`L`/`n`, so the per-frame call in its `update(dt)` was dead work
+  and was removed.
 - **Physics classes** (`Oscillator` subclasses, `WaveState`,
-  `SHMOscillator`, `Particle`/`Orbit`, `PulseWave`/`ProgressiveWave`, etc.)
-  hold state and expose `integrate()`/`step()`/`advance()`,
-  `energy()`/`period()`, and derived getters (e.g. `wavelength`,
-  `angularFrequency`). No DOM access, no p5 calls, no rendering. Derived
-  quantities are generally computed on demand from stored independent
-  fields (e.g. `wavelength = waveSpeed / frequency`) rather than cached, so
-  they can never drift out of sync with the sliders.
+  `SHMOscillator`, `Particle`/`Orbit`, `PulseWave`/`ProgressiveWave`,
+  `StretchedString`/`AirColumn`, etc.) hold state and expose
+  `integrate()`/`step()`/`advance()`, `energy()`/`period()`, and derived
+  getters (e.g. `wavelength`, `angularFrequency`). No DOM access, no p5
+  calls, no rendering. Derived quantities are generally computed on demand
+  from stored independent fields (e.g. `wavelength = waveSpeed / frequency`)
+  rather than cached, so they can never drift out of sync with the sliders.
+
+  **One class per physical system, but not necessarily one class per
+  boundary condition.** Where two physical systems differ only in boundary
+  condition — the underlying derivation and equation *shape* are the same,
+  just which end is a node vs. an antinode, and which harmonic numbers are
+  physically allowed — prefer a single class parameterized by a flag over
+  two classes that would mostly duplicate each other. `AirColumn(length,
+  harmonic, closedEnd)` (7.6) is the reference example: open and closed
+  columns share every method, differing only in wavelength relation,
+  envelope phase, and allowed-harmonics set, all branched on `closedEnd`.
+  Reserve genuinely separate classes (as with `StretchedString` vs.
+  `AirColumn`) for cases where the derivation itself differs — string speed
+  comes from tension/linear density, air column speed is a fixed constant —
+  not just the display label or boundary condition.
 - **Renderer functions** are free functions (`drawSpringSystem`,
-  `drawWaveformPanel`, `drawOscillator`, `drawPulseScene`, ...) that take an
-  explicit context, the relevant physics object(s)/params, and canvas
-  dimensions, and draw one frame. They perform no physics calculation
-  beyond unit→pixel conversion, and hold no state of their own.
+  `drawWaveformPanel`, `drawOscillator`, `drawPulseScene`,
+  `drawStandingWaveScene`, ...) that take an explicit context, the relevant
+  physics object(s)/params, and canvas dimensions, and draw one frame. They
+  perform no physics calculation beyond unit→pixel conversion, and hold no
+  state of their own.
+
+  **A `DISPLAY` visual-scale constant is sometimes better computed at
+  render time than stored as a fixed pixel value.** Where a curve or shape
+  needs to stay visually anchored to a boundary that's itself a function of
+  canvas size (e.g. a standing wave's peak touching pipe walls whose
+  position depends on `plotH`), compute the scale from the current plot
+  dimensions (`plotH / 2 - margin`) inside the renderer rather than reading
+  a fixed constant. `computeAmplitude(plotH)` in 7.6 is the reference
+  example — this keeps the visual relationship correct across canvas
+  resizes instead of drifting relative to the boundary as the canvas
+  changes size.
 - **Canvas** — either p5 global mode (`05-circular-motion`,
-  `7.1-kinematics-of-shm`: one `setup()`/`draw()` pair, functions like
-  `background()`/`stroke()` called bare) or p5 **instance mode**
-  (`7.2-graphs-shm`, `7.4-progressive-wave-shm`, `7.5-superposition-shm`:
-  each canvas is its own `new p5(sketch)`, useful when a sim needs multiple
-  independent canvases in sync, e.g. 4–5 synced graphs or 3 stacked
-  interference panels driven by one shared clock/ticker).
+  `7.1-kinematics-of-shm`, `7.6-standing-waves`: one `setup()`/`draw()`
+  pair, functions like `background()`/`stroke()` called bare) or p5
+  **instance mode** (`7.2-graphs-shm`, `7.4-progressive-wave-shm`,
+  `7.5-superposition-shm`: each canvas is its own `new p5(sketch)`, useful
+  when a sim needs multiple independent canvases in sync, e.g. 4–5 synced
+  graphs or 3 stacked interference panels driven by one shared clock/ticker).
+  Choose based on **whether the sim needs more than one canvas kept in
+  sync** — not sim complexity. 7.6 has three physics classes and a full
+  play/pause animation loop, and still uses global mode correctly, because
+  it only ever draws one canvas at a time.
 Two variants of the controller→physics wiring exist and both are fine:
 - **Single-file combo** (`oscillation-sim.js`, `wave-physics.js` +
   `oscillation-sketch.js`): physics classes, UIManager, and renderer
   functions in one or two files, sketch/controller in another.
-- **Fully split** (`7.4-progressive-wave-shm`, `7.5-superposition-shm`):
-  `*-physics.js`, `*-ui.js`/`*-ui-manager.js`, `*-renderer.js`,
-  `*-controller.js`, `*-sketch.js` as five separate files loaded in that
-  order. Prefer this split for any new sim with more than ~1 canvas or more
-  than ~150 lines of physics — it's what the two most recent, most complex
-  sims (wave + superposition) converged on.
+- **Fully split** (`7.4-progressive-wave-shm`, `7.5-superposition-shm`,
+  `7.6-standing-waves`): `*-physics.js`, `*-ui.js`/`*-ui-manager.js`,
+  `*-renderer.js`, `*-controller.js`, `*-sketch.js` as five separate files
+  loaded in that order. Prefer this split for any new sim with more than
+  ~1 canvas or more than ~150 lines of physics — it's what the three most
+  recent, most complex sims (wave, superposition, standing waves) converged
+  on. Note that "fully split" and "instance mode" are independent choices:
+  7.6 is fully split but global mode, showing the file-split decision and
+  the canvas-mode decision aren't the same axis.
 
 ## 5. Shared components
  
@@ -202,6 +260,19 @@ Duplication observed that should be reconciled next time it's touched:
 - **`signedFixed`/`updateReadout` are already shared** — keep new sims using
   these rather than re-rolling local diffing/formatting logic (this has
   mostly been followed correctly already).
+- **Discrete-value stepper buttons** (`.system-switch.compact` reused for a
+  fixed set of selectable values rather than a mode toggle) now has two
+  independent uses: 7.5's `.amp-step-group` (signed amplitude steps) and
+  7.6's `.harmonic-group` (integer harmonic numbers, including a non-
+  contiguous odd-only set for the closed air column). This is a confirmed
+  second use of the same underlying pattern — worth promoting to a generic
+  `.stepper-group` modifier in `shared/sim-style.css` next time either
+  topic's stepper CSS is touched, rather than deferring further per §6
+  rule 3.
+- **Node/antinode-style extrema markers with play-state-gated labels**
+  (7.6's `drawExtremaMarkers`) are not yet a shared helper — only one sim
+  uses this pattern so far. Revisit if a future sim (e.g. another
+  standing-wave-adjacent topic) needs the same marker+label behavior.
 
 ## 6. Future expansion
  
@@ -214,10 +285,20 @@ revisit that only once it's actually a problem). Every new sim should:
 1. Reuse `shared/sim-style.css` and `shared/sim-utils.js` untouched, adding
    only topic-specific CSS/JS on top.
 2. Prefer the fully-split file structure (§4) once the sim needs more than a
-   trivial amount of physics or more than one canvas.
+   trivial amount of physics or more than one canvas. Decide file-split and
+   canvas-mode independently — a fully-split sim can still be global mode
+   (see 7.6) if it only ever needs one canvas.
 3. Fold any newly-duplicated helper into `shared/` per §5 before moving on
    to the next sim, not "later" — this is also enforced as a QA gate in
    `instructions/checklist.md` ("Code cleanliness" section).
-4. Update this file if the architecture actually changes shape (new file
+4. Only call a controller's readout-update method from the callback that
+   actually changes the underlying values (a slider/button `on*Change`, a
+   mode switch), or from the per-frame `update(dt)` loop if the readouts
+   genuinely depend on `t`/`dt`/integrated state — never call it
+   unconditionally from `update(dt)` when it doesn't. See §4's Physics
+   classes / SimulationController discussion for the reference examples of
+   both the correct time-dependent case (7.5) and the bug (7.6, since
+   fixed).
+5. Update this file if the architecture actually changes shape (new file
    split, new shared module, new folder convention) — it should stay a
    description of what's true, not what was once planned.

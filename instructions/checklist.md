@@ -51,14 +51,14 @@ A# Checklist — Before Calling a Simulation "Done"
 ## Performance
 - [ ] Readout DOM writes are diffed (`updateReadout`), not unconditional
       per frame
+- [ ] `update(dt)`/the per-frame loop only calls `ui.updateReadouts(...)`
+      if the readouts depend on `t`/`dt`/integrated state — readouts
+      driven purely by slider/param values are updated from that
+      param's `on*Change` callback instead, not the per-frame loop
+      (see `docs/architecture.md` §4)
 - [ ] Multi-canvas sims share one clock/ticker rather than independent
       free-running loops
 - [ ] No console errors/warnings on load, slider drag, or mode switch
-- [ ] `SimulationController.update(dt)` should only call `ui.updateReadouts(...)` 
-      (or equivalent) if the readouts being updated actually depend on time-varying 
-      state (`t`, integrated position/velocity, etc.). Readouts driven purely by 
-      slider/param values belong in the param's `on*Change` callback, not in the 
-      per-frame update loop.
 
 ## Final pass
 - [ ] `docs/architecture.md` updated if this sim introduced a new pattern,
