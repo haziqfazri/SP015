@@ -9,7 +9,6 @@ class UIManager {
     this.callbacks = callbacks;
     this._lastReadout = {};
     this._cacheElements();
-    this._initPlaybackStates();
     this._bindEvents();
   }
 
@@ -92,24 +91,6 @@ class UIManager {
     this.el.phaseDiffSlider.value = INTERFERENCE_LIMITS.phaseDiffDefault;
   }
 
-  _initPlaybackStates() {
-    this.pulsePlaybackState = new PlaybackState({
-      buttonEl: this.el.btnPlay,
-      playLabel: '▶ Play',
-      pauseLabel: '⏸ Pause',
-      onPlay: () => this.callbacks.onPlayToggle(true),
-      onPause: () => this.callbacks.onPlayToggle(false),
-    });
-
-    this.interferencePlaybackState = new PlaybackState({
-      buttonEl: this.el.btnPlayInterference,
-      playLabel: '▶ Play',
-      pauseLabel: '⏸ Pause',
-      onPlay: () => this.callbacks.onInterferencePlayToggle(true),
-      onPause: () => this.callbacks.onInterferencePlayToggle(false),
-    });
-  }
-
   _bindEvents() {
     this._bindAmplitudeGroup(this.el.ampAGroup, (value) => this.callbacks.onAmplitudeAChange(value));
     this._bindAmplitudeGroup(this.el.ampBGroup, (value) => this.callbacks.onAmplitudeBChange(value));
@@ -124,11 +105,8 @@ class UIManager {
       this.callbacks.onScrub(value);
     });
 
-    this.el.btnPlay.addEventListener('click', () => this.pulsePlaybackState.toggle());
-    this.el.btnReset.addEventListener('click', () => {
-      this.pulsePlaybackState.pause();
-      this.callbacks.onReset();
-    });
+    this.el.btnPlay.addEventListener('click', () => this.callbacks.onPlayToggle());
+    this.el.btnReset.addEventListener('click', () => this.callbacks.onReset());
 
     this.el.modeButtons.pulse.addEventListener('click', () => this.callbacks.onModeChange('pulse'));
     this.el.modeButtons.interference.addEventListener('click', () => this.callbacks.onModeChange('interference'));
@@ -157,15 +135,9 @@ class UIManager {
       this.callbacks.onPhaseDiffChange(v);
     });
 
-    this.el.btnPlayInterference.addEventListener('click', () => this.interferencePlaybackState.toggle());
-    this.el.btnResetInterference.addEventListener('click', () => {
-      this.interferencePlaybackState.pause();
-      this.callbacks.onInterferenceReset();
-    });
-    this.el.btnStepInterference.addEventListener('click', () => {
-      this.interferencePlaybackState.pause();
-      this.callbacks.onInterferenceStep();
-    });
+    this.el.btnPlayInterference.addEventListener('click', () => this.callbacks.onInterferencePlayToggle());
+    this.el.btnResetInterference.addEventListener('click', () => this.callbacks.onInterferenceReset());
+    this.el.btnStepInterference.addEventListener('click', () => this.callbacks.onInterferenceStep());
   }
 
   // Amplitude step-button groups: click selects, deselects siblings.
@@ -183,7 +155,7 @@ class UIManager {
   }
 
   setPlayButtonLabel(isPlaying) {
-    this.el.btnPlay.textContent = isPlaying ? '⏸ Pause' : '▶ Play';
+    this.el.btnPlay.textContent = isPlaying ? 'Pause' : 'Play';
   }
 
   setTimeScrubberValue(t) {
@@ -234,7 +206,7 @@ class UIManager {
   }
 
   setInterferencePlayButtonLabel(isPlaying) {
-    this.el.btnPlayInterference.textContent = isPlaying ? '⏸ Pause' : '▶ Play';
+    this.el.btnPlayInterference.textContent = isPlaying ? 'Pause' : 'Play';
   }
 
   // Namespaced keys (ifT, ifAmp, ...) avoid collision with Pulse mode's
