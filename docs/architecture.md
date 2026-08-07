@@ -1,6 +1,6 @@
 # Architecture
 
-Reference doc for `haziqfazri/Animation-Projects`. Read this before adding or
+Reference doc for `haziqfazri/SP015`. Read this before adding or
 modifying a simulation — it describes the patterns actually in use across the
 repo, not an aspirational spec.
 
@@ -23,33 +23,57 @@ predictable structure matters more than any single sim's cleverness.
 ## 2. Folder layout & responsibilities
 
 ```
-Animation-Projects/
-  docs/
-    architecture.md          <- this file
-  instructions/
-    system.md                 project goals, educational objectives, AI development notes
-    coding.md                  naming/file conventions, ES6 style, UI standards
-    physics.md                 units, coordinate/vector conventions, LO mapping
-    checklist.md                pre-"done" QA checklist
-  shared/
-    sim-style.css             shared visual language (topbar, controls, readouts, buttons, theory strip)
-    sim-utils.js               shared p5 drawing/formatting helpers (global-mode functions)
-  circular-motion/
-  simple-harmonic-motion/      ("Oscillation Laboratory": spring–mass, pendulum, reference circle)
-  shm-graphs-analysis/         (Topic 7.2: x-t/v-t/a-t/E-x graphs)
-  shm-progressive-wave/        (Topic 7.4: Properties of Waves)
-  shm-superposition/           (Topic 7.5: Superposition of Waves)
-  <next-topic>/
-  ...
+SP015/
+├── README.md
+├── animations
+│   ├── 05-circular-motion
+│   │   ├── circular-motion-sim.js
+│   │   ├── circular-motion-sketch.js
+│   │   ├── circular-motion.css
+│   │   └── circular-motion.html
+│   └── 07-simple-harmonic-motion
+│       ├── 7.1-kinematics-of-shm               (Contains sim and sketch files)
+│       ├── 7.2-graphs-shm                      (Contains sim and sketch files)
+│       ├── 7.4-progressive-wave-shm            (Contains physics, ui, controller, renderer, sketch)
+│       ├── 7.5-superposition-shm               (Contains physics, ui, controller, renderer, sketch)
+│       ├── 7.6-application-of-standing-waves   (Not implemented yet, just empty folder)
+│       └── 7.7-doppler-effect                  (Not implemented yet, just empty folder)
+├── docs
+│   └── architecture.md   <- this file
+├── instructions
+│   ├── checklist.md      pre-"done" QA checklist
+│   ├── coding.md         naming/file conventions, ES6 style, UI standards
+│   ├── physics.md        units, coordinate/vector conventions, LO mapping
+│   └── system.md         project goals, educational objectives, AI development notes
+├── repository-refactor-roadmap.md
+├── shared
+│   ├── sim-style.css     shared visual language (topbar, controls, readouts, buttons, theory strip)
+│   └── sim-utils.js      shared p5 drawing/formatting helpers (global-mode functions)
+├── circular-motion/
+└── templates
+    ├── README.md
+    ├── index.html
+    ├── template-controller.js
+    ├── template-physics.js
+    ├── template-renderer.js
+    ├── template-sketch.js
+    ├── template-ui-manager.js
+    └── template.css
 ```
 
-Each simulation is **one folder, self-contained**, named after its topic
-(not "SP015-topic-7.4" — the topic number lives in a comment/kicker, not the
-folder name). A folder holds its own `index.html` (or `<topic>.html`), its
-own CSS, and its own JS. Nothing sim-specific lives outside its folder;
+Each simulation is **one folder, self-contained**, nested under
+`animations/<chapter-number>-<chapter-name>/`. Single-sim chapters (e.g.
+`05-circular-motion`) hold their files directly; multi-topic chapters (e.g.
+`07-simple-harmonic-motion`) split further into one subfolder per topic,
+named `<topic-number>-<short-name>` (e.g. `7.1-kinematics-of-shm`,
+`7.4-progressive-wave-shm`) — this supersedes the earlier convention of
+keeping the topic number out of the folder name; the topic-numbered
+subfolder *is* now the folder name, with the LO detail still living in
+comments/kickers. A folder holds its own `index.html` (or `<topic>.html`),
+its own CSS, and its own JS. Nothing sim-specific lives outside its folder;
 nothing shared lives inside a sim's folder — if the same helper turns up in
 two sims, it belongs in `shared/`.
-
+ 
 The `instructions/` split (`system.md` / `coding.md` / `physics.md` /
 `checklist.md`) described in `repo-refactor-roadmap-condensed.md` now
 exists alongside this file. Division of labor: **this file** is the
@@ -60,9 +84,9 @@ pre-"done" checklist). Keep new structural decisions here and new
 conventions/QA items there; cross-check both when either changes.
 
 ## 3. Simulation lifecycle
-
+ 
 Observed sequence for every sim in the repo so far:
-
+ 
 1. **Pick the LO.** Identify the SP015/SP025 topic + learning outcome(s) the
    sim teaches (cited directly in file-header comments, e.g.
    `SP015 7.5(a)`).
@@ -93,13 +117,13 @@ Observed sequence for every sim in the repo so far:
    diffing, button binding patterns, etc.) should move to `shared/`.
 
 ## 4. Data flow
-
+ 
 ```
 User → UIManager → SimulationController → Physics classes → SimulationController → Renderer → Canvas
 ```
-
+ 
 What each stage actually does, based on the code:
-
+ 
 - **User** interacts with an `<input type="range">`, checkbox, or `<button>`
   in the sim's HTML.
 - **UIManager** is the *sole* DOM accessor. It caches elements in `this.el`
@@ -129,19 +153,18 @@ What each stage actually does, based on the code:
   explicit context, the relevant physics object(s)/params, and canvas
   dimensions, and draw one frame. They perform no physics calculation
   beyond unit→pixel conversion, and hold no state of their own.
-- **Canvas** — either p5 global mode (`circular-motion`,
-  `simple-harmonic-motion`: one `setup()`/`draw()` pair, functions like
+- **Canvas** — either p5 global mode (`05-circular-motion`,
+  `7.1-kinematics-of-shm`: one `setup()`/`draw()` pair, functions like
   `background()`/`stroke()` called bare) or p5 **instance mode**
-  (`shm-graphs-analysis`, `shm-progressive-wave`, `shm-superposition`: each
-  canvas is its own `new p5(sketch)`, useful when a sim needs multiple
+  (`7.2-graphs-shm`, `7.4-progressive-wave-shm`, `7.5-superposition-shm`:
+  each canvas is its own `new p5(sketch)`, useful when a sim needs multiple
   independent canvases in sync, e.g. 4–5 synced graphs or 3 stacked
   interference panels driven by one shared clock/ticker).
-
 Two variants of the controller→physics wiring exist and both are fine:
 - **Single-file combo** (`oscillation-sim.js`, `wave-physics.js` +
   `oscillation-sketch.js`): physics classes, UIManager, and renderer
   functions in one or two files, sketch/controller in another.
-- **Fully split** (`shm-progressive-wave`, `shm-superposition`):
+- **Fully split** (`7.4-progressive-wave-shm`, `7.5-superposition-shm`):
   `*-physics.js`, `*-ui.js`/`*-ui-manager.js`, `*-renderer.js`,
   `*-controller.js`, `*-sketch.js` as five separate files loaded in that
   order. Prefer this split for any new sim with more than ~1 canvas or more
@@ -149,7 +172,7 @@ Two variants of the controller→physics wiring exist and both are fine:
   sims (wave + superposition) converged on.
 
 ## 5. Shared components
-
+ 
 Currently in `shared/`:
 - `sim-style.css` — topbar, system-bar/mode-switch, `.sim-grid`,
   `.canvas-shell`, `.readouts`/`.readouts--dense`, `.controls`,
@@ -161,13 +184,12 @@ Currently in `shared/`:
   `instructions/coding.md` §4 (UI standards) — keep the two in sync if
   either changes.
 - `sim-utils.js` — `drawArrowhead`, `normalizedArrowLength`, `VectorArrow`,
-  `signedFixed`, `drawDashedGuide`, `drawTrailDots`, `updateReadout`. These
-  assume p5 global mode (bare `push()`/`stroke()`) or take an explicit
-  `p5ctx` first argument.
-- `drawArrowCtx`/`VectorArrow` are now ctx-explicit and canonical, so any future 
-  sim needing arrows (interference vectors, force diagrams, etc.) uses this instead 
-  of writing a new one.Arrow
-
+  `signedFixed`, `drawDashedGuide`, `drawTrailDots`, `updateReadout`,
+  `PlaybackState`. These assume p5 global mode (bare `push()`/`stroke()`) or
+  take an explicit `p5ctx` first argument.
+- `drawArrowCtx`/`VectorArrow` are now ctx-explicit and canonical, so any future
+  sim needing arrows (interference vectors, force diagrams, etc.) uses this instead
+  of writing a new one.
 Duplication observed that should be reconciled next time it's touched:
 - **`PHYSICS`/`LIMITS`/`DISPLAY` constant-block convention** is repeated
   by hand in every sim rather than scaffolded — fine as-is, but worth a
@@ -177,23 +199,18 @@ Duplication observed that should be reconciled next time it's touched:
   sim. Not yet extracted because each sim's control set differs enough that
   a shared base class would mostly be overridden — revisit if a future sim
   needs materially the same controls as an existing one.
-- **Play/Pause/Reset/Step button wiring** (`isPlaying` toggle +
-  `loop()`/`noLoop()`/`redraw()` in global mode, or a `requestAnimationFrame`
-  ticker in instance mode) follows the same shape in every sim but is
-  hand-written each time. A small shared "playback controller" mixin would
-  remove real duplication if a future sim needs it.
 - **`signedFixed`/`updateReadout` are already shared** — keep new sims using
   these rather than re-rolling local diffing/formatting logic (this has
   mostly been followed correctly already).
 
 ## 6. Future expansion
-
+ 
 More SP015 topics will be added following the exact pattern in §3–4, and
 SP025 sims will start once SP015 coverage is far enough along — they'll live
-alongside SP015 folders (or under an `sp025/` prefix if the flat layout gets
-crowded; revisit that only once it's actually a problem). Every new sim
-should:
-
+alongside SP015's `animations/` chapters (or under a sibling `sp025/` root
+if mixing both curricula under one `animations/` tree gets confusing;
+revisit that only once it's actually a problem). Every new sim should:
+ 
 1. Reuse `shared/sim-style.css` and `shared/sim-utils.js` untouched, adding
    only topic-specific CSS/JS on top.
 2. Prefer the fully-split file structure (§4) once the sim needs more than a

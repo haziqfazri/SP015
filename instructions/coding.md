@@ -3,20 +3,32 @@
 ## 1. Naming & folder organization
 
 ```
-Animation-Projects/
+SP015/
   docs/architecture.md
   instructions/          system.md, coding.md, physics.md, checklist.md
   shared/
     sim-style.css         shared visual language
     sim-utils.js           shared p5 drawing/formatting helpers (global-mode)
-  <topic-name>/            e.g. circular-motion, simple-harmonic-motion,
-                            shm-graphs-analysis, shm-progressive-wave,
-                            shm-superposition
+  animations/
+    05-circular-motion/          e.g. single-sim chapter — files live directly in the chapter folder
+    07-simple-harmonic-motion/   multi-topic chapter — split further per topic:
+      7.1-kinematics-of-shm/
+      7.2-graphs-shm/
+      7.4-progressive-wave-shm/
+      7.5-superposition-shm/
+      ...
+  templates/
 ```
 
-- **Folder = topic name**, not a topic number (`simple-harmonic-motion`,
-  not `sp015-topic-7.1`). The SP015 topic number goes in a comment/kicker,
-  never the folder name.
+- **Folder = chapter, nested by topic.** Sims live under
+  `animations/<chapter-number>-<chapter-name>/`. A single-sim chapter (e.g.
+  `05-circular-motion`) keeps its files directly in that folder. A
+  multi-topic chapter (e.g. `07-simple-harmonic-motion`) splits further
+  into one subfolder per topic, named `<topic-number>-<short-name>` (e.g.
+  `7.1-kinematics-of-shm`, `7.4-progressive-wave-shm`) — this supersedes
+  the earlier rule of keeping the topic number out of the folder name; the
+  topic-numbered subfolder *is* now the folder name, with the specific LO
+  still cited in a comment/kicker.
 - **One folder, self-contained.** Own HTML, own CSS, own JS. Nothing
   sim-specific lives in `shared/`; nothing shared lives inside a sim's
   folder — a helper needed by two sims moves to `shared/`.
