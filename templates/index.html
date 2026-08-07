@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title><Sim Title> — SP0XX</title>
+
+<!-- Fonts: DM Sans for display/labels, Space Mono for instrument readouts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- p5.js latest -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.4/p5.min.js"></script>
+
+<!-- Shared styles first so topic CSS can override -->
+<link rel="stylesheet" href="../shared/sim-style.css">
+<link rel="stylesheet" href="template.css">
+</head>
+<body>
+
+<div class="app-shell">
+ <div class="lab-frame">
+
+  <header class="topbar">
+   <div>
+    <p class="kicker">SP0XX &middot; Topic X.X</p>
+    <h1><Sim Title></h1>
+   </div>
+   <div class="live-chip"><span class="pulse" aria-hidden="true"></span><span>Live Simulation</span></div>
+  </header>
+
+  <!-- Delete this whole <nav> if the sim has only one mode/system. -->
+  <nav class="system-bar" aria-label="Mode selection">
+   <span class="system-label">Mode</span>
+   <div class="system-switch">
+    <button id="modeAButton" class="system-option is-active" type="button" aria-pressed="true">Mode A</button>
+    <button id="modeBButton" class="system-option" type="button" aria-pressed="false">Mode B</button>
+   </div>
+  </nav>
+
+  <main class="sim-grid">
+
+   <section class="stage" aria-labelledby="simulation-heading">
+    <div class="stage-top">
+     <h2 id="simulation-heading">Live motion</h2>
+     <span class="mono" id="time-readout" style="font-size:12px;color:var(--muted)">t = 0.00 s</span>
+    </div>
+
+    <div class="canvas-shell" id="canvasShell">
+     <span class="canvas-label">describe what's drawn here</span>
+     <div id="canvas-holder"></div>
+    </div>
+
+    <section class="readouts" id="readoutsPanel" aria-label="Live simulation values">
+     <div class="readout">
+      <span class="readout-label">Example quantity</span>
+      <output id="readout-example" class="readout-value">0.00</output>
+     </div>
+    </section>
+   </section>
+
+   <aside class="controls" aria-labelledby="controls-heading">
+    <h2 class="control-title" id="controls-heading">Parameters</h2>
+    <p class="control-intro">Adjust the sliders and watch the simulation respond in real time.</p>
+
+    <div class="control-row">
+     <div class="control-meta">
+      <label for="example-slider">Example parameter</label>
+      <output id="example-value" class="control-value">5</output>
+     </div>
+     <input id="example-slider" type="range" min="0" max="10" step="1" value="5">
+     <p class="control-note">Explain what this parameter does physically.</p>
+    </div>
+
+    <div class="button-grid">
+     <button id="btn-play-pause" class="action primary" type="button">Play</button>
+     <button id="btn-reset" class="action" type="button">Reset</button>
+     <button id="btn-step" class="action col-span-2" type="button">Step +&Delta;t</button>
+    </div>
+   </aside>
+
+  </main>
+
+  <footer class="theory-strip">
+   <section class="theory-card">
+    <h2>Learning Outcome — X.X</h2>
+    <p>State the learning outcome this sim teaches, matching the curriculum spec wording.</p>
+   </section>
+   <section class="theory-card">
+    <h2>Key Equations</h2>
+    <span class="formula">y = f(x)</span>
+   </section>
+  </footer>
+
+ </div>
+</div>
+
+<!-- Shared helpers before topic-specific scripts -->
+<script src="../shared/sim-utils.js"></script>
+
+<!-- Topic-specific scripts, in dependency order -->
+<script src="template-physics.js"></script>
+<script src="template-renderer.js"></script>
+<script src="template-controller.js"></script>
+<script src="template-ui-manager.js"></script>
+<script src="template-sketch.js"></script>
+</body>
+</html>

@@ -37,7 +37,7 @@ class SimulationController {
       onAmplitudeBChange: (v) => this._onAmplitudeChange(waveB, v),
       onToggleCurve: () => this._requestRedrawIfPaused(),
       onScrub: (t) => this._onScrub(t),
-      onPlayToggle: () => this._onPlayToggle(),
+      onPlayToggle: (isPlaying) => this._onPlayToggle(isPlaying),
       onReset: () => this._onReset(),
 
       onModeChange: (mode) => this._onModeChange(mode),
@@ -45,7 +45,7 @@ class SimulationController {
       onWavelengthChange: (v) => this._onInterferenceWavelengthChange(v),
       onOmegaChangeInterference: (v) => this._onInterferenceOmegaChange(v),
       onPhaseDiffChange: (v) => this._onPhaseDiffChange(v),
-      onInterferencePlayToggle: () => this._onInterferencePlayToggle(),
+      onInterferencePlayToggle: (isPlaying) => this._onInterferencePlayToggle(isPlaying),
       onInterferenceReset: () => this._onInterferenceReset(),
       onInterferenceStep: () => this._onInterferenceStep(),
     });
@@ -100,15 +100,16 @@ class SimulationController {
   _onScrub(t) {
     this.t = t;
     this.isPlaying = false;
+    this.ui.pulsePlaybackState.pause();
     this.ui.setPlayButtonLabel(false);
     this.instance.noLoop();
     this._renderAll();
   }
 
-  _onPlayToggle() {
-    if (this.t >= LIMITS.timeMax) this.t = LIMITS.timeMin; // restart from 0 at end of timeline
+  _onPlayToggle(isPlaying = !this.isPlaying) {
+    if (this.t >= LIMITS.timeMax && isPlaying) this.t = LIMITS.timeMin; // restart from 0 at end of timeline
 
-    this.isPlaying = !this.isPlaying;
+    this.isPlaying = isPlaying;
     this.ui.setPlayButtonLabel(this.isPlaying);
 
     if (this.isPlaying) {
@@ -122,6 +123,7 @@ class SimulationController {
   _onReset() {
     this.t = LIMITS.timeMin;
     this.isPlaying = false;
+    this.ui.pulsePlaybackState.pause();
     this.ui.setPlayButtonLabel(false);
     this.ui.setTimeScrubberValue(this.t);
     this.instance.noLoop();
@@ -145,6 +147,7 @@ class SimulationController {
     if (this.t >= LIMITS.timeMax) {
       this.t = LIMITS.timeMax;
       this.isPlaying = false;
+      this.ui.pulsePlaybackState.pause();
       this.ui.setPlayButtonLabel(false);
       this.instance.noLoop();
     }
@@ -166,10 +169,12 @@ class SimulationController {
     // Pause whichever mode is being left.
     if (this.mode === 'pulse') {
       this.isPlaying = false;
+      this.ui.pulsePlaybackState.pause();
       this.ui.setPlayButtonLabel(false);
       this.instance.noLoop();
     } else {
       this.interferenceIsPlaying = false;
+      this.ui.interferencePlaybackState.pause();
       this.ui.setInterferencePlayButtonLabel(false);
     }
 
@@ -254,13 +259,14 @@ class SimulationController {
     this._renderInterferenceAll();
   }
 
-  _onInterferencePlayToggle() {
-    this.interferenceIsPlaying = !this.interferenceIsPlaying;
+  _onInterferencePlayToggle(isPlaying = !this.interferenceIsPlaying) {
+    this.interferenceIsPlaying = isPlaying;
     this.ui.setInterferencePlayButtonLabel(this.interferenceIsPlaying);
   }
 
   _onInterferenceReset() {
     this.interferenceIsPlaying = false;
+    this.ui.interferencePlaybackState.pause();
     this.ui.setInterferencePlayButtonLabel(false);
     this.interferenceT = 0;
     this._renderInterferenceAll();
@@ -268,6 +274,7 @@ class SimulationController {
 
   _onInterferenceStep() {
     this.interferenceIsPlaying = false;
+    this.ui.interferencePlaybackState.pause();
     this.ui.setInterferencePlayButtonLabel(false);
     this.interferenceT += 0.05;
     this._renderInterferenceAll();
