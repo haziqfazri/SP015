@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Doppler Effect — Topic 7.7 | SP015</title>
+
+<!-- Fonts: DM Sans for display/labels, Space Mono for instrument readouts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- p5.js latest -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.4/p5.min.js"></script>
+
+<!-- KaTeX -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.18.2/dist/katex.min.css" integrity="sha384-qArEAQvOPs1o7K1iAybhs66g8nYTXVt4VLOQ3abu+OMLJyPNfaH4Wpko0X2epHJ+" crossorigin="anonymous">
+<script src="https://cdn.jsdelivr.net/npm/katex@0.18.2/dist/katex.min.js" integrity="sha384-IHT6Yddb0KLCzZaxQ/so1j3xkJ8R6hOkCR06ma9NDHGn0Z4ClKcGtQ6qqsflRPxR" crossorigin="anonymous"></script>
+
+<!-- Shared styles first so topic CSS can override -->
+<link rel="stylesheet" href="../../../shared/sim-style.css">
+<link rel="stylesheet" href="doppler-effect.css">
+</head>
+<body>
+
+<div class="app-shell">
+ <div class="lab-frame">
+
+  <header class="topbar">
+   <div>
+    <p class="kicker">SP015 &middot; Topic 7.7</p>
+    <h1>Doppler Effect</h1>
+   </div>
+   <div class="live-chip"><span class="pulse" aria-hidden="true"></span><span>Live Simulation</span></div>
+  </header>
+
+  <!-- Two modes only, matching SP015 7.7(b)'s stated scope exactly:
+       "stationary observer and moving source, and vice versa." Both
+       modes share ONE stage/controls block below — the toggle just
+       swaps which body the speed slider drives (see ui.js's setMode). -->
+  <nav class="system-bar" aria-label="Doppler mode selection">
+   <span class="system-label">Mode</span>
+   <div class="system-switch">
+    <button id="sourceModeButton" class="system-option is-active" type="button" aria-pressed="true">Moving Source</button>
+    <button id="observerModeButton" class="system-option" type="button" aria-pressed="false">Moving Observer</button>
+   </div>
+  </nav>
+
+  <main class="sim-grid">
+
+   <section class="stage" aria-labelledby="simulation-heading">
+    <div class="stage-top">
+     <h2 id="simulation-heading">Source, Observer &amp; Wavefronts</h2>
+     <span class="mono" id="time-label" style="font-size:12px;color:var(--muted)">t = 0.00 s</span>
+    </div>
+
+    <div class="canvas-shell" id="canvasShell">
+     <span class="canvas-label">plan view &middot; line of motion</span>
+     <div id="canvas-holder"></div>
+    </div>
+
+    <p class="visual-note">
+     Wavefront rings are drawn at a slowed, stylized speed for clarity.
+     The frequency readouts and equation below always use the real speed
+     of sound, 340 m/s.
+    </p>
+
+    <section class="readouts" id="readoutsPanel" aria-label="Live simulation values">
+     <div class="readout">
+      <span class="readout-label">Apparent Frequency, <span class="katex-inline" data-latex="f'"></span></span>
+      <output id="val-apparent-freq" class="readout-value">500.0 Hz</output>
+     </div>
+     <div class="readout">
+      <span class="readout-label">Source Frequency, <span class="katex-inline" data-latex="f"></span></span>
+      <output id="val-source-freq" class="readout-value">500 Hz</output>
+     </div>
+     <div class="readout">
+      <span class="readout-label">Speed, <span class="katex-inline" data-latex="v"></span></span>
+      <output id="val-speed" class="readout-value">20 m/s</output>
+     </div>
+     <div class="readout">
+      <span class="readout-label">Separation, <span class="katex-inline" data-latex="\Delta x"></span></span>
+      <output id="val-separation" class="readout-value">40.0 m</output>
+     </div>
+    </section>
+   </section>
+
+   <aside class="controls" aria-labelledby="controls-heading">
+    <h2 class="control-title" id="controls-heading">Parameters</h2>
+    <p class="control-intro">
+     Choose which body moves, then adjust its speed and the source's
+     emitted frequency to see how the observed frequency shifts.
+    </p>
+
+    <div class="control-row">
+     <div class="control-meta">
+      <label for="freq-slider">Source Frequency, <span class="katex-inline" data-latex="f"></span></label>
+      <output id="freq-live" class="control-value">500 Hz</output>
+     </div>
+     <input id="freq-slider" type="range" min="200" max="1000" step="10" value="500">
+    </div>
+
+    <div class="control-row">
+     <div class="control-meta">
+      <!-- "Source"/"Observer" word swaps via ui.js's setMode() textContent
+           assignment (plain text, no notation); the v_S/v_O subscript is
+           the part that needs real math rendering, so it's a separate
+           target span re-rendered through renderMath() on the same
+           mode switch — see doppler-effect-ui.js. -->
+      <label for="speed-slider"><span id="speed-mover-word">Source</span> Speed, <span id="speed-subscript" class="katex-inline" data-latex="v_S"></span></label>
+      <output id="speed-live" class="control-value">20 m/s</output>
+     </div>
+     <input id="speed-slider" type="range" min="0" max="100" step="1" value="20">
+     <p class="control-note">Direction is fixed (left to right) — the moving body approaches, passes, then recedes from the stationary one during playback.</p>
+    </div>
+
+    <div class="control-checks">
+     <label class="check"><input type="checkbox" id="chk-play-sound"><span>Play Sound</span></label>
+    </div>
+
+    <div class="button-grid">
+     <button id="btn-play" class="action primary" type="button">▶ Play</button>
+     <button id="btn-reset" class="action" type="button">Reset</button>
+    </div>
+   </aside>
+
+  </main>
+
+  <footer class="theory-strip">
+   <section class="theory-card">
+    <h2>Learning Outcomes — 7.7(a), 7.7(b)</h2>
+    <p>
+     The Doppler Effect is the change in observed frequency of a wave
+     caused by relative motion between the source and the observer.
+     Limited here to one moving party at a time: a stationary observer
+     with a moving source, or a stationary source with a moving observer.
+    </p>
+   </section>
+   <section class="theory-card">
+    <h2>Key Equations</h2>
+    <p style="margin:0 0 4px;font-size:12px;color:var(--muted)">Moving source, stationary observer:</p>
+    <span class="formula" data-latex="f' = \dfrac{fv}{v \mp v_S}">f' = fv / (v &#8723; v&#8347;)</span>
+    <p style="margin:14px 0 4px;font-size:12px;color:var(--muted)">Moving observer, stationary source:</p>
+    <span class="formula" data-latex="f' = \dfrac{f\left(v \pm v_O\right)}{v}">f' = f(v &plusmn; v&#8320;) / v</span>
+   </section>
+  </footer>
+
+ </div>
+</div>
+
+<!-- Shared helpers before topic-specific scripts -->
+<script src="../../../shared/sim-utils.js"></script>
+
+<!-- Topic-specific scripts, in dependency order -->
+<script src="doppler-effect-physics.js"></script>
+<script src="doppler-effect-renderer.js"></script>
+<script src="doppler-effect-controller.js"></script>
+<script src="doppler-effect-ui.js"></script>
+<script src="doppler-effect-sketch.js"></script>
+</body>
+</html>

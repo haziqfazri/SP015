@@ -1,0 +1,61 @@
+/* =========================================================================
+   DOPPLER-EFFECT.CSS — topic-specific overrides for Topic 7.7 (Doppler
+   Effect). Load AFTER ../shared/sim-style.css.
+
+   Deliberately near-empty: this sim's layout (one .system-switch mode
+   toggle, one .canvas-shell, a plain 4-item .readouts row, standard
+   .control-row sliders, a .check for the audio toggle, a 2-button
+   .button-grid) is fully covered by shared/sim-style.css as-is — no
+   sim-specific canvas heights, extra panels, or disabled states are
+   needed here, unlike 7.5/7.6's topic CSS.
+   ========================================================================= */
+
+/* -------------------------------------------------------------------------
+   Visual-speed disclosure note
+   Sits under the canvas, small and muted so it reads as a caveat rather
+   than a headline — the on-screen counterpart to PHYSICS.wavefrontVisualSpeed's
+   code comment (see doppler-effect-physics.js).
+   ------------------------------------------------------------------------- */
+
+.visual-note {
+  margin: 10px 0 0;
+  font-size: 11px;
+  color: var(--muted);
+  line-height: 1.4;
+}
+
+/* -------------------------------------------------------------------------
+   KaTeX integration — PILOT for this repo, scoped to 7.7 only for now.
+   If a second sim adopts this pattern, promote renderMath() (currently a
+   standalone function in doppler-effect-ui.js) to shared/sim-utils.js,
+   and fold the rules below into shared/sim-style.css — per the repo's
+   promotion rule ("second use = promote now"), keeping it local until
+   then is deliberate, not an oversight.
+
+   Two contexts, two treatments:
+   - .formula (theory-strip equations) renders in KaTeX's displayMode —
+     centered, full-size operators. It already inherits --orange/--ink
+     color from the shared .formula rule; KaTeX respects that via
+     currentColor for ordinary symbols, so no color override is needed
+     here, only a size nudge to match the previous 21px scale.
+   - .katex-inline (readout/control label notation) renders inline at
+     1em, NOT KaTeX's default ~1.21em — otherwise a single inline
+     variable reads visibly larger than the surrounding label text.
+     text-transform is also reset to none: .readout-label and
+     .control-meta label are uppercase, and applying that to KaTeX's
+     rendered glyphs (which aren't real transformable letters) produces
+     visibly broken math notation instead of quietly failing.
+   ------------------------------------------------------------------------- */
+
+.formula .katex {
+  font-size: 1.15em;
+}
+
+.katex-inline {
+  display: inline-block;
+}
+
+.katex-inline .katex {
+  font-size: 1em;
+  text-transform: none;
+}
