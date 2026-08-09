@@ -65,26 +65,6 @@
    ------------------------------------------------------------------------- */
 
 /* -------------------------------------------------------------------------
-   Amplitude step groups (Wave A / Wave B)
-   Six buttons (−0.3 … +0.3) need to stay legible on one row without the
-   minus-sign glyphs crowding into their neighbours. The default
-   .system-switch.compact assumes fewer, wider options (e.g. 2-way
-   CW/CCW), so this sim's larger option count gets a tighter min-width
-   instead of flex:1 fighting for space.
-   ------------------------------------------------------------------------- */
-
-.amp-step-group {
-  flex-wrap: nowrap;
-}
-
-.amp-step-group .system-option {
-  flex: 1 1 0;
-  min-width: 0;
-  padding: 7px 4px;
-  font-variant-numeric: tabular-nums;
-}
-
-/* -------------------------------------------------------------------------
    Time scrubber row
    #scrubberRow reuses .control-row as-is for spacing/label layout — this
    rule only nudges it visually closer to the canvas it controls (rather
