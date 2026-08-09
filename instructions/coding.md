@@ -27,7 +27,7 @@ See `docs/architecture.md` §2 for the current folder tree. The naming rules:
 ### File responsibilities
 
 | File | Owns | Never does |
-|---|---|---|
+| --- | --- | --- |
 | `*-physics.js` / `*-sim.js` | State, equations, `integrate()`/`step()`/`advance()`, `energy()`, `period()`, derived getters | DOM access, canvas/p5 calls |
 | `*-ui.js` / `*-ui-manager.js` | DOM caching (`this.el`/`this.els`), event binding, readout writes, a `callbacks` object | Physics math, drawing, calling itself into physics |
 | `*-renderer.js` | Free drawing functions taking an explicit ctx + already-computed state | Physics calculation beyond unit→pixel mapping, DOM access, held state |
@@ -65,7 +65,8 @@ There is no hard line-count threshold and no requirement to use every role in
 
 ## 3. Constants, comments, error handling, performance
 
-**Constants**
+### Constants
+
 - A simulation should define clear `PHYSICS`, `LIMITS`, `DISPLAY` (and
   sim-specific variants like `INTERFERENCE_LIMITS`) constants where they are
   useful. These are the **single source of truth** for ranges/scaling — HTML
@@ -74,7 +75,8 @@ There is no hard line-count threshold and no requirement to use every role in
 - Physical constants (`G = 9.81`) live near the top of the file that uses
   them, named in caps.
 
-**Comments**
+### Comments
+
 - File header block explains the file's role and load-order dependency when
   that information is useful.
 - Every non-obvious equation gets an inline comment citing the SP015 LO
@@ -87,13 +89,15 @@ There is no hard line-count threshold and no requirement to use every role in
   Comments should explain physics, assumptions, non-obvious reasoning, or
   important architectural constraints.
 
-**Error handling**
+### Error handling
+
 - Abstract base classes throw explicitly for unimplemented methods:
   `throw new Error('Oscillator.integrate() must be implemented by subclass')`.
 - No silent failure — a missing DOM element or bad param should error
   loudly during development, not be swallowed.
 
-**Performance**
+### Performance
+
 - `dt` is always clamped on every controller's update loop (e.g.
   `Math.min(deltaTime / 1000, 0.03)`) so tab-switch stalls never blow up
   integration.
@@ -109,7 +113,8 @@ There is no hard line-count threshold and no requirement to use every role in
 
 ## 4. UI standards
 
-**Layout**
+### Layout
+
 - Fixed shell: `.app-shell > .lab-frame > .topbar, .system-bar?, .sim-grid, .theory-strip`.
 - `.sim-grid` is a two-column grid: `.stage` (canvas + readouts, left) and
   `.controls` (sidebar, right). Single-column full-width stage only for a
@@ -122,7 +127,8 @@ There is no hard line-count threshold and no requirement to use every role in
   `#canvas-holder-yt`) sized via topic CSS, never rely on the shared
   `#canvas-holder` id for more than one canvas.
 
-**Buttons & sliders**
+### Buttons & sliders
+
 - Playback controls always as `.button-grid`: Play/Pause (`.primary`),
   Reset, Step — Step spans two columns (`.col-span-2`) when there are 3
   buttons.
@@ -134,7 +140,8 @@ There is no hard line-count threshold and no requirement to use every role in
 - Slider `min`/`max`/`step`/`value` are set from `LIMITS` in JS at
   construction — HTML attributes are fallback only (see §3).
 
-**Fonts, colors, spacing**
+### Fonts, colors, spacing
+
 - Fonts: `DM Sans` (display/labels), `Space Mono` (mono/readouts/formulas)
   — loaded via Google Fonts, declared as `--display`/`--mono` CSS vars.
 - Palette (from `shared/sim-style.css` `:root`): `--ink #102126`,
@@ -147,6 +154,7 @@ There is no hard line-count threshold and no requirement to use every role in
   these rather than picking new values.
 - All topic CSS loads **after** `shared/sim-style.css` and only adds
   rules unique to that sim's layout — never redeclares shared rules.
+
 ## 5. Change scope and AI-assisted editing
 
 See `instructions/system.md` §4 for the full rules on diff size, focused

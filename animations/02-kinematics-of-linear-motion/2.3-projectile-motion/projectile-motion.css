@@ -1,0 +1,12 @@
+/* Topic-specific additions only; shell and responsive layout are shared. */
+
+.system-bar .system-option {
+  min-width: 102px;
+}
+
+.visual-note {
+  margin: 10px 0 0;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.4;
+}

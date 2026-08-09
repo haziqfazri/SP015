@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Projectile Motion — Topic 2.3 | SP015</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&amp;family=Space+Mono:wght@400;700&amp;display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.4/p5.min.js"></script>
+  <link rel="stylesheet" href="../../../shared/sim-style.css">
+  <link rel="stylesheet" href="projectile-motion.css">
+</head>
+<body>
+  <div class="app-shell">
+    <div class="lab-frame">
+      <header class="topbar">
+        <div>
+          <p class="kicker">SP015 · Topic 2.3</p>
+          <h1>Projectile Motion</h1>
+        </div>
+        <div class="live-chip"><span class="pulse" aria-hidden="true"></span><span>Live Simulation</span></div>
+      </header>
+
+      <nav class="system-bar" aria-label="Launch case presets">
+        <span class="system-label">Launch case</span>
+        <div class="system-switch">
+          <button class="system-option is-active" type="button" data-preset="angled" aria-pressed="true">Angled</button>
+          <button class="system-option" type="button" data-preset="horizontal" aria-pressed="false">Horizontal · 0°</button>
+          <button class="system-option" type="button" data-preset="vertical" aria-pressed="false">Vertical · 90°</button>
+        </div>
+      </nav>
+
+      <main class="sim-grid">
+        <section class="stage" aria-labelledby="simulation-heading">
+          <div class="stage-top">
+            <h2 id="simulation-heading">Trajectory and instantaneous vectors</h2>
+            <span class="mono" id="time-label" style="font-size:12px;color:var(--muted)">t = 0.00 s</span>
+          </div>
+          <div class="canvas-shell">
+            <span class="canvas-label">+x right · +y upward</span>
+            <div id="canvas-holder"></div>
+          </div>
+          <p class="visual-note">The model neglects air resistance: horizontal acceleration is zero and vertical acceleration is constant at −9.81 m/s².</p>
+
+          <section class="readouts readouts--dense" aria-label="Projectile values">
+            <div class="readout"><span class="readout-label">x</span><output id="val-x" class="readout-value">0.00 m</output></div>
+            <div class="readout"><span class="readout-label">y</span><output id="val-y" class="readout-value">0.00 m</output></div>
+            <div class="readout"><span class="readout-label">vₓ</span><output id="val-vx" class="readout-value">+0.00 m/s</output></div>
+            <div class="readout"><span class="readout-label">vᵧ</span><output id="val-vy" class="readout-value">+0.00 m/s</output></div>
+            <div class="readout"><span class="readout-label">Speed</span><output id="val-speed" class="readout-value">0.00 m/s</output></div>
+            <div class="readout"><span class="readout-label">Time of flight</span><output id="val-flight-time" class="readout-value">0.00 s</output></div>
+            <div class="readout"><span class="readout-label">Range</span><output id="val-range" class="readout-value">0.00 m</output></div>
+            <div class="readout"><span class="readout-label">Maximum height</span><output id="val-max-height" class="readout-value">0.00 m</output></div>
+          </section>
+        </section>
+
+        <aside class="controls" aria-labelledby="controls-heading">
+          <h2 class="control-title" id="controls-heading">Launch conditions</h2>
+          <p class="control-intro">Change the independent launch conditions, then compare the path with the velocity and acceleration vectors.</p>
+
+          <div class="control-row">
+            <div class="control-meta"><label for="speed-slider">Launch speed, u</label><output id="speed-live" class="control-value">25 m/s</output></div>
+            <input id="speed-slider" type="range" min="5" max="45" step="1" value="25">
+          </div>
+          <div class="control-row">
+            <div class="control-meta"><label for="angle-slider">Launch angle, θ</label><output id="angle-live" class="control-value">45°</output></div>
+            <input id="angle-slider" type="range" min="0" max="90" step="1" value="45">
+          </div>
+          <div class="control-row">
+            <div class="control-meta"><label for="height-slider">Launch height, y₀</label><output id="height-live" class="control-value">0.0 m</output></div>
+            <input id="height-slider" type="range" min="0" max="20" step="0.5" value="0">
+          </div>
+
+          <div class="control-checks">
+            <label class="check"><input id="chk-vectors" type="checkbox" checked><span>Show velocity and acceleration</span></label>
+            <label class="check"><input id="chk-trail" type="checkbox" checked><span>Show trail</span></label>
+          </div>
+
+          <div class="button-grid">
+            <button id="btn-play" class="action primary" type="button">▶ Play</button>
+            <button id="btn-reset" class="action" type="button">Reset</button>
+            <button id="btn-step" class="action col-span-2" type="button">Step +0.02 s</button>
+          </div>
+        </aside>
+      </main>
+
+      <footer class="theory-strip">
+        <section class="theory-card">
+          <h2>Learning Outcomes — 2.3(a), 2.3(b)</h2>
+          <p>Describe an angled projectile and its special cases: horizontal launch (θ = 0°) and vertical motion/free fall (θ = 90°). Solve projectile-motion problems by resolving horizontal and vertical components.</p>
+        </section>
+        <section class="theory-card">
+          <h2>Constant-acceleration model</h2>
+          <p>Horizontal and vertical motion have the same time, but different accelerations.</p>
+          <span class="formula">x = (u cos θ)t<br>y = y₀ + (u sin θ)t − ½gt²</span>
+        </section>
+      </footer>
+    </div>
+  </div>
+
+  <script src="../../../shared/sim-utils.js"></script>
+  <script src="projectile-physics.js"></script>
+  <script src="projectile-renderer.js"></script>
+  <script src="projectile-ui.js"></script>
+  <script src="projectile-controller.js"></script>
+  <script src="projectile-sketch.js"></script>
+</body>
+</html>
