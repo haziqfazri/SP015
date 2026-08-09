@@ -10,18 +10,7 @@ A growing library of interactive [p5.js](https://p5js.org/) simulations for teac
 
 ```text
 SP015/
-  animations/
-    05-circular-motion/
-      circular-motion-sim.js
-      circular-motion-sketch.js
-      circular-motion.css
-      circular-motion.html
-    07-simple-harmonic-motion/
-      7.1-kinematics-of-shm/
-      7.2-graphs-shm/
-      7.4-progressive-wave-shm/
-      7.5-superposition-shm/
-      7.6-application-of-standing-waves/
+  animations/            <- simulations, grouped by chapter (see docs/architecture.md for the current per-topic list)
   docs/
     architecture.md      <- repository structure and simulation architecture
   instructions/
@@ -49,12 +38,7 @@ These are static pages — no build step and no bundler. Open a simulation's HTM
 
 ## Adding a new simulation
 
-1. Start from the files in `templates/` and copy only the structure you actually need into the appropriate topic folder under `animations/`.
-2. Follow the simulation lifecycle and data flow described in [`docs/architecture.md`](docs/architecture.md).
-3. Reuse `shared/sim-style.css` and `shared/sim-utils.js` where they fit; add only topic-specific CSS/JS to the simulation folder.
-4. Before calling it done, check for duplication against existing sims and run through `instructions/checklist.md`.
-
-Use the **simplest architecture that keeps the simulation clear**. Do not split a small simulation into multiple files merely to match the structure of a more complex simulation.
+Start from [`templates/`](templates/README.md), which has the full build order and setup steps. In short: copy only the structure you need into the right topic folder under `animations/`, follow the lifecycle in [`docs/architecture.md`](docs/architecture.md), reuse `shared/` where it fits, and check `instructions/checklist.md` before calling it done.
 
 ---
 
@@ -64,7 +48,9 @@ Use the **simplest architecture that keeps the simulation clear**. Do not split 
 |---|---|---|
 | 7.1 – 7.2 | Oscillation Laboratory / SHM Graphs Analysis | ✅ Done |
 | 7.4 | Properties of Waves | ✅ Done |
-| 7.5 | Superposition of Waves | 🔶 In progress — pulse superposition + interference done, standing waves pending |
+| 7.5 | Superposition of Waves | ✅ Done — pulse superposition + interference |
+| 7.6 | Application of Standing Waves | ✅ Done |
+| 7.7 | Doppler Effect | ✅ Done |
 | Circular Motion | Uniform Circular Motion | ✅ Done |
 | — | *(next SP015 topic)* | ⬜ Planned |
 
@@ -80,7 +66,7 @@ Curriculum specs: [`Curriculum Specifications (CS) Physics SP015.pdf`](Curriculu
 - [`instructions/physics.md`](instructions/physics.md) — units, coordinate conventions, vector conventions, and physics assumptions.
 - [`instructions/checklist.md`](instructions/checklist.md) — QA checklist before calling a simulation done.
 
-**Source of truth:** `docs/architecture.md` is authoritative for repository structure and architectural/data-flow decisions. The files in `instructions/` provide supporting day-to-day conventions and QA guidance. If an instruction conflicts with the actual architecture, update the relevant documentation rather than maintaining two competing descriptions.
+The files in `instructions/` provide supporting day-to-day conventions and QA guidance underneath `docs/architecture.md` (see the callout at the top of this file). If an instruction ever conflicts with the actual architecture, update the relevant documentation rather than maintaining two competing descriptions.
 
 ---
 

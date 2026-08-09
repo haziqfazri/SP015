@@ -64,9 +64,8 @@ When an AI assistant (or future you) works in this repo:
    wasn't asked about. When modifying an existing simulation, provide focused
    snippets for changed sections instead of rewriting the entire file unless a
    full file is explicitly requested or genuinely necessary.
-6. **Avoid over-explaining comments.** Add comments for physics, assumptions,
-   non-obvious reasoning, or important constraints; do not narrate obvious
-   code or standard JavaScript operations.
+6. **Avoid over-explaining comments** — see `coding.md`'s Comments section
+   for the full rule and examples.
 7. **Follow the simulation lifecycle** in `docs/architecture.md` when adding
    a new sim. Use the simplest file structure that keeps its responsibilities
    clear; do not force a complex split onto a small simulation.

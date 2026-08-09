@@ -1,4 +1,4 @@
-A# Checklist — Before Calling a Simulation "Done"
+# Checklist — Before Calling a Simulation "Done"
 
 ## Functionality
 - [ ] Play/Pause/Reset/Step all work and update button labels correctly
@@ -59,7 +59,7 @@ A# Checklist — Before Calling a Simulation "Done"
       if the readouts depend on `t`/`dt`/integrated state — readouts
       driven purely by slider/param values are updated from that
       param's `on*Change` callback instead, not the per-frame loop
-      (see `docs/architecture.md` §4)
+      (see `docs/architecture.md` §5)
 - [ ] Multi-canvas sims share one clock/ticker rather than independent
       free-running loops
 - [ ] No console errors/warnings on load, slider drag, or mode switch

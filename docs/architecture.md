@@ -38,7 +38,8 @@ SP015/
 │       ├── 7.2-graphs-shm/
 │       ├── 7.4-progressive-wave-shm/
 │       ├── 7.5-superposition-shm/
-│       └── 7.6-application-of-standing-waves/
+│       ├── 7.6-application-of-standing-waves/
+│       └── 7.7-doppler-effect/
 ├── docs/
 │   └── architecture.md
 ├── instructions/
@@ -180,11 +181,9 @@ Observed sequence for every sim in the repo so far:
    sim teaches (cited directly in file-header comments, e.g.
    `SP015 7.5(a)`).
 2. **Decide physics state & constants.** Write the `PHYSICS` / `LIMITS` /
-   `DISPLAY` (or `INTERFERENCE_LIMITS`, etc.) constant blocks first — these
-   are the single source of truth for slider ranges and scaling, not the
-   HTML's `min`/`max`/`value` attributes (those are a cosmetic fallback
-   only, per repeated comments like *"index.html's static min/max/value
-   attributes are just a cosmetic fallback for viewing the markup alone"*).
+   `DISPLAY` (or `INTERFERENCE_LIMITS`, etc.) constant blocks first — see
+   `coding.md` §3 for why these, not the HTML attributes, are the source
+   of truth for slider ranges and scaling.
 3. **Write the physics class(es).** Pure state + derivation, no DOM/canvas
    (`SHMOscillator`, `WaveState`, `Oscillator`/`SpringOscillator`/
    `PendulumOscillator`, `PulseWave`/`ProgressiveWave`,
@@ -207,7 +206,7 @@ Observed sequence for every sim in the repo so far:
    three physics classes and no single canvas needing to stay in lockstep
    with another) as long as it's a single canvas. Instance mode's value is
    specifically coordinating multiple canvases off one shared clock — don't
-   reach for it just because a sim is "advanced." See §4 for the full
+   reach for it just because a sim is "advanced." See §5 for the full
    canvas-mode decision guidance.
 8. **Wire the theory strip / readouts** to match the LO text and correct
    units, cross-checking against the curriculum spec PDF.
@@ -382,7 +381,7 @@ requirement. Every new sim should:
    actually changes the underlying values (a slider/button `on*Change`, a
    mode switch), or from the per-frame `update(dt)` loop if the readouts
    genuinely depend on `t`/`dt`/integrated state — never call it
-   unconditionally from `update(dt)` when it doesn't. See §4's Physics
+   unconditionally from `update(dt)` when it doesn't. See §5's Physics
    classes / SimulationController discussion for the reference examples of
    both the correct time-dependent case (7.5) and the bug (7.6, since
    fixed).

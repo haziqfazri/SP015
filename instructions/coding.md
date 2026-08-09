@@ -2,23 +2,7 @@
 
 ## 1. Naming & folder organization
 
-```
-SP015/
-  docs/architecture.md
-  instructions/          system.md, coding.md, physics.md, checklist.md
-  shared/
-    sim-style.css         shared visual language
-    sim-utils.js           shared p5 drawing/formatting helpers (global-mode)
-  animations/
-    05-circular-motion/          e.g. single-sim chapter — files live directly in the chapter folder
-    07-simple-harmonic-motion/   multi-topic chapter — split further per topic:
-      7.1-kinematics-of-shm/
-      7.2-graphs-shm/
-      7.4-progressive-wave-shm/
-      7.5-superposition-shm/
-      ...
-  templates/
-```
+See `docs/architecture.md` §2 for the current folder tree. The naming rules:
 
 - **Folder = chapter, nested by topic.** Sims live under
   `animations/<chapter-number>-<chapter-name>/`. A single-sim chapter (e.g.
@@ -84,9 +68,9 @@ There is no hard line-count threshold and no requirement to use every role in
 **Constants**
 - A simulation should define clear `PHYSICS`, `LIMITS`, `DISPLAY` (and
   sim-specific variants like `INTERFERENCE_LIMITS`) constants where they are
-  useful. These are the preferred source of truth for ranges and scaling. These are the **single source of truth**
-  for ranges/scaling — HTML `min`/`max`/`value` attributes are a cosmetic
-  fallback only, never edited to change behavior.
+  useful. These are the **single source of truth** for ranges/scaling — HTML
+  `min`/`max`/`value` attributes are a cosmetic fallback only, never edited
+  to change behavior.
 - Physical constants (`G = 9.81`) live near the top of the file that uses
   them, named in caps.
 
@@ -165,13 +149,6 @@ There is no hard line-count threshold and no requirement to use every role in
   rules unique to that sim's layout — never redeclares shared rules.
 ## 5. Change scope and AI-assisted editing
 
-- Make the smallest change that correctly satisfies the request.
-- **When modifying an existing simulation, show focused code snippets for the
-  changed sections rather than rewriting the entire file.** Preserve unrelated
-  code, formatting, APIs, and working behavior.
-- A full-file replacement is appropriate only when the user explicitly asks for
-  a complete file, the file is being created from scratch, or a broad rewrite is
-  genuinely required.
-- Do not introduce a new architecture level merely because it looks cleaner.
-  Use the existing structure unless the requested change exposes a concrete
-  reason to simplify or split it.
+See `instructions/system.md` §4 for the full rules on diff size, focused
+snippets vs. full-file rewrites, and preserving existing architecture — they
+apply here too and aren't restated to avoid drift between two copies.

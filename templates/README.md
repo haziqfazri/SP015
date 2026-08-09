@@ -15,13 +15,8 @@ the full rationale — this is just the condensed checklist.
 
 Do not copy every template file automatically. Start with the smallest
 structure that fits the simulation, then add separation only when complexity
-justifies it. See `docs/architecture.md` for the three architecture levels.
-
-- **Level 1:** `sim.js` + `sketch.js` + CSS/HTML.
-- **Level 2:** add `physics.js` and/or `controller.js` when the separation
-  materially improves clarity.
-- **Level 3:** use separate physics, controller, renderer, UI, and sketch files
-  only for genuinely complex simulations.
+justifies it. See `docs/architecture.md` §3 for the three architecture levels
+and the decision rule for choosing between them.
 
 ## Build order
 
@@ -64,10 +59,6 @@ justifies it. See `docs/architecture.md` for the three architecture levels.
 
 ## AI editing reminders
 
-- When changing an existing simulation, preserve the existing architecture if
-  it is working well.
-- Return focused code snippets for changed sections rather than rewriting the
-  entire existing file, unless a full file was explicitly requested or is
-  genuinely necessary.
-- Avoid adding comments that simply describe obvious code. Explain physics,
-  assumptions, non-obvious reasoning, and important constraints instead.
+See `instructions/system.md` §4 for the full rules on diff scope, focused
+snippets vs. full-file rewrites, and comment style — they apply to new sims
+built from this template too.

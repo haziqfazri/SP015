@@ -74,6 +74,8 @@
 | SHM Graphs Analysis | 7.2 | Shape and relationship of x-t, v-t, a-t, and E-x graphs at a given instant |
 | Progressive Waves | 7.4 | y(x,t) equation, particle vs. wave-pattern velocity, λ derived from v and f |
 | Superposition of Waves | 7.5 | Superposition principle, constructive/destructive interference, pulse vs. continuous-wave interference |
+| Application of Standing Waves | 7.6 | Standing waves on stretched strings and in open/closed air columns, allowed harmonics, node/antinode positions |
+| Doppler Effect | 7.7 | Apparent frequency for a stationary observer + moving source, or vice versa (SP015 7.7(b) scope — never both moving at once) |
 
 New sims should add a row here (and cite the specific sub-LO, e.g.
 `7.1(c.iii)`, in code comments) as soon as their topic is decided.
