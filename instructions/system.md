@@ -61,10 +61,15 @@ When an AI assistant (or future you) works in this repo:
    guides, trail dots, or readout diffing locally.
 5. **Avoid unnecessary rewrites.** Prefer the smallest diff that correctly
    satisfies the request; don't restyle, rename, or restructure code that
-   wasn't asked about.
-6. **Follow the simulation lifecycle** in `docs/architecture.md` when adding
+   wasn't asked about. When modifying an existing simulation, provide focused
+   snippets for changed sections instead of rewriting the entire file unless a
+   full file is explicitly requested or genuinely necessary.
+6. **Avoid over-explaining comments.** Add comments for physics, assumptions,
+   non-obvious reasoning, or important constraints; do not narrate obvious
+   code or standard JavaScript operations.
+7. **Follow the simulation lifecycle** in `docs/architecture.md` when adding
    a new sim. Use the simplest file structure that keeps its responsibilities
    clear; do not force a complex split onto a small simulation.
-7. **Fold genuine repeated helpers into `shared/`** when a second simulation
+8. **Fold genuine repeated helpers into `shared/`** when a second simulation
    needs them and the abstraction is clear. Avoid creating shared abstractions
    merely for hypothetical future reuse.

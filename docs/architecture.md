@@ -84,7 +84,95 @@ data flow, and architectural decisions. The files in `instructions/` support
 that architecture with day-to-day conventions and QA guidance; they do not
 maintain a competing folder layout or lifecycle definition.
 
-## 3. Simulation lifecycle
+## 3. Architecture levels — choose the simplest one that fits
+
+The repository does **not** require every simulation to use the full
+physics/UI/controller/renderer/sketch split. Start simple and introduce a
+separation only when the current structure becomes difficult to understand or
+maintain.
+
+### Level 1 — Simple
+
+Use this for a small, self-contained simulation with one main physical model,
+minimal UI, and limited state. A typical structure is:
+
+```text
+<sim>/
+├── index.html
+├── <sim>-sim.js
+├── <sim>-sketch.js
+└── <sim>.css
+```
+
+Keep physics state, equations, and closely related simulation logic together
+when doing so is clearer. Do not create controller, renderer, or UI classes
+just to match a template.
+
+### Level 2 — Medium
+
+Use this when separating physics from application/interaction logic makes the
+code substantially easier to understand. A typical structure is:
+
+```text
+<sim>/
+├── index.html
+├── <sim>-physics.js
+├── <sim>-controller.js
+├── <sim>-sketch.js
+└── <sim>.css
+```
+
+The controller can handle UI events, playback, and orchestration while the
+physics module remains independent of the DOM and canvas. A separate renderer
+or UI manager is optional at this level.
+
+### Level 3 — Complex
+
+Use the full split only when the simulation has genuinely distinct and
+substantial UI, rendering, controller, and physics responsibilities. A typical
+structure is:
+
+```text
+<sim>/
+├── index.html
+├── <sim>-physics.js
+├── <sim>-controller.js
+├── <sim>-renderer.js
+├── <sim>-ui.js
+├── <sim>-sketch.js
+└── <sim>.css
+```
+
+This is appropriate for simulations with multiple canvases, graphs, many
+controls, several interacting physical models, multiple render modes, or
+complicated state transitions.
+
+### Decision rule
+
+Use this sequence when starting or modifying a simulation:
+
+1. **Can the simulation remain clear with a small number of files?** If yes,
+   use Level 1.
+2. **Would separating physics from application/interaction logic materially
+   improve clarity?** If yes, use Level 2.
+3. **Are UI, rendering, controller, and physics responsibilities all large
+   enough to justify separate modules?** If yes, use Level 3.
+4. If none of these conditions applies, do not add another abstraction.
+
+Complexity should be judged from the implementation, not from the physics topic
+name or file length alone.
+
+### Anti-overengineering rule
+
+Do not create a separate file, class, abstraction, or shared utility unless it
+solves an existing problem. File separation should follow actual complexity,
+not an idealized architecture. A small simulation is allowed to be small.
+
+When modifying an existing simulation, preserve its current structure when it
+is working well. Refactor only when the requested change or an existing
+maintenance problem gives a concrete reason to do so.
+
+## 4. Simulation lifecycle
  
 Observed sequence for every sim in the repo so far:
  
@@ -127,7 +215,7 @@ Observed sequence for every sim in the repo so far:
    the second copy of a helper (arrow drawing, dashed guides, readout
    diffing, button binding patterns, etc.) should move to `shared/`.
 
-## 4. Data flow
+## 5. Data flow
  
 ```
 User → UIManager → SimulationController → Physics classes → SimulationController → Renderer → Canvas
@@ -231,7 +319,7 @@ Likewise, keep a simulation compact when splitting it would only create small
 files with little benefit. File structure and canvas mode are independent
 choices.
 
-## 5. Shared components
+## 6. Shared components
  
 Currently in `shared/`:
 - `sim-style.css` — topbar, system-bar/mode-switch, `.sim-grid`,
@@ -274,7 +362,7 @@ Duplication observed that should be reconciled next time it's touched:
   uses this pattern so far. Revisit if a future sim (e.g. another
   standing-wave-adjacent topic) needs the same marker+label behavior.
 
-## 6. Future expansion
+## 7. Future expansion
  
 More SP015 topics will be added using the patterns in §3–4, and SP025 sims
 will start once SP015 coverage is far enough along — they'll live

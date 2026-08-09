@@ -91,12 +91,17 @@ There is no hard line-count threshold and no requirement to use every role in
   them, named in caps.
 
 **Comments**
-- File header block explains the file's role and load-order dependency.
+- File header block explains the file's role and load-order dependency when
+  that information is useful.
 - Every non-obvious equation gets an inline comment citing the SP015 LO
   and the equation itself, e.g. `// λ = v/f — derived, not stored`.
 - Sign conventions and simplifications (small-angle vs exact,
-  ±-direction resolution) are always explained in a comment, not left
-  implicit.
+  ±-direction resolution) are explained where the reasoning would otherwise be
+  unclear.
+- **Avoid over-explaining comments.** Do not add comments that merely restate
+  obvious code, narrate every function, or explain standard JavaScript syntax.
+  Comments should explain physics, assumptions, non-obvious reasoning, or
+  important architectural constraints.
 
 **Error handling**
 - Abstract base classes throw explicitly for unimplemented methods:
@@ -158,3 +163,15 @@ There is no hard line-count threshold and no requirement to use every role in
   these rather than picking new values.
 - All topic CSS loads **after** `shared/sim-style.css` and only adds
   rules unique to that sim's layout — never redeclares shared rules.
+## 5. Change scope and AI-assisted editing
+
+- Make the smallest change that correctly satisfies the request.
+- **When modifying an existing simulation, show focused code snippets for the
+  changed sections rather than rewriting the entire file.** Preserve unrelated
+  code, formatting, APIs, and working behavior.
+- A full-file replacement is appropriate only when the user explicitly asks for
+  a complete file, the file is being created from scratch, or a broad rewrite is
+  genuinely required.
+- Do not introduce a new architecture level merely because it looks cleaner.
+  Use the existing structure unless the requested change exposes a concrete
+  reason to simplify or split it.

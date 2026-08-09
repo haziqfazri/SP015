@@ -34,6 +34,10 @@ A# Checklist — Before Calling a Simulation "Done"
 - [ ] Theory strip text matches the LO wording and cites correct formulas
 
 ## Code cleanliness
+- [ ] Architecture is no more complex than the simulation requires; no file,
+      class, or abstraction was added merely to match a template
+- [ ] Comments explain physics, assumptions, or non-obvious reasoning rather
+      than restating obvious code
 - [ ] File responsibilities respected: physics has no DOM/canvas access,
       UIManager has no physics math, renderer has no held state or physics
       derivation beyond unit→pixel mapping
