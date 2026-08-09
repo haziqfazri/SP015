@@ -25,9 +25,7 @@ SP015/
   `05-circular-motion`) keeps its files directly in that folder. A
   multi-topic chapter (e.g. `07-simple-harmonic-motion`) splits further
   into one subfolder per topic, named `<topic-number>-<short-name>` (e.g.
-  `7.1-kinematics-of-shm`, `7.4-progressive-wave-shm`) — this supersedes
-  the earlier rule of keeping the topic number out of the folder name; the
-  topic-numbered subfolder *is* now the folder name, with the specific LO
+  `7.1-kinematics-of-shm`, `7.4-progressive-wave-shm`). The specific LO is
   still cited in a comment/kicker.
 - **One folder, self-contained.** Own HTML, own CSS, own JS. Nothing
   sim-specific lives in `shared/`; nothing shared lives inside a sim's
@@ -36,13 +34,13 @@ SP015/
   `wave-physics.js`, `wave-ui-manager.js` / `wave-superposition-ui.js`,
   `wave-controller.js`, `wave-renderer.js`, `wave-sketch.js`. HTML is
   `index.html` or `<topic>.html`; CSS is `<topic>.css`.
-- **Class naming:** `UIManager`, `SimulationController` are the fixed names
-  for those two roles in every sim. Physics classes are named for what they
-  model (`SpringOscillator`, `WaveState`, `SHMOscillator`, `Particle`,
-  `Orbit`, `PulseWave`, `ProgressiveWave`) — never generically `Physics` or
-  `Model`.
+- **Class naming:** When these roles exist, use clear names such as
+  `UIManager` and `SimulationController`. Physics classes should be named for
+  what they model (`SpringOscillator`, `WaveState`, `SHMOscillator`, `Particle`,
+  `Orbit`, `PulseWave`, `ProgressiveWave`) rather than generic names such as
+  `Physics` or `Model`.
 
-### File responsibilities (strict)
+### File responsibilities
 
 | File | Owns | Never does |
 |---|---|---|
@@ -52,12 +50,17 @@ SP015/
 | `*-controller.js` (`SimulationController`) | Owns physics + UI instances, wires callbacks, playback state (`isPlaying`), history/trail buffers, decides when to redraw | Drawing code, physics derivations of its own |
 | `*-sketch.js` | `setup()`/`draw()`/`windowResized()` (global mode) or `DOMContentLoaded` bootstrap (instance mode) | Business logic beyond lifecycle wiring |
 
-Two accepted file-split variants — pick based on complexity:
-- **Single-file combo** (physics + UIManager + renderer together, sketch
-  separate) — fine for a simple, single-canvas sim.
-- **Fully split** (`*-physics.js`, `*-ui.js`, `*-renderer.js`,
-  `*-controller.js`, `*-sketch.js`, loaded in that order) — required once a
-  sim has >1 canvas or >~150 lines of physics.
+### File-split guidance
+
+- **Compact** — keep related physics, UI, and rendering code together when the
+  simulation is small and self-contained.
+- **Split** — separate physics, UI, controller, renderer, and sketch code when
+  the simulation has enough distinct responsibilities that the split improves
+  clarity.
+
+There is no hard line-count threshold and no requirement to use every role in
+ every simulation. File responsibilities are boundaries to use when useful,
+ not a template that every simulation must fill.
 
 ## 2. ES6 conventions in use
 
@@ -79,9 +82,9 @@ Two accepted file-split variants — pick based on complexity:
 ## 3. Constants, comments, error handling, performance
 
 **Constants**
-- Every sim defines its own `PHYSICS`, `LIMITS`, `DISPLAY` (and
-  sim-specific variants like `INTERFERENCE_LIMITS`) blocks at the top of
-  the physics or controller file. These are the **single source of truth**
+- A simulation should define clear `PHYSICS`, `LIMITS`, `DISPLAY` (and
+  sim-specific variants like `INTERFERENCE_LIMITS`) constants where they are
+  useful. These are the preferred source of truth for ranges and scaling. These are the **single source of truth**
   for ranges/scaling — HTML `min`/`max`/`value` attributes are a cosmetic
   fallback only, never edited to change behavior.
 - Physical constants (`G = 9.81`) live near the top of the file that uses

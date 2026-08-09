@@ -457,6 +457,33 @@ input[type="range"] {
 
 .col-span-2 { grid-column: span 2; }
 
+/* -------------------------------------------------------------------------
+   Stepper groups
+   A row of .system-option buttons for selecting one of a fixed set of
+   discrete values (an amplitude step, a harmonic number, ...) rather than
+   a continuous slider. Used wherever the underlying quantity is genuinely
+   discrete. First introduced as 7.5's amp-step-group, generalized here
+   after 7.6's harmonic-group turned out to need the exact same layout.
+   ------------------------------------------------------------------------- */
+
+.stepper-group {
+  flex-wrap: nowrap;
+}
+
+.stepper-group .system-option {
+  flex: 1 1 0;
+  min-width: 0;
+  padding: 7px 4px;
+  font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 800px) {
+  .stepper-group .system-option {
+    font-size: 11px;
+    padding: 6px 2px;
+  }
+}
+
 /* =========================================================================
    Theory strip (footer)
    ========================================================================= */

@@ -145,6 +145,78 @@ function updateReadout(store, key, el, formattedValue) {
 }
 
 // -------------------------------------------------------------------------
+// Audio
+// First shared audio helper in the repo (previously only drawing/
+// formatting lived here). Promoted from 7.7 (Doppler Effect) — Mode 1
+// (auto-play through the selected observer) and Modes 2/3 (opt-in "Play
+// Sound" checkbox) both need a continuously-updatable tone rather than
+// retriggering a new oscillator every frame, so this wraps a single
+// AudioContext + OscillatorNode pair with smooth frequency ramping.
+// -------------------------------------------------------------------------
+
+class AudioTone {
+  constructor() {
+    this.ctx = null;
+    this.oscillator = null;
+    this.gainNode = null;
+    this.isPlaying = false;
+  }
+
+  // Lazily creates the AudioContext on first call — must be triggered by
+  // a user gesture (a Play click/tap), never on page load, per browser
+  // autoplay policy.
+  start(frequency) {
+    if (this.isPlaying) {
+      this.updateFrequency(frequency);
+      return;
+    }
+
+    this.ctx = this.ctx || new (window.AudioContext || window.webkitAudioContext)();
+    this.oscillator = this.ctx.createOscillator();
+    this.gainNode = this.ctx.createGain();
+
+    this.oscillator.type = 'sine';
+    this.oscillator.frequency.setValueAtTime(frequency, this.ctx.currentTime);
+
+    // Ramp gain up from 0 rather than starting at full volume, avoiding
+    // an audible click at tone onset.
+    this.gainNode.gain.setValueAtTime(0, this.ctx.currentTime);
+    this.gainNode.gain.linearRampToValueAtTime(0.15, this.ctx.currentTime + 0.05);
+
+    this.oscillator.connect(this.gainNode);
+    this.gainNode.connect(this.ctx.destination);
+    this.oscillator.start();
+
+    this.isPlaying = true;
+  }
+
+  // Smoothly ramps to a new frequency rather than retriggering the
+  // oscillator — call this every frame the observed frequency changes
+  // while the tone is already playing.
+  updateFrequency(frequency) {
+    if (!this.isPlaying) return;
+    this.oscillator.frequency.setTargetAtTime(frequency, this.ctx.currentTime, 0.05);
+  }
+
+  // Ramps gain down before stopping to avoid a click, then tears down
+  // the oscillator node (a new one is created on the next start()).
+  stop() {
+    if (!this.isPlaying) return;
+
+    const ctx = this.ctx;
+    const osc = this.oscillator;
+    const gain = this.gainNode;
+
+    gain.gain.setTargetAtTime(0, ctx.currentTime, 0.05);
+    osc.stop(ctx.currentTime + 0.2);
+
+    this.isPlaying = false;
+    this.oscillator = null;
+    this.gainNode = null;
+  }
+}
+
+// -------------------------------------------------------------------------
 // Playback State
 // -------------------------------------------------------------------------
 

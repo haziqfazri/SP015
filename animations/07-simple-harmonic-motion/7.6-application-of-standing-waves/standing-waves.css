@@ -6,25 +6,6 @@
    ========================================================================= */
 
 /* -------------------------------------------------------------------------
-   Harmonic-number stepper groups
-   Six buttons (n = 1..6, or the odd set 1,3,5,7,9,11 for the closed
-   column) need to stay legible on one row without fighting for space —
-   same reasoning as 7.5's .amp-step-group, reused here under a
-   sim-specific name since the values are integers, not signed decimals.
-   ------------------------------------------------------------------------- */
-
-.harmonic-group {
-  flex-wrap: nowrap;
-}
-
-.harmonic-group .system-option {
-  flex: 1 1 0;
-  min-width: 0;
-  padding: 8px 4px;
-  font-variant-numeric: tabular-nums;
-}
-
-/* -------------------------------------------------------------------------
    Wave-speed readout visibility
    Only the stretched-string mode has a live v = sqrt(T/mu) readout — air
    columns use the fixed SPEED_OF_SOUND constant instead (stated in the

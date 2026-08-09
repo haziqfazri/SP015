@@ -22,35 +22,34 @@ predictable structure matters more than any single sim's cleverness.
 
 ## 2. Folder layout & responsibilities
 
-```
+The repository currently uses the following structure:
+
+```text
 SP015/
 ├── README.md
-├── animations
-│   ├── 05-circular-motion
+├── animations/
+│   ├── 05-circular-motion/
 │   │   ├── circular-motion-sim.js
 │   │   ├── circular-motion-sketch.js
 │   │   ├── circular-motion.css
 │   │   └── circular-motion.html
-│   └── 07-simple-harmonic-motion
-│       ├── 7.1-kinematics-of-shm               (Contains sim and sketch files)
-│       ├── 7.2-graphs-shm                      (Contains sim and sketch files)
-│       ├── 7.4-progressive-wave-shm            (Contains physics, ui, controller, renderer, sketch)
-│       ├── 7.5-superposition-shm               (Contains physics, ui, controller, renderer, sketch)
-│       ├── 7.6-standing-waves                  (Contains physics, ui, controller, renderer, sketch — global mode)
-│       └── 7.7-doppler-effect                  (Not implemented yet, just empty folder)
-├── docs
-│   └── architecture.md   <- this file
-├── instructions
-│   ├── checklist.md      pre-"done" QA checklist
-│   ├── coding.md         naming/file conventions, ES6 style, UI standards
-│   ├── physics.md        units, coordinate/vector conventions, LO mapping
-│   └── system.md         project goals, educational objectives, AI development notes
-├── repository-refactor-roadmap.md
-├── shared
-│   ├── sim-style.css     shared visual language (topbar, controls, readouts, buttons, theory strip)
-│   └── sim-utils.js      shared p5 drawing/formatting helpers (global-mode functions)
-├── circular-motion/
-└── templates
+│   └── 07-simple-harmonic-motion/
+│       ├── 7.1-kinematics-of-shm/
+│       ├── 7.2-graphs-shm/
+│       ├── 7.4-progressive-wave-shm/
+│       ├── 7.5-superposition-shm/
+│       └── 7.6-application-of-standing-waves/
+├── docs/
+│   └── architecture.md
+├── instructions/
+│   ├── checklist.md
+│   ├── coding.md
+│   ├── physics.md
+│   └── system.md
+├── shared/
+│   ├── sim-style.css
+│   └── sim-utils.js
+└── templates/
     ├── README.md
     ├── index.html
     ├── template-controller.js
@@ -61,27 +60,29 @@ SP015/
     └── template.css
 ```
 
-Each simulation is **one folder, self-contained**, nested under
-`animations/<chapter-number>-<chapter-name>/`. Single-sim chapters (e.g.
-`05-circular-motion`) hold their files directly; multi-topic chapters (e.g.
-`07-simple-harmonic-motion`) split further into one subfolder per topic,
-named `<topic-number>-<short-name>` (e.g. `7.1-kinematics-of-shm`,
-`7.4-progressive-wave-shm`) — this supersedes the earlier convention of
-keeping the topic number out of the folder name; the topic-numbered
-subfolder *is* now the folder name, with the LO detail still living in
-comments/kickers. A folder holds its own `index.html` (or `<topic>.html`),
-its own CSS, and its own JS. Nothing sim-specific lives outside its folder;
-nothing shared lives inside a sim's folder — if the same helper turns up in
-two sims, it belongs in `shared/`.
- 
-The `instructions/` split (`system.md` / `coding.md` / `physics.md` /
-`checklist.md`) described in `repo-refactor-roadmap-condensed.md` now
-exists alongside this file. Division of labor: **this file** is the
-structural/data-flow reference (folder layout, lifecycle, data flow, shared
-components) — **`instructions/`** is the day-to-day conventions and QA
-reference (naming, ES6 style, UI standards, physics conventions, the
-pre-"done" checklist). Keep new structural decisions here and new
-conventions/QA items there; cross-check both when either changes.
+### Folder responsibilities
+
+- **`animations/`** — all simulation projects, grouped by chapter/topic.
+- **`shared/`** — code genuinely reused by multiple simulations.
+- **`templates/`** — optional starting files for new simulations; use only the
+  parts appropriate to the simulation.
+- **`docs/`** — repository architecture and structural decisions.
+- **`instructions/`** — supporting coding, physics, project, and QA guidance.
+
+Each simulation is self-contained inside its topic folder. It owns its HTML,
+CSS, and JavaScript files. Nothing simulation-specific belongs in `shared/`.
+Conversely, a helper should move into `shared/` when it is genuinely reused by
+multiple simulations and the abstraction is clear.
+
+The repository does **not** require every simulation to use the same number of
+files. A small simulation may keep related code together, while a more involved
+simulation may separate physics, UI, controller, renderer, and sketch code.
+Choose the simplest structure that keeps responsibilities clear.
+
+`docs/architecture.md` is the authoritative source for repository structure,
+data flow, and architectural decisions. The files in `instructions/` support
+that architecture with day-to-day conventions and QA guidance; they do not
+maintain a competing folder layout or lifecycle definition.
 
 ## 3. Simulation lifecycle
  
@@ -215,19 +216,20 @@ What each stage actually does, based on the code:
   sync** — not sim complexity. 7.6 has three physics classes and a full
   play/pause animation loop, and still uses global mode correctly, because
   it only ever draws one canvas at a time.
-Two variants of the controller→physics wiring exist and both are fine:
-- **Single-file combo** (`oscillation-sim.js`, `wave-physics.js` +
-  `oscillation-sketch.js`): physics classes, UIManager, and renderer
-  functions in one or two files, sketch/controller in another.
-- **Fully split** (`7.4-progressive-wave-shm`, `7.5-superposition-shm`,
-  `7.6-standing-waves`): `*-physics.js`, `*-ui.js`/`*-ui-manager.js`,
-  `*-renderer.js`, `*-controller.js`, `*-sketch.js` as five separate files
-  loaded in that order. Prefer this split for any new sim with more than
-  ~1 canvas or more than ~150 lines of physics — it's what the three most
-  recent, most complex sims (wave, superposition, standing waves) converged
-  on. Note that "fully split" and "instance mode" are independent choices:
-  7.6 is fully split but global mode, showing the file-split decision and
-  the canvas-mode decision aren't the same axis.
+The repository currently contains both compact and fully split simulations.
+Both patterns are valid:
+
+- **Compact** — related physics, UI, and rendering code may live in one or two
+  files when the simulation is small and self-contained.
+- **Split** — `*-physics.js`, `*-ui.js`/`*-ui-manager.js`, `*-renderer.js`,
+  `*-controller.js`, and `*-sketch.js` may be separated when the simulation has
+  enough distinct responsibilities that the split improves clarity.
+
+There is no hard line-count threshold. Split files when responsibilities become
+meaningfully difficult to manage together, not simply because a file is large.
+Likewise, keep a simulation compact when splitting it would only create small
+files with little benefit. File structure and canvas mode are independent
+choices.
 
 ## 5. Shared components
  
@@ -237,10 +239,8 @@ Currently in `shared/`:
   `.control-row`, buttons, `.theory-strip`, responsive breakpoints.
   Topic CSS loads after this and only adds sim-specific layout (e.g.
   `shm-graphs.css`'s 2×2 `.graph-quad`, `wave-properties.css`'s stacked
-  dual-canvas panels). For the specific palette (hex values), fonts,
-  spacing rhythm, and button/slider placement rules this file encodes, see
-  `instructions/coding.md` §4 (UI standards) — keep the two in sync if
-  either changes.
+  dual-canvas panels). For the specific palette, fonts, spacing rhythm, and button/slider placement
+rules, see `instructions/coding.md` for the day-to-day UI conventions.
 - `sim-utils.js` — `drawArrowhead`, `normalizedArrowLength`, `VectorArrow`,
   `signedFixed`, `drawDashedGuide`, `drawTrailDots`, `updateReadout`,
   `PlaybackState`. These assume p5 global mode (bare `push()`/`stroke()`) or
@@ -251,7 +251,7 @@ Currently in `shared/`:
 Duplication observed that should be reconciled next time it's touched:
 - **`PHYSICS`/`LIMITS`/`DISPLAY` constant-block convention** is repeated
   by hand in every sim rather than scaffolded — fine as-is, but worth a
-  template (see §6 / roadmap Phase 5) so the shape stays consistent.
+  template so the shape stays consistent.
 - **UIManager boilerplate** (cache-elements → bind-controls →
   configure-ranges-from-LIMITS → diffed readout updates) is re-derived per
   sim. Not yet extracted because each sim's control set differs enough that
@@ -276,21 +276,20 @@ Duplication observed that should be reconciled next time it's touched:
 
 ## 6. Future expansion
  
-More SP015 topics will be added following the exact pattern in §3–4, and
-SP025 sims will start once SP015 coverage is far enough along — they'll live
-alongside SP015's `animations/` chapters (or under a sibling `sp025/` root
-if mixing both curricula under one `animations/` tree gets confusing;
-revisit that only once it's actually a problem). Every new sim should:
+More SP015 topics will be added using the patterns in §3–4, and SP025 sims
+will start once SP015 coverage is far enough along — they'll live
+alongside SP015's `animations/` chapters. If SP025 later becomes large enough
+to need a separate root, document that decision here when it becomes an actual
+requirement. Every new sim should:
  
-1. Reuse `shared/sim-style.css` and `shared/sim-utils.js` untouched, adding
-   only topic-specific CSS/JS on top.
-2. Prefer the fully-split file structure (§4) once the sim needs more than a
-   trivial amount of physics or more than one canvas. Decide file-split and
-   canvas-mode independently — a fully-split sim can still be global mode
-   (see 7.6) if it only ever needs one canvas.
-3. Fold any newly-duplicated helper into `shared/` per §5 before moving on
-   to the next sim, not "later" — this is also enforced as a QA gate in
-   `instructions/checklist.md` ("Code cleanliness" section).
+1. Reuse `shared/sim-style.css` and `shared/sim-utils.js` where they fit,
+   adding only topic-specific CSS/JS to the simulation folder.
+2. Choose the file split based on the simulation's actual responsibilities. Do not split a small simulation into multiple
+   files merely to match a more complex simulation. Canvas mode remains an
+   independent decision based on whether multiple canvases need to stay in sync.
+3. Fold a genuinely repeated helper into `shared/` when another simulation
+   needs it and the abstraction is clear. See `instructions/checklist.md` for
+   the related QA check.
 4. Only call a controller's readout-update method from the callback that
    actually changes the underlying values (a slider/button `on*Change`, a
    mode switch), or from the per-frame `update(dt)` loop if the readouts

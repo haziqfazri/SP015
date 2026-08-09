@@ -48,7 +48,8 @@ Every simulation should:
 When an AI assistant (or future you) works in this repo:
 
 1. **Read `docs/architecture.md` first**, every time, before touching
-   anything. It documents the real data flow and file split in use.
+   anything. It is the source of truth for repository structure and simulation
+   data flow.
 2. **Modify only the files actually affected.** Don't touch a sim's HTML
    when only its physics changed, and vice versa.
 3. **Preserve existing public APIs** (class/method names like
@@ -61,8 +62,9 @@ When an AI assistant (or future you) works in this repo:
 5. **Avoid unnecessary rewrites.** Prefer the smallest diff that correctly
    satisfies the request; don't restyle, rename, or restructure code that
    wasn't asked about.
-6. **Follow the LO-first workflow** from `architecture.md` §3 when adding
-   a new sim: pick the LO → constants → physics class → UIManager →
-   renderer → controller → sketch → theory strip.
-7. **Fold new duplication into `shared/`** before considering a task done,
-   per `architecture.md` §5/§6 — don't leave a third copy of a helper.
+6. **Follow the simulation lifecycle** in `docs/architecture.md` when adding
+   a new sim. Use the simplest file structure that keeps its responsibilities
+   clear; do not force a complex split onto a small simulation.
+7. **Fold genuine repeated helpers into `shared/`** when a second simulation
+   needs them and the abstraction is clear. Avoid creating shared abstractions
+   merely for hypothetical future reuse.
