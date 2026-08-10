@@ -7,6 +7,8 @@ class UIManager {
     this.system = 'spring'; // 'spring' | 'pendulum'
     this.isPlaying = false;
     this.showDisplacementVector = false;
+    this.showVelocityVector = false;
+    this.showAccelerationVector = false;
     this.playbackState = null;
 
     // Assigned by SimulationController after construction.

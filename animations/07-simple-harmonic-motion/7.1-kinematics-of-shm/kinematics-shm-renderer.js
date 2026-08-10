@@ -21,12 +21,7 @@ function drawSinusoidColumn(p5ctx, phase, A, history, x0, y0, w, h, centerY, amp
   const tToX = (t) => plotX + ((t - tStart) / windowDuration) * plotW;
   const yToPx = (val) => centerY - (val / A) * ampPx;
 
-  p5ctx.push();
-  p5ctx.noStroke(); p5ctx.fill(16, 33, 38);
-  p5ctx.textFont('Space Mono'); p5ctx.textStyle(p5ctx.BOLD); p5ctx.textSize(12);
-  p5ctx.textAlign(p5ctx.LEFT, p5ctx.TOP);
-  p5ctx.text('y\u2013t graph', x0 + 6, y0 + 2);
-  p5ctx.pop();
+  drawLabel(p5ctx, 'y\u2013t graph', x0 + 6, y0 + 2, { font: 'Space Mono', weight: 'BOLD', size: 12, align: ['LEFT', 'TOP'] });
 
   p5ctx.push();
   p5ctx.noFill(); p5ctx.stroke(201, 210, 199); p5ctx.strokeWeight(1);
@@ -37,18 +32,10 @@ function drawSinusoidColumn(p5ctx, phase, A, history, x0, y0, w, h, centerY, amp
   guides.forEach(({ val, label }) => {
     const py = yToPx(val);
     drawDashedGuide(p5ctx, plotX, py, plotX + plotW, py, p5ctx.color(97, 112, 117), 1, [4, 4]);
-    p5ctx.push();
-    p5ctx.noStroke(); p5ctx.fill(97, 112, 117);
-    p5ctx.textFont('Space Mono'); p5ctx.textSize(10); p5ctx.textAlign(p5ctx.RIGHT, p5ctx.CENTER);
-    p5ctx.text(label, plotX - 6, py);
-    p5ctx.pop();
+    drawLabel(p5ctx, label, plotX - 6, py, { fill: [97, 112, 117], font: 'Space Mono', size: 10, align: ['RIGHT', 'CENTER'] });
   });
 
-  p5ctx.push();
-  p5ctx.noStroke(); p5ctx.fill(97, 112, 117);
-  p5ctx.textFont('Space Mono'); p5ctx.textSize(10); p5ctx.textAlign(p5ctx.RIGHT, p5ctx.TOP);
-  p5ctx.text('t (s)', plotX + plotW, plotY + plotH + 6);
-  p5ctx.pop();
+  drawLabel(p5ctx, 't (s)', plotX + plotW, plotY + plotH + 6, { fill: [97, 112, 117], font: 'Space Mono', size: 10, align: ['RIGHT', 'TOP'] });
 
   p5ctx.push();
   p5ctx.noFill(); p5ctx.stroke(255, 107, 53); p5ctx.strokeWeight(2.5);
@@ -84,12 +71,7 @@ function drawCircleColumn(p5ctx, phase, A, x0, y0, w, h, centerY, ampPx) {
   const px = cx + r * Math.cos(phase.theta);
   const py = cy - r * Math.sin(phase.theta);
 
-  p5ctx.push();
-  p5ctx.noStroke(); p5ctx.fill(16, 33, 38);
-  p5ctx.textFont('Space Mono'); p5ctx.textStyle(p5ctx.BOLD); p5ctx.textSize(12);
-  p5ctx.textAlign(p5ctx.LEFT, p5ctx.TOP);
-  p5ctx.text('circular motion', x0 + 6, y0 + 2);
-  p5ctx.pop();
+  drawLabel(p5ctx, 'circular motion', x0 + 6, y0 + 2, { font: 'Space Mono', weight: 'BOLD', size: 12, align: ['LEFT', 'TOP'] });
 
   p5ctx.push();
   p5ctx.noFill(); p5ctx.stroke(201, 210, 199); p5ctx.strokeWeight(2);
@@ -98,14 +80,11 @@ function drawCircleColumn(p5ctx, phase, A, x0, y0, w, h, centerY, ampPx) {
 
   drawDashedGuide(p5ctx, cx - r, cy, cx + r, cy, p5ctx.color(180), 1, [4, 4]);
 
-  p5ctx.push();
-  p5ctx.noStroke(); p5ctx.fill(97, 112, 117);
-  p5ctx.textFont('Space Mono'); p5ctx.textSize(10); p5ctx.textAlign(p5ctx.CENTER, p5ctx.CENTER);
-  p5ctx.text('0, 2\u03C0', cx + r + 20, cy);
-  p5ctx.text('\u03C0/2', cx, cy - r - 14);
-  p5ctx.text('\u03C0', cx - r - 14, cy);
-  p5ctx.text('3\u03C0/2', cx, cy + r + 14);
-  p5ctx.pop();
+  const axisLabelOpts = { fill: [97, 112, 117], font: 'Space Mono', size: 10 };
+  drawLabel(p5ctx, '0, 2\u03C0', cx + r + 20, cy, axisLabelOpts);
+  drawLabel(p5ctx, '\u03C0/2', cx, cy - r - 14, axisLabelOpts);
+  drawLabel(p5ctx, '\u03C0', cx - r - 14, cy, axisLabelOpts);
+  drawLabel(p5ctx, '3\u03C0/2', cx, cy + r + 14, axisLabelOpts);
 
   const arcR = r * 0.42;
   p5ctx.push();
@@ -120,12 +99,9 @@ function drawCircleColumn(p5ctx, phase, A, x0, y0, w, h, centerY, ampPx) {
   p5ctx.pop();
 
   const labelAngle = phase.theta / 2;
-  p5ctx.push();
-  p5ctx.noStroke(); p5ctx.fill(255, 107, 53);
-  p5ctx.textFont('Space Mono'); p5ctx.textStyle(p5ctx.BOLD); p5ctx.textSize(13);
-  p5ctx.textAlign(p5ctx.CENTER, p5ctx.CENTER);
-  p5ctx.text('\u03B8', cx + (arcR + 16) * Math.cos(labelAngle), cy - (arcR + 16) * Math.sin(labelAngle));
-  p5ctx.pop();
+  drawLabel(p5ctx, '\u03B8', cx + (arcR + 16) * Math.cos(labelAngle), cy - (arcR + 16) * Math.sin(labelAngle), {
+    fill: [255, 107, 53], font: 'Space Mono', weight: 'BOLD', size: 13
+  });
 
   p5ctx.push();
   p5ctx.stroke(16, 33, 38); p5ctx.strokeWeight(2.5);
@@ -159,12 +135,7 @@ function drawVerticalSpringColumn(p5ctx, phase, A, x0, y0, w, h, centerY, ampPx)
   const massY = centerY - (phase.y(A) / A) * ampPx;
   const massSize = 30;
 
-  p5ctx.push();
-  p5ctx.noStroke(); p5ctx.fill(16, 33, 38);
-  p5ctx.textFont('Space Mono'); p5ctx.textStyle(p5ctx.BOLD); p5ctx.textSize(12);
-  p5ctx.textAlign(p5ctx.LEFT, p5ctx.TOP);
-  p5ctx.text('SHM', x0 + 6, y0 + 2);
-  p5ctx.pop();
+  drawLabel(p5ctx, 'SHM', x0 + 6, y0 + 2, { font: 'Space Mono', weight: 'BOLD', size: 12, align: ['LEFT', 'TOP'] });
 
   p5ctx.push();
   p5ctx.noStroke(); p5ctx.fill(16, 33, 38);
@@ -182,11 +153,7 @@ function drawVerticalSpringColumn(p5ctx, phase, A, x0, y0, w, h, centerY, ampPx)
   const guides = [{ py: centerY - ampPx, label: 'y = A' }, { py: centerY + ampPx, label: 'y = -A' }];
   guides.forEach(({ py, label }) => {
     drawDashedGuide(p5ctx, x0 + 10, py, x0 + w - 10, py, p5ctx.color(180), 1, [3, 3]);
-    p5ctx.push();
-    p5ctx.noStroke(); p5ctx.fill(97, 112, 117);
-    p5ctx.textFont('Space Mono'); p5ctx.textSize(10); p5ctx.textAlign(p5ctx.LEFT, p5ctx.CENTER);
-    p5ctx.text(label, x0 + w - 42, py - 10);
-    p5ctx.pop();
+    drawLabel(p5ctx, label, x0 + w - 42, py - 10, { fill: [97, 112, 117], font: 'Space Mono', size: 10, align: ['LEFT', 'CENTER'] });
   });
 
   drawSpringCoilVertical(p5ctx, cx, ceilingY, massY - massSize / 2);
@@ -303,23 +270,18 @@ function drawSpringSystem(p5ctx, oscillator, params, width, height, vectorOption
   // Equilibrium guide
   drawDashedGuide(p5ctx, equilibrium, 32, equilibrium, floorY + 80, p5ctx.color(53, 185, 173));
 
-  if (showDisplacement) {
-    const vectorY = floorY + 61;
-    displacementArrow.draw(p5ctx, equilibrium, vectorY, massX, vectorY, 'x', true);
-  }
-
-  if (showVelocity) {
-    const vy = floorY - 40;
-    const len = oscillator.v * VELOCITY_PX_PER_MS;
-    velocityArrow.draw(p5ctx, equilibrium, vy, equilibrium + len, vy, 'v', true);
-  }
-
-  if (showAccel) {
-    const ay = floorY - 70;
-    const a = (-params.k * oscillator.x) / params.m; // SP015 7.1: a = -kx/m, derived not stored
-    const len = a * ACCEL_PX_PER_MS2;
-    accelArrow.draw(p5ctx, equilibrium, ay, equilibrium + len, ay, 'a', true);
-  }
+  // Displacement/velocity/acceleration vectors — all anchored at x=equilibrium,
+  // stacked at different y-offsets from the mass, each with its own endpoint
+  // length. Config-driven since the three are structurally identical.
+  const vectorA = (-params.k * oscillator.x) / params.m; // SP015 7.1: a = -kx/m, derived not stored
+  const vectors = [
+    { show: showDisplacement, arrow: displacementArrow, y: floorY + 61, endX: massX, label: 'x' },
+    { show: showVelocity, arrow: velocityArrow, y: floorY - 40, endX: equilibrium + oscillator.v * VELOCITY_PX_PER_MS, label: 'v' },
+    { show: showAccel, arrow: accelArrow, y: floorY - 70, endX: equilibrium + vectorA * ACCEL_PX_PER_MS2, label: 'a' },
+  ];
+  vectors.forEach(({ show, arrow, y, endX, label }) => {
+    if (show) arrow.draw(p5ctx, equilibrium, y, endX, y, label, true);
+  });
 
   // Trail
   if (!showDisplacement) {
@@ -356,23 +318,9 @@ function drawSpringSystem(p5ctx, oscillator, params, width, height, vectorOption
   p5ctx.rectMode(p5ctx.CORNER);
   p5ctx.pop();
 
-  p5ctx.push();
-  p5ctx.noStroke();
-  p5ctx.fill(16, 33, 38);
-  p5ctx.textFont('Space Mono');
-  p5ctx.textStyle(p5ctx.BOLD);
-  p5ctx.textSize(12);
-  p5ctx.textAlign(p5ctx.CENTER, p5ctx.CENTER);
-  p5ctx.text(params.m.toFixed(1) + ' kg', massX, floorY + 4);
-  p5ctx.pop();
+  drawLabel(p5ctx, params.m.toFixed(1) + ' kg', massX, floorY + 4, { font: 'Space Mono', weight: 'BOLD', size: 12 });
 
-  p5ctx.push();
-  p5ctx.noStroke();
-  p5ctx.fill(53, 185, 173);
-  p5ctx.textSize(11);
-  p5ctx.textAlign(p5ctx.CENTER, p5ctx.BASELINE);
-  p5ctx.text('equilibrium', equilibrium, 24);
-  p5ctx.pop();
+  drawLabel(p5ctx, 'equilibrium', equilibrium, 24, { fill: [53, 185, 173], size: 11, align: ['CENTER', 'BASELINE'] });
 }
 
 // The length slider's max value (matches configureControlRanges() in
@@ -441,21 +389,7 @@ function drawPendulumSystem(p5ctx, oscillator, params, width, height) {
   p5ctx.circle(bobX, bobY, bobRadius * 2);
   p5ctx.pop();
 
-  p5ctx.push();
-  p5ctx.noStroke();
-  p5ctx.fill(16, 33, 38);
-  p5ctx.textFont('Space Mono');
-  p5ctx.textStyle(p5ctx.BOLD);
-  p5ctx.textSize(11);
-  p5ctx.textAlign(p5ctx.CENTER, p5ctx.CENTER);
-  p5ctx.text(params.m.toFixed(1) + ' kg', bobX, bobY + 4);
-  p5ctx.pop();
+  drawLabel(p5ctx, params.m.toFixed(1) + ' kg', bobX, bobY + 4, { font: 'Space Mono', weight: 'BOLD', size: 11 });
 
-  p5ctx.push();
-  p5ctx.noStroke();
-  p5ctx.fill(53, 185, 173);
-  p5ctx.textSize(11);
-  p5ctx.textAlign(p5ctx.CENTER, p5ctx.BASELINE);
-  p5ctx.text('equilibrium', pivotX, pivotY + rodLength + 42);
-  p5ctx.pop();
+  drawLabel(p5ctx, 'equilibrium', pivotX, pivotY + rodLength + 42, { fill: [53, 185, 173], size: 11, align: ['CENTER', 'BASELINE'] });
 }

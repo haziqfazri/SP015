@@ -126,6 +126,26 @@ function drawTrailDots(p5ctx, trail, projector, r = 255, g = 107, b = 53, maxAlp
   });
 }
 
+// Draws a single line of text with common styling in one call, replacing
+// the repeated noStroke/fill/textFont/textSize/textAlign/text/pop block
+// that shows up wherever a sim labels a mass, an axis, or a guide line.
+// `align` is [horizontal, vertical] using p5's constant names as strings
+// (e.g. ['CENTER', 'BASELINE']) so callers don't need p5ctx.CENTER etc.
+// in scope. `font`/`weight` are optional — omit to inherit whatever the
+// canvas's current text style already is (matches prior call-site behavior
+// where not every label explicitly set a font).
+function drawLabel(p5ctx, text, x, y, { fill = [16, 33, 38], size = 11, weight = null, font = null, align = ['CENTER', 'CENTER'] } = {}) {
+  p5ctx.push();
+  p5ctx.noStroke();
+  p5ctx.fill(fill);
+  if (font) p5ctx.textFont(font);
+  if (weight) p5ctx.textStyle(weight === 'BOLD' ? p5ctx.BOLD : p5ctx.NORMAL);
+  p5ctx.textSize(size);
+  p5ctx.textAlign(p5ctx[align[0]], p5ctx[align[1]]);
+  p5ctx.text(text, x, y);
+  p5ctx.pop();
+}
+
 // -------------------------------------------------------------------------
 // Readout diffing
 // -------------------------------------------------------------------------

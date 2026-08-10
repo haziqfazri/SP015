@@ -10,8 +10,8 @@ class SimulationController {
     this.ui = new UIManager();
 
     this.displacementVectorArrow = null;
-
-    this._refLogCounter = 0; // used to throttle the reference phase logging to once per frame
+    this.velocityVectorArrow = null;
+    this.accelVectorArrow = null;
   }
 
   init() {
@@ -109,9 +109,6 @@ class SimulationController {
     this.referencePhase.advance(dt, omega);
     const y = this.referencePhase.y(A);
     this.signalHistory.push(this.referencePhase.t, y);
-
-    // Throttled sanity-check log — remove once step 2 is verified.
-    this._refLogCounter++;
   }
 
   _requestRedrawIfPaused() {

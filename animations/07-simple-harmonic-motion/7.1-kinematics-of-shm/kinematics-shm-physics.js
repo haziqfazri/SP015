@@ -125,8 +125,8 @@ class ReferencePhase {
 // a fixed number of cycles, regardless of the current period.
 // =========================================================================
 class SignalHistory {
-  constructor(windowDuration) {
-    this.windowDuration = 6;
+  constructor(windowDuration = 6) {
+    this.windowDuration = windowDuration;
     this.samples = [];
   }
 
