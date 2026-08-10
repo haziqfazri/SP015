@@ -7,8 +7,8 @@
 
 const G = 9.81;            // gravitational acceleration, m/s^2
 const TRAIL_MAX = 42;       // matches the vanilla version's trail length cap
-const VELOCITY_ARROW_MAX = 14;
-const ACCEL_ARROW_MAX = 280;
+const VELOCITY_PX_PER_MS = 100;   // px per (m/s) — direct scale, no normalization
+const ACCEL_PX_PER_MS2 = 10;    // px per (m/s²) — direct scale, no normalization
 
 // =========================================================================
 // signedFixed(), drawDashedGuide(), and drawTrailDots() now live in
@@ -465,19 +465,19 @@ function drawSpringSystem(p5ctx, oscillator, params, width, height, vectorOption
 
   if (showDisplacement) {
     const vectorY = floorY + 61;
-    displacementVectorArrow.draw(p5ctx, equilibrium, vectorY, massX, vectorY, 'x', true);
+    displacementArrow.draw(p5ctx, equilibrium, vectorY, massX, vectorY, 'x', true);
   }
 
   if (showVelocity) {
-    const vy = 20;
-    const len = normalizedArrowLength(Math.abs(oscillator.v), 0, VELOCITY_ARROW_MAX) * Math.sign(oscillator.v);
+    const vy = floorY - 40;
+    const len = oscillator.v * VELOCITY_PX_PER_MS;
     velocityArrow.draw(p5ctx, equilibrium, vy, equilibrium + len, vy, 'v', true);
   }
 
   if (showAccel) {
-    const ay = 8;
+    const ay = floorY - 70;
     const a = (-params.k * oscillator.x) / params.m; // SP015 7.1: a = -kx/m, derived not stored
-    const len = normalizedArrowLength(Math.abs(a), 0, ACCEL_ARROW_MAX) * Math.sign(a);
+    const len = a * ACCEL_PX_PER_MS2;
     accelArrow.draw(p5ctx, equilibrium, ay, equilibrium + len, ay, 'a', true);
   }
 
