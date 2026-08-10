@@ -440,7 +440,7 @@ function drawSpringCoilVertical(p5ctx, x, y1, y2) {
   p5ctx.pop();
 }
 
-function drawSpringSystem(p5ctx, oscillator, params, width, height) {
+function drawSpringSystem(p5ctx, oscillator, params, width, height, showDisplacementVector, displacementVectorArrow) {
   const floorY = height * 0.7;
   const equilibrium = width * 0.59;
   const massSize = Math.min(70, 44 + params.m * 7);
@@ -458,7 +458,12 @@ function drawSpringSystem(p5ctx, oscillator, params, width, height) {
   p5ctx.pop();
 
   // Equilibrium guide
-  drawDashedGuide(p5ctx, equilibrium, 32, equilibrium, floorY + 15, p5ctx.color(53, 185, 173));
+  drawDashedGuide(p5ctx, equilibrium, 32, equilibrium, floorY + 80, p5ctx.color(53, 185, 173));
+
+  if (showDisplacementVector) {
+    const vectorY = floorY + 61;
+    displacementVectorArrow.draw(p5ctx, equilibrium, vectorY, massX, vectorY, 'x', true);
+  }
 
   // Trail
   drawTrailDots(p5ctx, oscillator.trail, (x) => ({
@@ -605,6 +610,7 @@ class UIManager {
   constructor() {
     this.system = 'spring'; // 'spring' | 'pendulum'
     this.isPlaying = false;
+    this.showDisplacementVector = false;
     this.playbackState = null;
 
     // Assigned by SimulationController after construction.
@@ -613,6 +619,7 @@ class UIManager {
     this.onPlayToggle = null;     // (isPlaying) => {}
     this.onReset = null;          // () => {}
     this.onStep = null;           // (dt) => {}
+    this.onDisplayChange = null;
 
     this._lastReadout = {};
     this._cacheEls();
@@ -652,6 +659,9 @@ class UIManager {
 
       positionLabel: document.getElementById('positionLabel'),
       velocityLabel: document.getElementById('velocityLabel'),
+
+      vectorToggleGroup: document.getElementById('vectorToggleGroup'),
+      displacementVectorToggle: document.getElementById('toggleDisplacementVector'),
 
       timeValue: document.getElementById('timeValue'),
       positionValue: document.getElementById('positionValue'),
@@ -706,6 +716,7 @@ class UIManager {
     this._bindSliders();
     this._bindReferenceSliders();
     this._bindPlaybackButtons();
+    this._bindDisplacementVectorToggle();
   }
 
   _bindSystemToggle() {
@@ -715,6 +726,7 @@ class UIManager {
       this.els.springButton.classList.toggle('is-active', system === 'spring');
       this.els.pendulumButton.classList.toggle('is-active', system === 'pendulum');
       this.els.referenceButton.classList.toggle('is-active', system === 'reference');
+      this.els.vectorToggleGroup.classList.toggle('hidden', system !== 'spring');
       this.els.springButton.setAttribute('aria-pressed', String(system === 'spring'));
       this.els.pendulumButton.setAttribute('aria-pressed', String(system === 'pendulum'));
       this.els.referenceButton.setAttribute('aria-pressed', String(system === 'reference'));
@@ -760,6 +772,13 @@ class UIManager {
     const T = Number(this.els.refPeriodControl.value);
     this.els.ampOutput.textContent = A.toFixed(2) + ' m';
     this.els.refPeriodOutput.textContent = T.toFixed(2) + ' s';
+  }
+
+  _bindDisplacementVectorToggle() {
+    this.els.displacementVectorToggle.addEventListener('change', () => {
+      this.showDisplacementVector = this.els.displacementVectorToggle.checked;
+      if (this.onDisplayChange) this.onDisplayChange();
+    });
   }
 
   _bindSliders() {

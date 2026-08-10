@@ -18,6 +18,8 @@ class SimulationController {
     this.signalHistory = new SignalHistory();
     this.ui = new UIManager();
 
+    this.displacementVectorArrow = null;
+
     this._refLogCounter = 0; // used to throttle the reference phase logging to once per frame
   }
 
@@ -25,6 +27,9 @@ class SimulationController {
     const holder = document.getElementById('canvas-holder');
     const cnv = createCanvas(holder.clientWidth, holder.clientHeight);
     cnv.parent('canvas-holder');
+
+    this.displacementVectorArrow = new VectorArrow(color(255, 107, 53), 3);
+
     pixelDensity(1);
     frameRate(60);
 
@@ -38,6 +43,7 @@ class SimulationController {
     };
     this.ui.onParamsChange = () => { this._resetActive(); this._requestRedrawIfPaused(); };
     this.ui.onReset = () => { this._resetActive(); this._requestRedrawIfPaused(); };
+    this.ui.onDisplayChange = () => this._requestRedrawIfPaused();
     this.ui.onStep = (dt) => { this._stepActive(dt); this._requestRedrawIfPaused(); };
     this.ui.onPlayToggle = (isPlaying) => {
       if (isPlaying) {
@@ -131,7 +137,7 @@ class SimulationController {
     background(248, 250, 246); // --panel
 
     if (this.ui.system === 'spring') {
-      drawSpringSystem(window, this.springOscillator, this.ui.physicsParams(), width, height);
+      drawSpringSystem(window, this.springOscillator, this.ui.physicsParams(), width, height, this.ui.showDisplacementVector, this.displacementVectorArrow);
     } else if (this.ui.system === 'pendulum') {
       drawPendulumSystem(window, this.pendulumOscillator, this.ui.physicsParams(), width, height);
     } else {

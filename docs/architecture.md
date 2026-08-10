@@ -174,9 +174,9 @@ is working well. Refactor only when the requested change or an existing
 maintenance problem gives a concrete reason to do so.
 
 ## 4. Simulation lifecycle
-
+ 
 Observed sequence for every sim in the repo so far:
-
+ 
 1. **Pick the LO.** Identify the SP015/SP025 topic + learning outcome(s) the
    sim teaches (cited directly in file-header comments, e.g.
    `SP015 7.5(a)`).
@@ -215,13 +215,13 @@ Observed sequence for every sim in the repo so far:
    diffing, button binding patterns, etc.) should move to `shared/`.
 
 ## 5. Data flow
-
-``` text
+ 
+```
 User → UIManager → SimulationController → Physics classes → SimulationController → Renderer → Canvas
 ```
-
+ 
 What each stage actually does, based on the code:
-
+ 
 - **User** interacts with an `<input type="range">`, checkbox, or `<button>`
   in the sim's HTML.
 - **UIManager** is the *sole* DOM accessor. It caches elements in `this.el`
@@ -319,9 +319,8 @@ files with little benefit. File structure and canvas mode are independent
 choices.
 
 ## 6. Shared components
-
+ 
 Currently in `shared/`:
-
 - `sim-style.css` — topbar, system-bar/mode-switch, `.sim-grid`,
   `.canvas-shell`, `.readouts`/`.readouts--dense`, `.controls`,
   `.control-row`, buttons, `.theory-strip`, responsive breakpoints.
@@ -363,13 +362,13 @@ Duplication observed that should be reconciled next time it's touched:
   standing-wave-adjacent topic) needs the same marker+label behavior.
 
 ## 7. Future expansion
-
+ 
 More SP015 topics will be added using the patterns in §3–4, and SP025 sims
 will start once SP015 coverage is far enough along — they'll live
 alongside SP015's `animations/` chapters. If SP025 later becomes large enough
 to need a separate root, document that decision here when it becomes an actual
 requirement. Every new sim should:
-
+ 
 1. Reuse `shared/sim-style.css` and `shared/sim-utils.js` where they fit,
    adding only topic-specific CSS/JS to the simulation folder.
 2. Choose the file split based on the simulation's actual responsibilities. Do not split a small simulation into multiple

@@ -68,8 +68,7 @@
 ## 4. SP015 learning outcomes by sim type (high level)
 
 | Sim type | Topic | LO focus |
-| --- | --- | --- |
-| Projectile Motion | 2.3 | Angled, horizontal, and vertical launch cases; resolved kinematics and range/time/maximum-height problems |
+|---|---|---|
 | Circular motion | 6.x | Angular position/velocity, centripetal accel/force, period, uniform circular motion |
 | Oscillation Laboratory (spring, pendulum, reference circle) | 7.1 | Defining SHM, connection between circular motion and SHM, restoring force/torque |
 | SHM Graphs Analysis | 7.2 | Shape and relationship of x-t, v-t, a-t, and E-x graphs at a given instant |

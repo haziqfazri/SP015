@@ -1,7 +1,6 @@
 # Checklist — Before Calling a Simulation "Done"
 
 ## Functionality
-
 - [ ] Play/Pause/Reset/Step all work and update button labels correctly
 - [ ] Sliders update state live (`input` event) and their `<output>` value
       matches what's actually applied to the physics
@@ -13,7 +12,6 @@
       never blank on load
 
 ## Physics accuracy
-
 - [ ] Equations match the SP015/SP025 spec exactly (check against the PDF,
       not memory) — units, symbols, and sign conventions all correct
 - [ ] Every equation/simplification has a comment citing the LO
@@ -25,7 +23,6 @@
       explicitly stated in a comment or on-screen note, not silently assumed
 
 ## UI consistency
-
 - [ ] Uses `shared/sim-style.css` unmodified; topic CSS only adds
       sim-specific rules, doesn't redeclare shared ones
 - [ ] Fonts, colors, spacing match the established palette (§4 of
@@ -37,7 +34,6 @@
 - [ ] Theory strip text matches the LO wording and cites correct formulas
 
 ## Code cleanliness
-
 - [ ] Architecture is no more complex than the simulation requires; no file,
       class, or abstraction was added merely to match a template
 - [ ] Comments explain physics, assumptions, or non-obvious reasoning rather
@@ -57,7 +53,6 @@
       unbounded
 
 ## Performance
-
 - [ ] Readout DOM writes are diffed (`updateReadout`), not unconditional
       per frame
 - [ ] `update(dt)`/the per-frame loop only calls `ui.updateReadouts(...)`
@@ -70,7 +65,6 @@
 - [ ] No console errors/warnings on load, slider drag, or mode switch
 
 ## Final pass
-
 - [ ] `docs/architecture.md` updated if this sim introduced a new pattern,
       shared module, or file-split convention
 - [ ] Sim tested at both desktop width and the `800px`/`460px` responsive
