@@ -463,7 +463,7 @@ function drawSpringSystem(p5ctx, oscillator, params, width, height, vectorOption
   // Equilibrium guide
   drawDashedGuide(p5ctx, equilibrium, 32, equilibrium, floorY + 80, p5ctx.color(53, 185, 173));
 
-  if (showDisplacementVector) {
+  if (showDisplacement) {
     const vectorY = floorY + 61;
     displacementVectorArrow.draw(p5ctx, equilibrium, vectorY, massX, vectorY, 'x', true);
   }
@@ -482,7 +482,7 @@ function drawSpringSystem(p5ctx, oscillator, params, width, height, vectorOption
   }
 
   // Trail
-  if (!showDisplacementVector) {
+  if (!showDisplacement) {
     drawTrailDots(p5ctx, oscillator.trail, (x) => ({
       x: equilibrium + x * pxPerMetre,
       y: floorY + 61
@@ -680,6 +680,8 @@ class UIManager {
 
       vectorToggleGroup: document.getElementById('vectorToggleGroup'),
       displacementVectorToggle: document.getElementById('toggleDisplacementVector'),
+      velocityVectorToggle: document.getElementById('toggleVelocityVector'),
+      accelerationVectorToggle: document.getElementById('toggleAccelerationVector'),
 
       timeValue: document.getElementById('timeValue'),
       positionValue: document.getElementById('positionValue'),
