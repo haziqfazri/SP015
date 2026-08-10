@@ -57,6 +57,8 @@ class UIManager {
 
       positionLabel: document.getElementById('positionLabel'),
       velocityLabel: document.getElementById('velocityLabel'),
+      accelerationLabel: document.getElementById('accelerationLabel'),
+      forceLabel: document.getElementById('forceLabel'),
 
       vectorToggleGroup: document.getElementById('vectorToggleGroup'),
       displacementVectorToggle: document.getElementById('toggleDisplacementVector'),
@@ -66,7 +68,9 @@ class UIManager {
       timeValue: document.getElementById('timeValue'),
       positionValue: document.getElementById('positionValue'),
       velocityValue: document.getElementById('velocityValue'),
-      energyValue: document.getElementById('energyValue'),
+      accelerationValue: document.getElementById('accelerationValue'),
+      forceValue: document.getElementById('forceValue'),
+      forceReadout: document.getElementById('forceReadout'),
       periodValue: document.getElementById('periodValue'),
       periodNote: document.getElementById('periodNote'),
 
@@ -282,6 +286,8 @@ class UIManager {
 
     this.els.positionLabel.textContent = spring ? 'Position' : 'Angle';
     this.els.velocityLabel.textContent = spring ? 'Velocity' : 'Angular velocity';
+    this.els.accelerationLabel.textContent = spring ? 'Acceleration' : 'Angular acceleration';
+    this.els.forceReadout.classList.toggle('hidden', !spring); // restoring force: spring-only for now
 
     this.els.periodNote.textContent = spring
       ? 'T = 2π√(m/k) — independent of amplitude for an ideal spring.'
@@ -311,29 +317,35 @@ class UIManager {
     this.els.periodValue.textContent = oscillator.period(physics).toFixed(2) + ' s';
   }
 
-  // Updates the four live readouts (time, position/angle, velocity, energy)
-  // with diffing against the last-written value, same optimization as the
-  // UCM sim's updateReadout().
+  // Updates the live readouts (time, position/angle, velocity, acceleration,
+  // and — spring only — restoring force) with diffing against the
+  // last-written value, same optimization as the UCM sim's updateReadout().
   updateReadout(oscillator) {
     const physics = this.physicsParams();
     const last = this._lastReadout;
 
     const time = oscillator.t.toFixed(2) + ' s';
-    let position, velocity;
+    let position, velocity, acceleration;
+    const isSpring = this.system === 'spring';
 
-    if (this.system === 'spring') {
+    if (isSpring) {
       position = signedFixed(oscillator.x, 3) + ' m';
       velocity = signedFixed(oscillator.v, 3) + ' m/s';
+      acceleration = signedFixed(oscillator.acceleration(physics), 3) + ' m/s\u00b2';
     } else {
       position = signedFixed(oscillator.x * 180 / Math.PI, 1) + '°';
       velocity = signedFixed(oscillator.v * 180 / Math.PI, 1) + '°/s';
+      acceleration = signedFixed(oscillator.acceleration(physics) * 180 / Math.PI, 1) + '°/s\u00b2';
     }
-
-    const energy = oscillator.energy(physics).toFixed(3) + ' J';
 
     if (last.time !== time) { this.els.timeValue.textContent = time; last.time = time; }
     if (last.position !== position) { this.els.positionValue.textContent = position; last.position = position; }
     if (last.velocity !== velocity) { this.els.velocityValue.textContent = velocity; last.velocity = velocity; }
-    if (last.energy !== energy) { this.els.energyValue.textContent = energy; last.energy = energy; }
+    if (last.acceleration !== acceleration) { this.els.accelerationValue.textContent = acceleration; last.acceleration = acceleration; }
+
+    if (isSpring) {
+      const force = signedFixed(oscillator.restoringForce(physics), 3) + ' N';
+      if (last.force !== force) { this.els.forceValue.textContent = force; last.force = force; }
+    }
   }
 }

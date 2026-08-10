@@ -19,9 +19,17 @@ class Oscillator {
     throw new Error('Oscillator.integrate() must be implemented by subclass');
   }
 
-  // Returns total mechanical energy (J) for the current state.
-  energy(params) {
-    throw new Error('Oscillator.energy() must be implemented by subclass');
+  // Returns the instantaneous acceleration (m/s^2) or angular acceleration
+  // (rad/s^2) for the current state — subclass-defined units, matching x/v.
+  acceleration(params) {
+    throw new Error('Oscillator.acceleration() must be implemented by subclass');
+  }
+
+  // Returns the restoring force (N), F = m·a. Built on acceleration() so
+  // subclasses don't need their own override — any subclass that defines
+  // acceleration() gets this for free.
+  restoringForce(params) {
+    return params.m * this.acceleration(params);
   }
 
   // Returns the ideal (undamped, small-amplitude where relevant) period, s.
@@ -55,8 +63,8 @@ class SpringOscillator extends Oscillator {
     this.pushTrail();
   }
 
-  energy({ m, k }) {
-    return 0.5 * m * this.v * this.v + 0.5 * k * this.x * this.x;
+  acceleration({ m, k }) {
+    return (-k * this.x) / m;
   }
 
   period({ m, k }) {
@@ -78,8 +86,8 @@ class PendulumOscillator extends Oscillator {
     this.pushTrail();
   }
 
-  energy({ m, L }) {
-    return 0.5 * m * L * L * this.v * this.v + m * G * L * (1 - Math.cos(this.x));
+  acceleration({ L }) {
+    return -(G / L) * Math.sin(this.x);
   }
 
   period({ L }) {
@@ -137,8 +145,20 @@ class SignalHistory {
   push(t, y) {
     this.samples.push({ t, y });
     const cutoff = t - this.windowDuration;
-    while (this.samples.length && this.samples[0].t < cutoff) {
+
+    // Drop samples that are still strictly before the *previous* sample
+    // in line (i.e. two or more samples behind cutoff), but always leave
+    // the single sample straddling the cutoff so it can be interpolated
+    // below — plain shift()-ing left a gap up to one frame's dt wide at
+    // the trace's leading edge, which grew proportionally larger as
+    // windowDuration (3x period) shrank with lower periods.
+    while (this.samples.length > 1 && this.samples[1].t < cutoff) {
       this.samples.shift();
+    }
+    if (this.samples.length > 1 && this.samples[0].t < cutoff) {
+      const [a, b] = this.samples;
+      const frac = (cutoff - a.t) / (b.t - a.t);
+      this.samples[0] = { t: cutoff, y: a.y + (b.y - a.y) * frac };
     }
   }
 

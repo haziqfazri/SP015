@@ -65,7 +65,7 @@
      <div id="canvas-holder"></div>
     </div>
 
-    <section class="readouts" id="readoutsPanel" aria-label="Live simulation values">
+    <section class="readouts readouts--dense" id="readoutsPanel" aria-label="Live simulation values">
      <div class="readout">
       <span class="readout-label">Time</span>
       <output id="timeValue" class="readout-value">0.00 s</output>
@@ -79,8 +79,12 @@
       <output id="velocityValue" class="readout-value">+0.00 m/s</output>
      </div>
      <div class="readout">
-      <span class="readout-label">Total energy</span>
-      <output id="energyValue" class="readout-value">0.00 J</output>
+      <span class="readout-label" id="accelerationLabel">Acceleration</span>
+      <output id="accelerationValue" class="readout-value">+0.00 m/s&#178;</output>
+     </div>
+     <div class="readout" id="forceReadout">
+      <span class="readout-label" id="forceLabel">Restoring force</span>
+      <output id="forceValue" class="readout-value">+0.00 N</output>
      </div>
     </section>
    </section>

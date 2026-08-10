@@ -16,7 +16,13 @@ function drawSinusoidColumn(p5ctx, phase, A, history, x0, y0, w, h, centerY, amp
 
   const windowDuration = history.windowDuration;
   const tNow = phase.t;
-  const tStart = tNow - windowDuration;
+  // Right after a reset the buffer hasn't accumulated a full window's
+  // worth of samples yet — anchoring to the earliest sample actually
+  // present (rather than the idealized tNow - windowDuration, which can
+  // be negative/undersupplied early on) means the trace starts at the
+  // left edge immediately instead of being compressed toward the right
+  // edge until enough real time has passed to fill the window.
+  const tStart = history.samples.length ? history.samples[0].t : tNow - windowDuration;
 
   const tToX = (t) => plotX + ((t - tStart) / windowDuration) * plotW;
   const yToPx = (val) => centerY - (val / A) * ampPx;
@@ -131,7 +137,7 @@ function drawCircleColumn(p5ctx, phase, A, x0, y0, w, h, centerY, ampPx) {
 // =========================================================================
 function drawVerticalSpringColumn(p5ctx, phase, A, x0, y0, w, h, centerY, ampPx) {
   const cx = x0 + w / 2;
-  const ceilingY = centerY - ampPx - 46;
+  const ceilingY = y0 + 44; // fixed offset from column top — independent of amplitude
   const massY = centerY - (phase.y(A) / A) * ampPx;
   const massSize = 30;
 
@@ -273,7 +279,7 @@ function drawSpringSystem(p5ctx, oscillator, params, width, height, vectorOption
   // Displacement/velocity/acceleration vectors — all anchored at x=equilibrium,
   // stacked at different y-offsets from the mass, each with its own endpoint
   // length. Config-driven since the three are structurally identical.
-  const vectorA = (-params.k * oscillator.x) / params.m; // SP015 7.1: a = -kx/m, derived not stored
+  const vectorA = oscillator.acceleration(params); // SP015 7.1: a = -kx/m, single source of truth
   const vectors = [
     { show: showDisplacement, arrow: displacementArrow, y: floorY + 61, endX: massX, label: 'x' },
     { show: showVelocity, arrow: velocityArrow, y: floorY - 40, endX: equilibrium + oscillator.v * VELOCITY_PX_PER_MS, label: 'v' },
