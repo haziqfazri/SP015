@@ -7,6 +7,8 @@
 
 const G = 9.81;            // gravitational acceleration, m/s^2
 const TRAIL_MAX = 42;       // matches the vanilla version's trail length cap
+const VELOCITY_ARROW_MAX = 14;
+const ACCEL_ARROW_MAX = 280;
 
 // =========================================================================
 // signedFixed(), drawDashedGuide(), and drawTrailDots() now live in
@@ -440,7 +442,8 @@ function drawSpringCoilVertical(p5ctx, x, y1, y2) {
   p5ctx.pop();
 }
 
-function drawSpringSystem(p5ctx, oscillator, params, width, height, showDisplacementVector, displacementVectorArrow) {
+function drawSpringSystem(p5ctx, oscillator, params, width, height, vectorOptions = {}) {
+  const { showDisplacement, showVelocity, showAccel, displacementArrow, velocityArrow, accelArrow } = vectorOptions;
   const floorY = height * 0.7;
   const equilibrium = width * 0.59;
   const massSize = Math.min(70, 44 + params.m * 7);
@@ -465,11 +468,26 @@ function drawSpringSystem(p5ctx, oscillator, params, width, height, showDisplace
     displacementVectorArrow.draw(p5ctx, equilibrium, vectorY, massX, vectorY, 'x', true);
   }
 
+  if (showVelocity) {
+    const vy = 20;
+    const len = normalizedArrowLength(Math.abs(oscillator.v), 0, VELOCITY_ARROW_MAX) * Math.sign(oscillator.v);
+    velocityArrow.draw(p5ctx, equilibrium, vy, equilibrium + len, vy, 'v', true);
+  }
+
+  if (showAccel) {
+    const ay = 8;
+    const a = (-params.k * oscillator.x) / params.m; // SP015 7.1: a = -kx/m, derived not stored
+    const len = normalizedArrowLength(Math.abs(a), 0, ACCEL_ARROW_MAX) * Math.sign(a);
+    accelArrow.draw(p5ctx, equilibrium, ay, equilibrium + len, ay, 'a', true);
+  }
+
   // Trail
-  drawTrailDots(p5ctx, oscillator.trail, (x) => ({
-    x: equilibrium + x * pxPerMetre,
-    y: floorY + 61
-  }));
+  if (!showDisplacementVector) {
+    drawTrailDots(p5ctx, oscillator.trail, (x) => ({
+      x: equilibrium + x * pxPerMetre,
+      y: floorY + 61
+    }));
+  }
 
   // Wall
   p5ctx.push();
@@ -716,7 +734,7 @@ class UIManager {
     this._bindSliders();
     this._bindReferenceSliders();
     this._bindPlaybackButtons();
-    this._bindDisplacementVectorToggle();
+    this._bindVectorToggles();
   }
 
   _bindSystemToggle() {
@@ -774,9 +792,17 @@ class UIManager {
     this.els.refPeriodOutput.textContent = T.toFixed(2) + ' s';
   }
 
-  _bindDisplacementVectorToggle() {
+  _bindVectorToggles() {
     this.els.displacementVectorToggle.addEventListener('change', () => {
       this.showDisplacementVector = this.els.displacementVectorToggle.checked;
+      if (this.onDisplayChange) this.onDisplayChange();
+    });
+    this.els.velocityVectorToggle.addEventListener('change', () => {
+      this.showVelocityVector = this.els.velocityVectorToggle.checked;
+      if (this.onDisplayChange) this.onDisplayChange();
+    });
+    this.els.accelerationVectorToggle.addEventListener('change', () => {
+      this.showAccelerationVector = this.els.accelerationVectorToggle.checked;
       if (this.onDisplayChange) this.onDisplayChange();
     });
   }
