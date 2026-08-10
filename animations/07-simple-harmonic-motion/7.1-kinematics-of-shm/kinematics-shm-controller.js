@@ -85,6 +85,7 @@ class SimulationController {
     this.referencePhase.reset();
     this.signalHistory.clear();
     this._syncReferenceHistoryWindow();
+    this.signalHistory.push(this.referencePhase.t, this.referencePhase.y(this.ui.referenceParams().A)); // seed t=0 at equilibrium so the trace never starts mid-jump
   }
 
   _syncReferenceHistoryWindow() {
