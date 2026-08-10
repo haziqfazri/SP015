@@ -1,12 +1,3 @@
-/* =========================================================================
-   OSCILLATION LABORATORY — MAIN SKETCH / CONTROLLER
-   p5.js lifecycle (setup/draw/windowResized) plus the SimulationController
-   that ties UIManager, the two Oscillator subclasses, and the renderer
-   functions together. Physics/UI classes live in oscillation-sim.js.
-   ========================================================================= */
-
-let simulation;
-
 class SimulationController {
   constructor() {
     // Both oscillators are kept alive at all times (not recreated on
@@ -154,23 +145,4 @@ class SimulationController {
       drawReferenceScene(window, this.referencePhase, A, this.signalHistory, width, height);
     }
   }
-}
-
-// =========================================================================
-// p5.js lifecycle
-// =========================================================================
-function setup() {
-  simulation = new SimulationController();
-  simulation.init();
-}
-
-function windowResized() {
-  simulation.resize();
-  const isPlaying = simulation.ui.playbackState?.isPlaying ?? simulation.ui.isPlaying;
-  if (!isPlaying) redraw();
-}
-
-function draw() {
-  simulation.update();
-  simulation.render();
 }
