@@ -2,10 +2,17 @@
    SHM-GRAPHS.JS — Topic 7.2 (Graphs of Simple Harmonic Motion), SP015.
 
    Uses p5 INSTANCE MODE (not the global setup()/draw() convention used by
-   circular-motion/oscillation) because this sim needs five independent
-   canvases — the oscillator strip plus x-t, v-t, a-t, and E-x graphs —
-   each living in its own holder div. drawDashedGuide() in sim-utils.js
-   already takes a p5 context explicitly, which supports this usage.
+   circular-motion/oscillation) because this sim needs several independent
+   canvases — Standard Graphs mode's oscillator strip plus x-t, v-t, a-t,
+   and E-x graphs, and Phase Shift mode's isolated x-t graph — each living
+   in its own holder div. drawDashedGuide() in sim-utils.js already takes
+   a p5 context explicitly, which supports this usage.
+
+   Phase Shift mode (SP015 7.2) is a static, non-integrating view: A and ω
+   are fixed, only φ varies, and its canvas is excluded from the shared
+   per-frame render loop, repainting only on mode entry or a phase-step
+   click (see SimulationController's `phaseInstance`, kept separate from
+   `instances`).
 
    Load order: shared/sim-utils.js, THEN this file.
 
@@ -20,7 +27,7 @@
 
 const PHYSICS = {
   assumedMass: 1.00,   // kg — fixed assumption for energy readouts (not a
-                        // slider; 7.2's LO is graph shape, not mass effects)
+  // slider; 7.2's LO is graph shape, not mass effects)
 };
 
 const LIMITS = {
@@ -43,6 +50,17 @@ const DISPLAY = {
 const UI = {
   dt: 1 / 60,     // s per simulation step, ~60 FPS
   stepDt: 0.05,   // s advanced by a single "Step" button press
+};
+
+// Phase Shift mode (isolated single-graph view, SP015 7.2) — static curve,
+// no time integration, so A and omega are fixed rather than slider-driven;
+// only phi varies. Reuses the Standard Graphs mode defaults for A/omega so
+// the two modes show a visually consistent amplitude/period.
+const PHASE_SHIFT = {
+  amplitude: LIMITS.amplitudeDefault, // m, fixed
+  omega: LIMITS.omegaDefault,         // rad/s, fixed
+  phaseStep: Math.PI / 2,             // rad per button click
+  cyclesEachSide: 2,                  // 2 full cycles for t>=0 and t<0
 };
 
 // -------------------------------------------------------------------------
@@ -119,6 +137,27 @@ class SHMOscillator {
 }
 
 // -------------------------------------------------------------------------
+// Phase helpers — Phase Shift mode (7.2 isolated view). Free functions
+// rather than SHMOscillator methods since this mode never integrates
+// time; phase wrapping/formatting is pure display logic.
+// -------------------------------------------------------------------------
+
+// Wraps phi into (-pi, pi] so e.g. 3pi/2 displays as -pi/2, matching the
+// spec's requirement to always show the shortest signed representation.
+function wrapPhase(phi) {
+  let wrapped = phi % (2 * Math.PI);
+  if (wrapped > Math.PI) wrapped -= 2 * Math.PI;
+  if (wrapped <= -Math.PI) wrapped += 2 * Math.PI;
+  return wrapped;
+}
+
+// Formats phi as a signed fractional multiple of pi, e.g. "+0.50π rad".
+function formatPhase(phi) {
+  const multiple = wrapPhase(phi) / Math.PI;
+  return `${signedFixed(multiple, 2)}\u03C0 rad`;
+}
+
+// -------------------------------------------------------------------------
 // UIManager — DOM access, event binding, readout updates only. Never
 // computes physics, never draws to canvas. Talks to SimulationController
 // exclusively via the callbacks object passed into its constructor.
@@ -131,10 +170,10 @@ class UIManager {
     this.playbackState = null;
     this._cacheElements();
     this._applyLimits(); // LIMITS is the single source of truth for slider
-                         // ranges/defaults; index.html's static min/max/value
-                         // attributes are just a cosmetic fallback for
-                         // viewing the markup alone — do not edit those to
-                         // change behavior, edit LIMITS instead.
+    // ranges/defaults; index.html's static min/max/value
+    // attributes are just a cosmetic fallback for
+    // viewing the markup alone — do not edit those to
+    // change behavior, edit LIMITS instead.
     this._bindEvents();
   }
 
@@ -160,6 +199,21 @@ class UIManager {
       readoutEk: document.getElementById('readout-ek'),
       readoutEp: document.getElementById('readout-ep'),
       readoutEtotal: document.getElementById('readout-etotal'),
+
+      // Mode switch
+      standardModeButton: document.getElementById('standardModeButton'),
+      phaseShiftModeButton: document.getElementById('phaseShiftModeButton'),
+      standardStage: document.getElementById('standardStage'),
+      phaseShiftStage: document.getElementById('phaseShiftStage'),
+      standardControls: document.getElementById('standardControls'),
+      phaseShiftControls: document.getElementById('phaseShiftControls'),
+      controlsTitle: document.getElementById('controlsTitle'),
+      controlsIntro: document.getElementById('controlsIntro'),
+
+      // Phase Shift mode
+      phaseLabel: document.getElementById('phase-label'),
+      btnPhaseMinus: document.getElementById('btn-phase-minus'),
+      btnPhasePlus: document.getElementById('btn-phase-plus'),
     };
   }
 
@@ -223,6 +277,45 @@ class UIManager {
       this.playbackState.pause();
       this.callbacks.onStep();
     });
+
+    this.el.standardModeButton.addEventListener('click', () =>
+      this.callbacks.onSystemChange('standard'));
+    this.el.phaseShiftModeButton.addEventListener('click', () =>
+      this.callbacks.onSystemChange('phaseShift'));
+
+    this.el.btnPhaseMinus.addEventListener('click', () =>
+      this.callbacks.onPhaseStep(-1));
+    this.el.btnPhasePlus.addEventListener('click', () =>
+      this.callbacks.onPhaseStep(1));
+  }
+
+  // Swaps which stage/control block is visible. Standard Graphs keeps its
+  // own playback running underneath — this only toggles what's on screen,
+  // matching 7.1's system-switch pattern (system-option is-active/aria-pressed).
+  setSystem(system) {
+    const isStandard = system === 'standard';
+
+    this.el.standardModeButton.classList.toggle('is-active', isStandard);
+    this.el.phaseShiftModeButton.classList.toggle('is-active', !isStandard);
+    this.el.standardModeButton.setAttribute('aria-pressed', String(isStandard));
+    this.el.phaseShiftModeButton.setAttribute('aria-pressed', String(!isStandard));
+
+    this.el.standardStage.classList.toggle('hidden', !isStandard);
+    this.el.phaseShiftStage.classList.toggle('hidden', isStandard);
+    this.el.standardControls.classList.toggle('hidden', !isStandard);
+    this.el.phaseShiftControls.classList.toggle('hidden', isStandard);
+
+    this.el.controlsTitle.textContent = isStandard ? 'Controls' : 'Phase Controls';
+    this.el.controlsIntro.textContent = isStandard
+      ? 'Adjust amplitude and angular frequency to see how each SHM graph responds.'
+      : 'Step the phase offset φ to see how x = A sin(ωt + φ) shifts left or right.';
+  }
+
+  // Phase readout is display-only and only changes on a button click, not
+  // per frame, so it's a direct write rather than going through the
+  // per-frame updateReadout() diffing store.
+  updatePhaseReadout(phase) {
+    this.el.phaseLabel.textContent = `\u03C6 = ${formatPhase(phase)}`;
   }
 
   // Called once per frame by the controller with the latest physics state.
@@ -300,7 +393,7 @@ function drawTimeSeriesGraph(p, controller, field, colorVal, axisLabel) {
   const omega = oscillator.omega;
   const maxAbs = field === 'x' ? A
     : field === 'v' ? A * omega
-    : A * omega * omega; // 'a'
+      : A * omega * omega; // 'a'
 
   const tNow = oscillator.t;
   const tMin = tNow - DISPLAY.graphTimeWindow;
@@ -434,6 +527,66 @@ function drawEnergyDisplacementGraph(p, controller) {
   }
 }
 
+/**
+ * Draws the isolated Phase Shift mode graph: a single static x = A sin(ωt
+ * + φ) curve swept across [-2T, 2T] — SP015 7.2. Static because A and ω
+ * are fixed in this mode (see PHASE_SHIFT constants); only φ (passed via
+ * controller.phase) changes the shape, so this is a closed-form sweep
+ * like drawEnergyDisplacementGraph, not a history-buffer plot.
+ */
+function drawPhaseShiftGraph(p, controller) {
+  const { phase } = controller;
+  const { amplitude: A, omega, cyclesEachSide } = PHASE_SHIFT;
+  const T = (2 * Math.PI) / omega;
+  const tMax = cyclesEachSide * T;
+  const tMin = -tMax;
+
+  const pad = DISPLAY.graphPadding;
+  const plotW = p.width - pad.left - pad.right;
+  const plotH = p.height - pad.top - pad.bottom;
+
+  const toXY = (tVal, xVal) => {
+    const px = pad.left + ((tVal - tMin) / (tMax - tMin)) * plotW;
+    const py = pad.top + plotH / 2 - (xVal / A) * (plotH / 2);
+    return { x: px, y: py };
+  };
+
+  // Axes: t-axis through x=0, x-axis (vertical) at t=0.
+  p.push();
+  p.stroke('#c9d2c7');
+  p.strokeWeight(1);
+  const zeroTX = toXY(0, 0).x;
+  p.line(zeroTX, pad.top, zeroTX, pad.top + plotH);
+  p.line(pad.left, pad.top + plotH / 2, pad.left + plotW, pad.top + plotH / 2);
+  p.pop();
+
+  p.push();
+  p.noStroke();
+  p.fill('#617075');
+  p.textSize(10);
+  p.textAlign(p.LEFT, p.BOTTOM);
+  p.text('Displacement, x (m)', pad.left, pad.top - 2);
+  p.textAlign(p.RIGHT, p.TOP);
+  p.text('Time, t (s)', p.width - pad.right, pad.top + plotH + 4);
+  p.pop();
+
+  // Curve: x = A sin(ωt + φ) — SP015 7.2, general phase form of 7.1(b).
+  const sweepSteps = 240;
+  p.push();
+  p.stroke('#ff6b35');
+  p.strokeWeight(2);
+  p.noFill();
+  p.beginShape();
+  for (let i = 0; i <= sweepSteps; i++) {
+    const tVal = tMin + ((tMax - tMin) * i) / sweepSteps;
+    const xVal = A * Math.sin(omega * tVal + phase);
+    const { x, y } = toXY(tVal, xVal);
+    p.vertex(x, y);
+  }
+  p.endShape();
+  p.pop();
+}
+
 // -------------------------------------------------------------------------
 // SimulationController — orchestration only. Owns SHMOscillator, the
 // history buffer for the time-series graphs, playback state, and the
@@ -448,6 +601,9 @@ class SimulationController {
     this.isPlaying = false;
     this.curveVisibility = { EK: true, EP: true, Etotal: true };
 
+    this.system = 'standard'; // 'standard' | 'phaseShift'
+    this.phase = 0;           // rad — Phase Shift mode only, reset on mode entry
+
     this.ui = new UIManager({
       onAmplitudeChange: (v) => this._onAmplitudeChange(v),
       onOmegaChange: (v) => this._onOmegaChange(v),
@@ -455,6 +611,8 @@ class SimulationController {
       onPlayToggle: () => this._onPlayToggle(),
       onReset: () => this._onReset(),
       onStep: () => this._onStep(),
+      onSystemChange: (system) => this._onSystemChange(system),
+      onPhaseStep: (direction) => this._onPhaseStep(direction),
     });
 
     this._recordSample(); // seed history with t=0 point before first paint
@@ -503,6 +661,35 @@ class SimulationController {
     this._renderAll();
   }
 
+  // Standard Graphs mode keeps running underneath (its own instance loop
+  // is untouched); Phase Shift mode has no clock, so entering it just
+  // resets φ to 0 (per spec) and repaints its own canvas once. The phase
+  // canvas is created once up front but its holder is `display:none`
+  // until activated, so it needs an explicit resize before its first
+  // real paint — same reason 7.1's onSystemChange calls resize().
+  _onSystemChange(system) {
+    this.system = system;
+    this.ui.setSystem(system);
+
+    if (system === 'phaseShift') {
+      this.phase = 0;
+      this.ui.updatePhaseReadout(this.phase);
+      this._resizePhaseCanvas();
+      this.phaseInstance.redraw();
+    }
+  }
+
+  _onPhaseStep(direction) {
+    this.phase = wrapPhase(this.phase + direction * PHASE_SHIFT.phaseStep);
+    this.ui.updatePhaseReadout(this.phase);
+    this.phaseInstance.redraw();
+  }
+
+  _resizePhaseCanvas() {
+    const holder = document.getElementById('phase-holder');
+    this.phaseInstance.resizeCanvas(holder.clientWidth, holder.clientHeight);
+  }
+
   // ----- internal -----
 
   _recordSample() {
@@ -547,6 +734,9 @@ class SimulationController {
         };
         p.windowResized = () => {
           const holder = document.getElementById(holderId);
+          // Guard against a hidden holder (e.g. phase-holder while Standard
+          // Graphs mode is active) reporting 0x0 on a browser resize event.
+          if (holder.clientWidth === 0 || holder.clientHeight === 0) return;
           p.resizeCanvas(holder.clientWidth, holder.clientHeight);
         };
       });
@@ -559,6 +749,11 @@ class SimulationController {
       makeInstance('at-holder', (p, c) => drawTimeSeriesGraph(p, c, 'a', '#dff34b', 'a (m/s\u00B2)')),
       makeInstance('ex-holder', drawEnergyDisplacementGraph),
     ];
+
+    // Kept out of `this.instances` (and thus out of `_renderAll()`'s every-
+    // frame redraw) since Phase Shift mode is static and only repaints on
+    // mode entry or a phase-step click — see _onSystemChange/_onPhaseStep.
+    this.phaseInstance = makeInstance('phase-holder', drawPhaseShiftGraph);
   }
 }
 

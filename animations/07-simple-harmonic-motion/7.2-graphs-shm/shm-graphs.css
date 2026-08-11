@@ -72,3 +72,20 @@
     height: 220px;
   }
 }
+
+/* -------------------------------------------------------------------------
+   Phase Shift mode — single full-width graph. Reuses .canvas-shell at its
+   default 350px height (no override needed, unlike the quad cells above)
+   since only one canvas is on stage. .graph-holder is reused as-is.
+   ------------------------------------------------------------------------- */
+
+#phase-holder {
+  width: 100%;
+  height: 100%;
+}
+
+#phase-holder canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}

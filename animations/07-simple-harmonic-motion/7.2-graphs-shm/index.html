@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -11,8 +12,10 @@
 
   <!-- Google Fonts used by sim-style.css -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;700&family=Space+Mono:wght@400;700&display=swap"
+    rel="stylesheet" />
 </head>
+
 <body>
   <div class="app-shell">
     <div class="lab-frame">
@@ -29,11 +32,22 @@
         </div>
       </header>
 
+      <!-- ================= Mode switch ================= -->
+      <nav class="system-bar" aria-label="Graph mode selection">
+        <span class="system-label">Mode</span>
+        <div class="system-switch">
+          <button id="standardModeButton" class="system-option is-active" type="button" aria-pressed="true">Standard
+            Graphs</button>
+          <button id="phaseShiftModeButton" class="system-option" type="button" aria-pressed="false">Phase
+            Shift</button>
+        </div>
+      </nav>
+
       <!-- ================= Main grid: stage + controls ================= -->
       <div class="sim-grid">
 
         <!-- ---------- Stage ---------- -->
-        <section class="stage">
+        <section class="stage" id="standardStage">
           <div class="stage-top">
             <h2>Oscillator &amp; Synced Graphs</h2>
             <span class="mono" id="time-label">t = 0.00 s</span>
@@ -94,50 +108,86 @@
           </div>
         </section>
 
+        <!-- ---------- Phase Shift stage (single graph, isolated mode) ---------- -->
+        <section class="stage hidden" id="phaseShiftStage">
+          <div class="stage-top">
+            <h2>Phase-Shifted Displacement–Time Graph</h2>
+            <span class="mono" id="phase-label">&phi; = +0.00&pi; rad</span>
+          </div>
+
+          <div class="canvas-shell" id="phase-shell">
+            <span class="canvas-label">DISPLACEMENT–TIME, x = A sin(&omega;t + &phi;)</span>
+            <div class="graph-holder" id="phase-holder"></div>
+          </div>
+        </section>
+
         <!-- ---------- Controls ---------- -->
         <aside class="controls">
-          <h2 class="control-title">Controls</h2>
-          <p class="control-intro">
+          <h2 class="control-title" id="controlsTitle">Controls</h2>
+          <p class="control-intro" id="controlsIntro">
             Adjust amplitude and angular frequency to see how each SHM graph responds.
           </p>
 
-          <div class="control-row">
-            <div class="control-meta">
-              <label for="amplitude-slider">Amplitude, A</label>
-              <span class="control-value" id="amplitude-value">0.20 m</span>
+          <!-- ---------- Standard Graphs controls ---------- -->
+          <div id="standardControls">
+            <div class="control-row">
+              <div class="control-meta">
+                <label for="amplitude-slider">Amplitude, A</label>
+                <span class="control-value" id="amplitude-value">0.20 m</span>
+              </div>
+              <input type="range" id="amplitude-slider" min="0.05" max="0.30" step="0.01" value="0.20" />
             </div>
-            <input type="range" id="amplitude-slider" min="0.05" max="0.30" step="0.01" value="0.20" />
-          </div>
 
-          <div class="control-row">
-            <div class="control-meta">
-              <label for="omega-slider">Angular Frequency, &omega;</label>
-              <span class="control-value" id="omega-value">4.0 rad/s</span>
+            <div class="control-row">
+              <div class="control-meta">
+                <label for="omega-slider">Angular Frequency, &omega;</label>
+                <span class="control-value" id="omega-value">4.0 rad/s</span>
+              </div>
+              <input type="range" id="omega-slider" min="2" max="12" step="0.1" value="4.0" />
+              <p class="control-note">m assumed = 1.00 kg for energy readouts (ideal spring/oscillator, no damping)</p>
             </div>
-            <input type="range" id="omega-slider" min="2" max="12" step="0.1" value="4.0" />
-            <p class="control-note">m assumed = 1.00 kg for energy readouts (ideal spring/oscillator, no damping)</p>
+
+            <!-- Energy-x curve visibility toggles -->
+            <div class="control-checks">
+              <label class="check">
+                <input type="checkbox" id="check-ek" checked />
+                Show Kinetic Energy, E<sub>K</sub>
+              </label>
+              <label class="check">
+                <input type="checkbox" id="check-ep" checked />
+                Show Potential Energy, E<sub>P</sub>
+              </label>
+              <label class="check">
+                <input type="checkbox" id="check-etotal" checked />
+                Show Total Energy, E
+              </label>
+            </div>
+
+            <div class="button-grid">
+              <button class="action primary" id="btn-play">Play</button>
+              <button class="action" id="btn-reset">Reset</button>
+              <button class="action col-span-2" id="btn-step">⏭ Step</button>
+            </div>
           </div>
 
-          <!-- Energy-x curve visibility toggles -->
-          <div class="control-checks">
-            <label class="check">
-              <input type="checkbox" id="check-ek" checked />
-              Show Kinetic Energy, E<sub>K</sub>
-            </label>
-            <label class="check">
-              <input type="checkbox" id="check-ep" checked />
-              Show Potential Energy, E<sub>P</sub>
-            </label>
-            <label class="check">
-              <input type="checkbox" id="check-etotal" checked />
-              Show Total Energy, E
-            </label>
-          </div>
-
-          <div class="button-grid">
-            <button class="action primary" id="btn-play">Play</button>
-            <button class="action" id="btn-reset">Reset</button>
-            <button class="action col-span-2" id="btn-step">⏭ Step</button>
+          <!-- ---------- Phase Shift controls ---------- -->
+          <div class="hidden" id="phaseShiftControls">
+            <p class="control-note">
+              Amplitude and angular frequency are fixed in this mode
+              (A = 0.20 m, &omega; = 4.0 rad/s) so the graph isolates the
+              effect of &phi; alone.
+            </p>
+            <div class="control-row">
+              <div class="control-meta">
+                <label>Phase Offset, &phi;</label>
+              </div>
+              <div class="system-switch compact stepper-group" role="group" aria-label="Phase offset step">
+                <button type="button" class="system-option" id="btn-phase-minus">&minus;&pi;/2</button>
+                <button type="button" class="system-option" id="btn-phase-plus">+&pi;/2</button>
+              </div>
+              <p class="control-note">&minus;&pi;/2 shifts the graph right (later); +&pi;/2 shifts it left (earlier).
+              </p>
+            </div>
           </div>
         </aside>
       </div>
@@ -155,7 +205,8 @@
         <div class="theory-card">
           <h2>Key Equations</h2>
           <p>
-            x = A sin(&omega;t) &nbsp;|&nbsp; v = &plusmn;&omega;&radic;(A&sup2; &minus; x&sup2;) &nbsp;|&nbsp; a = &minus;&omega;&sup2;x
+            x = A sin(&omega;t) &nbsp;|&nbsp; v = &plusmn;&omega;&radic;(A&sup2; &minus; x&sup2;) &nbsp;|&nbsp; a =
+            &minus;&omega;&sup2;x
             <span class="formula">E = E<sub>K</sub> + E<sub>P</sub> = &frac12;m&omega;&sup2;A&sup2; (constant)</span>
           </p>
         </div>
@@ -171,4 +222,5 @@
   <script src="../../../shared/sim-utils.js"></script>
   <script src="shm-graphs-sim.js"></script>
 </body>
+
 </html>
