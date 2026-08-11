@@ -4,7 +4,7 @@
    and playback state. No physics derivations, no drawing code. p5 GLOBAL
    mode — setup()/draw()/windowResized() live in sketch.js and call into
    this controller's update()/render(), rather than this file owning a p5
-   instance itself (contrast with 7.4/7.5's instance-mode controllers).
+   instance itself (contrast with 7.2's and 7.5's instance-mode controllers).
    Load after physics.js and renderer.js, before ui.js and sketch.js.
    ========================================================================= */
 

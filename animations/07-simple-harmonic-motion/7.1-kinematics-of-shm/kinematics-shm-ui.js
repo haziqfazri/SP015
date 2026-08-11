@@ -318,34 +318,25 @@ class UIManager {
   }
 
   // Updates the live readouts (time, position/angle, velocity, acceleration,
-  // and — spring only — restoring force) with diffing against the
-  // last-written value, same optimization as the UCM sim's updateReadout().
+  // and — spring only — restoring force) using the shared diffing helper.
   updateReadout(oscillator) {
     const physics = this.physicsParams();
-    const last = this._lastReadout;
-
-    const time = oscillator.t.toFixed(2) + ' s';
-    let position, velocity, acceleration;
+    const store = this._lastReadout;
     const isSpring = this.system === 'spring';
 
+    const time = oscillator.t.toFixed(2) + ' s';
+
     if (isSpring) {
-      position = signedFixed(oscillator.x, 3) + ' m';
-      velocity = signedFixed(oscillator.v, 3) + ' m/s';
-      acceleration = signedFixed(oscillator.acceleration(physics), 3) + ' m/s\u00b2';
+      updateReadout(store, 'time', this.els.timeValue, time);
+      updateReadout(store, 'position', this.els.positionValue, signedFixed(oscillator.x, 3) + ' m');
+      updateReadout(store, 'velocity', this.els.velocityValue, signedFixed(oscillator.v, 3) + ' m/s');
+      updateReadout(store, 'acceleration', this.els.accelerationValue, signedFixed(oscillator.acceleration(physics), 3) + ' m/s\u00b2');
+      updateReadout(store, 'force', this.els.forceValue, signedFixed(oscillator.restoringForce(physics), 3) + ' N');
     } else {
-      position = signedFixed(oscillator.x * 180 / Math.PI, 1) + '°';
-      velocity = signedFixed(oscillator.v * 180 / Math.PI, 1) + '°/s';
-      acceleration = signedFixed(oscillator.acceleration(physics) * 180 / Math.PI, 1) + '°/s\u00b2';
-    }
-
-    if (last.time !== time) { this.els.timeValue.textContent = time; last.time = time; }
-    if (last.position !== position) { this.els.positionValue.textContent = position; last.position = position; }
-    if (last.velocity !== velocity) { this.els.velocityValue.textContent = velocity; last.velocity = velocity; }
-    if (last.acceleration !== acceleration) { this.els.accelerationValue.textContent = acceleration; last.acceleration = acceleration; }
-
-    if (isSpring) {
-      const force = signedFixed(oscillator.restoringForce(physics), 3) + ' N';
-      if (last.force !== force) { this.els.forceValue.textContent = force; last.force = force; }
+      updateReadout(store, 'time', this.els.timeValue, time);
+      updateReadout(store, 'position', this.els.positionValue, signedFixed(oscillator.x * 180 / Math.PI, 1) + '°');
+      updateReadout(store, 'velocity', this.els.velocityValue, signedFixed(oscillator.v * 180 / Math.PI, 1) + '°/s');
+      updateReadout(store, 'acceleration', this.els.accelerationValue, signedFixed(oscillator.acceleration(physics) * 180 / Math.PI, 1) + '°/s\u00b2');
     }
   }
 }

@@ -7,13 +7,10 @@
    plain numbers/state already computed elsewhere. No physics maths beyond
    unit->pixel mapping, no DOM access.
 
-   NOTE on arrows: shared/sim-utils.js's VectorArrow/drawArrowhead assume
-   the p5 GLOBAL instance (bare stroke()/line() calls) and only work in
-   global-mode sims. If this sim uses instance mode or a p5.Graphics
-   buffer, you need a context-explicit arrow helper instead — see
-   wave-renderer.js's drawArrowCtx() for a working example (merged
-   shaft+head polygon, no seam). Don't silently re-fork a third copy;
-   either reuse drawArrowCtx's pattern directly or promote one to shared/.
+   NOTE on arrows: shared/sim-utils.js's drawArrowCtx and VectorArrow both
+   take an explicit rendering context, so they work in global-mode and
+   instance-mode/Graphics-buffer sims alike. No fork needed — they are the
+   canon ctx-explicit helpers.
    ========================================================================= */
 
 const DISPLAY = {
