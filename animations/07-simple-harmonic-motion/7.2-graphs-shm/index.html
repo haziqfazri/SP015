@@ -181,7 +181,7 @@
               <div class="control-meta">
                 <label>Phase Offset, &phi;</label>
               </div>
-              <div class="system-switch compact stepper-group" role="group" aria-label="Phase offset step">
+              <div class="system-switch phase-step-group" role="group" aria-label="Phase offset step">
                 <button type="button" class="system-option" id="btn-phase-minus">&minus;&pi;/2</button>
                 <button type="button" class="system-option" id="btn-phase-plus">+&pi;/2</button>
               </div>
@@ -220,7 +220,11 @@
 
   <!-- Shared helpers before topic-specific script -->
   <script src="../../../shared/sim-utils.js"></script>
-  <script src="shm-graphs-sim.js"></script>
+  <script src="shm-graphs-physics.js"></script>
+  <script src="shm-graphs-renderer.js"></script>
+  <script src="shm-graphs-controller.js"></script>
+  <script src="shm-graphs-ui-manager.js"></script>
+  <script src="shm-graphs-sketch.js"></script>
 </body>
 
 </html>
