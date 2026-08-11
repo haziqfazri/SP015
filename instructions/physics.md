@@ -69,7 +69,8 @@
 
 | Sim type | Topic | LO focus |
 |---|---|---|
-| Circular motion | 6.x | Angular position/velocity, centripetal accel/force, period, uniform circular motion |
+| Projectile Motion | 2.3 | Launch parameters (speed/angle/height), trajectory, range, flight time, maximum height |
+| Circular motion | 5 | Angular position/velocity, centripetal accel/force, period, uniform circular motion |
 | Oscillation Laboratory (spring, pendulum, reference circle) | 7.1 | Defining SHM, connection between circular motion and SHM, restoring force/torque |
 | SHM Graphs Analysis | 7.2 | Shape and relationship of x-t, v-t, a-t, and E-x graphs at a given instant |
 | Progressive Waves | 7.4 | y(x,t) equation, particle vs. wave-pattern velocity, λ derived from v and f |

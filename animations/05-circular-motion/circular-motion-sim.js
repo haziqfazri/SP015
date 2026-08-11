@@ -28,7 +28,7 @@ const ACCEL_MAX = OMEGA_MAX * OMEGA_MAX * RADIUS_M_MAX;
 const FORCE_MIN = MASS_MIN * ACCEL_MIN;
 const FORCE_MAX = MASS_MAX * ACCEL_MAX;
 
-// drawArrowhead() and normalizedArrowLength() now live in
+// drawArrowCtx() and normalizedArrowLength() now live in
 // ../shared/sim-utils.js (loaded before this file in index.html).
 // normalizedArrowLength() is called below with just (magnitude, min, max) —
 // its optional minLen/maxLen params default to 40/160, matching the values

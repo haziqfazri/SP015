@@ -46,6 +46,7 @@ Start from [`templates/`](templates/README.md), which has the full build order a
 
 | Topic | Simulation | Status |
 |---|---|---|
+| 2.3 | Projectile Motion | ✅ Done |
 | 7.1 – 7.2 | Oscillation Laboratory / SHM Graphs Analysis | ✅ Done |
 | 7.4 | Properties of Waves | ✅ Done |
 | 7.5 | Superposition of Waves | ✅ Done — pulse superposition + interference |

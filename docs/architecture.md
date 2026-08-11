@@ -28,6 +28,8 @@ The repository currently uses the following structure:
 SP015/
 ├── README.md
 ├── animations/
+│   ├── 02-kinematics-of-linear-motion/
+│   │   └── 2.3-projectile-motion/
 │   ├── 05-circular-motion/
 │   │   ├── circular-motion-sim.js
 │   │   ├── circular-motion-sketch.js
@@ -185,9 +187,9 @@ Observed sequence for every sim in the repo so far:
    `coding.md` §3 for why these, not the HTML attributes, are the source
    of truth for slider ranges and scaling.
 3. **Write the physics class(es).** Pure state + derivation, no DOM/canvas
-   (`SHMOscillator`, `WaveState`, `Oscillator`/`SpringOscillator`/
-   `PendulumOscillator`, `PulseWave`/`ProgressiveWave`,
-   `StretchedString`/`AirColumn`, `Particle`/`Orbit`).
+    (`SHMOscillator`, `WaveState`, `Oscillator`/`SpringOscillator`/
+    `PendulumOscillator`, `PulseWave`/`ProgressiveWave`, `Projectile`,
+    `StretchedString`/`AirColumn`, `Particle`/`Orbit`).
 4. **Write UIManager.** Cache DOM elements once, bind events, expose a
    `callbacks` object the controller fills in — UIManager never calls
    physics or renderer functions directly.
@@ -292,13 +294,15 @@ What each stage actually does, based on the code:
   example — this keeps the visual relationship correct across canvas
   resizes instead of drifting relative to the boundary as the canvas
   changes size.
-- **Canvas** — either p5 global mode (`05-circular-motion`,
-  `7.1-kinematics-of-shm`, `7.6-standing-waves`: one `setup()`/`draw()`
-  pair, functions like `background()`/`stroke()` called bare) or p5
-  **instance mode** (`7.2-graphs-shm`, `7.4-progressive-wave-shm`,
-  `7.5-superposition-shm`: each canvas is its own `new p5(sketch)`, useful
-  when a sim needs multiple independent canvases in sync, e.g. 4–5 synced
-  graphs or 3 stacked interference panels driven by one shared clock/ticker).
+- **Canvas** — either p5 global mode (`2.3-projectile-motion`, `05-circular-motion`,
+  `7.1-kinematics-of-shm`, `7.4-progressive-wave-shm`, `7.6-application-of-standing-waves`,
+  `7.7-doppler-effect`: one `setup()`/`draw()` pair, functions like
+  `background()`/`stroke()` called bare — 7.4 additionally uses a
+  `createGraphics` buffer for its second panel) or p5 **instance mode**
+  (`7.2-graphs-shm`, `7.5-superposition-shm`: each canvas is its own
+  `new p5(sketch)`, used when a sim needs 3+ independent canvases in
+  lockstep, e.g. 4–5 synced graphs or 3 stacked interference panels
+  driven by one shared clock/ticker).
   Choose based on **whether the sim needs more than one canvas kept in
   sync** — not sim complexity. 7.6 has three physics classes and a full
   play/pause animation loop, and still uses global mode correctly, because
@@ -328,10 +332,10 @@ Currently in `shared/`:
   `shm-graphs.css`'s 2×2 `.graph-quad`, `wave-properties.css`'s stacked
   dual-canvas panels). For the specific palette, fonts, spacing rhythm, and button/slider placement
 rules, see `instructions/coding.md` for the day-to-day UI conventions.
-- `sim-utils.js` — `drawArrowhead`, `normalizedArrowLength`, `VectorArrow`,
-  `signedFixed`, `drawDashedGuide`, `drawTrailDots`, `updateReadout`,
-  `PlaybackState`. These assume p5 global mode (bare `push()`/`stroke()`) or
-  take an explicit `p5ctx` first argument.
+- `sim-utils.js` — `drawArrowCtx`, `normalizedArrowLength`, `VectorArrow`,
+  `signedFixed`, `drawDashedGuide`, `drawTrailDots`, `drawLabel`,
+  `updateReadout`, `AudioTone`, `PlaybackState`. These assume p5 global mode
+  (bare `push()`/`stroke()`) or take an explicit `p5ctx` first argument.
 - `drawArrowCtx`/`VectorArrow` are now ctx-explicit and canonical, so any future
   sim needing arrows (interference vectors, force diagrams, etc.) uses this instead
   of writing a new one.
