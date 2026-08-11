@@ -22,14 +22,14 @@ function yToPx(y, centerY, plotH) {
 
 function drawAxis(p, plotX, plotY, plotW, plotH, centerY) {
   p.push();
-  p.stroke('#c9d2c7');
+  p.stroke(PALETTE.line);
   p.strokeWeight(1);
   p.line(plotX, centerY, plotX + plotW, centerY); // equilibrium line
   p.pop();
 
   // Tick marks only — no numeric labels (removed per Fazri's request).
   p.push();
-  p.stroke('#c9d2c7');
+  p.stroke(PALETTE.line);
   p.strokeWeight(1);
   p.noFill();
   for (let x = DOMAIN.xMin; x <= DOMAIN.xMax; x += 1) {
@@ -74,13 +74,13 @@ function drawPulseScene(p, controller) {
   const visibility = controller.ui.curveVisibility();
 
   if (visibility.waveA) {
-    drawCurve(p, (x) => superposition.waveA.valueAt(x, t), '#ff6b35', plotX, plotY, plotW, plotH, centerY, 2);
+    drawCurve(p, (x) => superposition.waveA.valueAt(x, t), PALETTE.orange, plotX, plotY, plotW, plotH, centerY, 2);
   }
   if (visibility.waveB) {
-    drawCurve(p, (x) => superposition.waveB.valueAt(x, t), '#35b9ad', plotX, plotY, plotW, plotH, centerY, 2);
+    drawCurve(p, (x) => superposition.waveB.valueAt(x, t), PALETTE.teal, plotX, plotY, plotW, plotH, centerY, 2);
   }
   if (visibility.resultant) {
-    drawCurve(p, (x) => superposition.resultantAt(x, t), '#102126', plotX, plotY, plotW, plotH, centerY, 3);
+    drawCurve(p, (x) => superposition.resultantAt(x, t), PALETTE.ink, plotX, plotY, plotW, plotH, centerY, 3);
   }
 }
 
@@ -102,18 +102,18 @@ function drawWavePanel(p, valueFn, colorVal, weight = 2.5) {
 
 function drawInterferenceWaveA(p, controller) {
   const { interferenceT, interference } = controller;
-  p.background(248, 250, 246);
-  drawWavePanel(p, (x) => interference.waveA.valueAt(x, interferenceT), '#ff6b35');
+  p.background(PALETTE.panel);
+  drawWavePanel(p, (x) => interference.waveA.valueAt(x, interferenceT), PALETTE.orange);
 }
 
 function drawInterferenceWaveB(p, controller) {
   const { interferenceT, interference } = controller;
-  p.background(248, 250, 246);
-  drawWavePanel(p, (x) => interference.waveB.valueAt(x, interferenceT), '#35b9ad');
+  p.background(PALETTE.panel);
+  drawWavePanel(p, (x) => interference.waveB.valueAt(x, interferenceT), PALETTE.teal);
 }
 
 function drawInterferenceResultant(p, controller) {
   const { interferenceT, interference } = controller;
-  p.background(248, 250, 246);
-  drawWavePanel(p, (x) => interference.resultantAt(x, interferenceT), '#102126', 3);
+  p.background(PALETTE.panel);
+  drawWavePanel(p, (x) => interference.resultantAt(x, interferenceT), PALETTE.ink, 3);
 }

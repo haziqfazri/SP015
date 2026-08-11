@@ -15,11 +15,11 @@ const DISPLAY = {
   sampleCount: 200,         // points swept when drawing the curve
   nodeRadius: 6,            // px
   antinodeRadius: 6,        // px
-  axisColor: '#c9d2c7',
-  envelopeColor: [16, 33, 38, 46],   // rgba-ish array for the faint static envelope guide
-  curveColor: '#ff6b35',
-  nodeColor: '#102126',
-  antinodeColor: '#35b9ad',
+  axisColor: PALETTE.line,
+  envelopeColor: [...PALETTE.inkRGB, 46],   // ink at alpha 46 for the faint static envelope guide
+  curveColor: PALETTE.orange,
+  nodeColor: PALETTE.ink,
+  antinodeColor: PALETTE.teal,
 };
 
 // Domain metre-position -> canvas x pixel.
@@ -176,7 +176,7 @@ function drawExtremaMarkers(object, length, plotX, plotW, centerY, amp) {
 function drawBoundaryLabels(mode, plotX, plotY, plotW) {
   push();
   noStroke();
-  fill('#617075');
+  fill(PALETTE.muted);
   textSize(11);
   textAlign(LEFT, BOTTOM);
   const leftLabel = mode === 'closed' ? 'CLOSED END' : (mode === 'open' ? 'OPEN END' : 'FIXED END');
@@ -202,7 +202,7 @@ function drawStandingWaveScene(controller) {
   const object = controller.activeObject();
   const length = object.length;
 
-  background(248, 250, 246);
+  background(PALETTE.panel);
   drawAxis(plotX, plotY, plotW, plotH, centerY);
   drawPipeWalls(controller.mode, plotX, plotY, plotW, plotH);
   drawEndCap(controller.mode, 'left', plotX, plotY, plotH);

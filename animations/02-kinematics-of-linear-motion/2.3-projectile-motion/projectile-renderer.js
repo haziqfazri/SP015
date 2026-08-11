@@ -13,12 +13,12 @@ const DISPLAY = {
   vectorMinLength: 34,
   vectorMaxLength: 92,
   colors: {
-    ink: '#102126',
-    panel: '#f8faf6',
-    line: '#c9d2c7',
-    orange: '#ff6b35',
-    teal: '#35b9ad',
-    muted: '#617075',
+    ink: PALETTE.ink,
+    panel: PALETTE.panel,
+    line: PALETTE.line,
+    orange: PALETTE.orange,
+    teal: PALETTE.teal,
+    muted: PALETTE.muted,
   },
 };
 

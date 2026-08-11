@@ -332,11 +332,14 @@ Currently in `shared/`:
   `shm-graphs.css`'s 2×2 `.graph-quad`, `wave-properties.css`'s stacked
   dual-canvas panels). For the specific palette, fonts, spacing rhythm, and button/slider placement
 rules, see `instructions/coding.md` for the day-to-day UI conventions.
-- `sim-utils.js` — `drawArrowCtx`, `normalizedArrowLength`, `VectorArrow`,
-  `signedFixed`, `drawDashedGuide`, `drawTrailDots`, `drawLabel`,
-  `updateReadout`, `AudioTone`, `PlaybackState`. These assume p5 global mode
-  (bare `push()`/`stroke()`) or take an explicit `p5ctx` first argument.
-- `drawArrowCtx`/`VectorArrow` are now ctx-explicit and canonical, so any future
+- `sim-utils.js` — `PALETTE`, `drawArrowCtx`, `normalizedArrowLength`,
+  `VectorArrow`, `signedFixed`, `drawDashedGuide`, `drawTrailDots`,
+  `drawLabel`, `updateReadout`, `AudioTone`, `PlaybackState`.
+  `PALETTE` is the canonical JS color source (hex + array forms), mirroring
+  `shared/sim-style.css` `:root`. Every sim must reference `PALETTE.*` for
+  canvas colors — no inline hex or RGB literals. `PALETTE.accent` and
+  `PALETTE.path` are documented non-CSS additions (2+ sims use each).
+  `drawArrowCtx`/`VectorArrow` are ctx-explicit and canonical, so any future
   sim needing arrows (interference vectors, force diagrams, etc.) uses this instead
   of writing a new one.
 Duplication observed that should be reconciled next time it's touched:

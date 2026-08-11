@@ -30,21 +30,21 @@ function drawSinusoidColumn(p5ctx, phase, A, history, x0, y0, w, h, centerY, amp
   drawLabel(p5ctx, 'y\u2013t graph', x0 + 6, y0 + 2, { font: 'Space Mono', weight: 'BOLD', size: 12, align: ['LEFT', 'TOP'] });
 
   p5ctx.push();
-  p5ctx.noFill(); p5ctx.stroke(201, 210, 199); p5ctx.strokeWeight(1);
+  p5ctx.noFill(); p5ctx.stroke(PALETTE.line); p5ctx.strokeWeight(1);
   p5ctx.rect(plotX, plotY, plotW, plotH);
   p5ctx.pop();
 
   const guides = [{ val: A, label: 'A' }, { val: 0, label: '0' }, { val: -A, label: '-A' }];
   guides.forEach(({ val, label }) => {
     const py = yToPx(val);
-    drawDashedGuide(p5ctx, plotX, py, plotX + plotW, py, p5ctx.color(97, 112, 117), 1, [4, 4]);
-    drawLabel(p5ctx, label, plotX - 6, py, { fill: [97, 112, 117], font: 'Space Mono', size: 10, align: ['RIGHT', 'CENTER'] });
+    drawDashedGuide(p5ctx, plotX, py, plotX + plotW, py, p5ctx.color(PALETTE.muted), 1, [4, 4]);
+    drawLabel(p5ctx, label, plotX - 6, py, { fill: PALETTE.mutedRGB, font: 'Space Mono', size: 10, align: ['RIGHT', 'CENTER'] });
   });
 
-  drawLabel(p5ctx, 't (s)', plotX + plotW, plotY + plotH + 6, { fill: [97, 112, 117], font: 'Space Mono', size: 10, align: ['RIGHT', 'TOP'] });
+  drawLabel(p5ctx, 't (s)', plotX + plotW, plotY + plotH + 6, { fill: PALETTE.mutedRGB, font: 'Space Mono', size: 10, align: ['RIGHT', 'TOP'] });
 
   p5ctx.push();
-  p5ctx.noFill(); p5ctx.stroke(255, 107, 53); p5ctx.strokeWeight(2.5);
+  p5ctx.noFill(); p5ctx.stroke(PALETTE.orange); p5ctx.strokeWeight(2.5);
   p5ctx.beginShape();
   history.samples.forEach((sample) => { p5ctx.vertex(tToX(sample.t), yToPx(sample.y)); });
   p5ctx.endShape();
@@ -56,7 +56,7 @@ function drawSinusoidColumn(p5ctx, phase, A, history, x0, y0, w, h, centerY, amp
     dotX = tToX(last.t);
     dotY = yToPx(last.y);
     p5ctx.push();
-    p5ctx.noStroke(); p5ctx.fill(53, 185, 173);
+    p5ctx.noStroke(); p5ctx.fill(PALETTE.teal);
     p5ctx.circle(dotX, dotY, 8);
     p5ctx.pop();
   }
@@ -80,13 +80,13 @@ function drawCircleColumn(p5ctx, phase, A, x0, y0, w, h, centerY, ampPx) {
   drawLabel(p5ctx, 'circular motion', x0 + 6, y0 + 2, { font: 'Space Mono', weight: 'BOLD', size: 12, align: ['LEFT', 'TOP'] });
 
   p5ctx.push();
-  p5ctx.noFill(); p5ctx.stroke(201, 210, 199); p5ctx.strokeWeight(2);
+  p5ctx.noFill(); p5ctx.stroke(PALETTE.line); p5ctx.strokeWeight(2);
   p5ctx.circle(cx, cy, r * 2);
   p5ctx.pop();
 
-  drawDashedGuide(p5ctx, cx - r, cy, cx + r, cy, p5ctx.color(180), 1, [4, 4]);
+  drawDashedGuide(p5ctx, cx - r, cy, cx + r, cy, p5ctx.color(PALETTE.path), 1, [4, 4]);
 
-  const axisLabelOpts = { fill: [97, 112, 117], font: 'Space Mono', size: 10 };
+  const axisLabelOpts = { fill: PALETTE.mutedRGB, font: 'Space Mono', size: 10 };
   drawLabel(p5ctx, '0, 2\u03C0', cx + r + 20, cy, axisLabelOpts);
   drawLabel(p5ctx, '\u03C0/2', cx, cy - r - 14, axisLabelOpts);
   drawLabel(p5ctx, '\u03C0', cx - r - 14, cy, axisLabelOpts);
@@ -94,7 +94,7 @@ function drawCircleColumn(p5ctx, phase, A, x0, y0, w, h, centerY, ampPx) {
 
   const arcR = r * 0.42;
   p5ctx.push();
-  p5ctx.noFill(); p5ctx.stroke(255, 107, 53); p5ctx.strokeWeight(2.5);
+  p5ctx.noFill(); p5ctx.stroke(PALETTE.orange); p5ctx.strokeWeight(2.5);
   p5ctx.beginShape();
   const steps = 24;
   for (let i = 0; i <= steps; i++) {
@@ -106,23 +106,23 @@ function drawCircleColumn(p5ctx, phase, A, x0, y0, w, h, centerY, ampPx) {
 
   const labelAngle = phase.theta / 2;
   drawLabel(p5ctx, '\u03B8', cx + (arcR + 16) * Math.cos(labelAngle), cy - (arcR + 16) * Math.sin(labelAngle), {
-    fill: [255, 107, 53], font: 'Space Mono', weight: 'BOLD', size: 13
+    fill: PALETTE.orangeRGB, font: 'Space Mono', weight: 'BOLD', size: 13
   });
 
   p5ctx.push();
-  p5ctx.stroke(16, 33, 38); p5ctx.strokeWeight(2.5);
+  p5ctx.stroke(PALETTE.ink); p5ctx.strokeWeight(2.5);
   p5ctx.line(cx, cy, px, py);
   p5ctx.pop();
 
-  drawDashedGuide(p5ctx, px, py, px, cy, p5ctx.color(53, 185, 173), 1.5, [3, 3]);
+  drawDashedGuide(p5ctx, px, py, px, cy, p5ctx.color(PALETTE.teal), 1.5, [3, 3]);
 
   p5ctx.push();
-  p5ctx.noStroke(); p5ctx.fill(16, 33, 38);
+  p5ctx.noStroke(); p5ctx.fill(PALETTE.ink);
   p5ctx.circle(cx, cy, 7);
   p5ctx.pop();
 
   p5ctx.push();
-  p5ctx.fill(255, 107, 53); p5ctx.stroke(16, 33, 38); p5ctx.strokeWeight(2);
+  p5ctx.fill(PALETTE.orange); p5ctx.stroke(PALETTE.ink); p5ctx.strokeWeight(2);
   p5ctx.circle(px, py, 14);
   p5ctx.pop();
 
@@ -144,28 +144,28 @@ function drawVerticalSpringColumn(p5ctx, phase, A, x0, y0, w, h, centerY, ampPx)
   drawLabel(p5ctx, 'SHM', x0 + 6, y0 + 2, { font: 'Space Mono', weight: 'BOLD', size: 12, align: ['LEFT', 'TOP'] });
 
   p5ctx.push();
-  p5ctx.noStroke(); p5ctx.fill(16, 33, 38);
+  p5ctx.noStroke(); p5ctx.fill(PALETTE.ink);
   p5ctx.rect(cx - 30, ceilingY - 8, 60, 8);
   p5ctx.pop();
 
   p5ctx.push();
-  p5ctx.stroke(239, 243, 237); p5ctx.strokeWeight(1);
+  p5ctx.stroke(PALETTE.paper); p5ctx.strokeWeight(1);
   for (let x = cx - 28; x < cx + 30; x += 10) {
     p5ctx.line(x, ceilingY, x - 6, ceilingY + 8);
   }
   p5ctx.pop();
 
-  drawDashedGuide(p5ctx, x0 + 10, centerY, x0 + w - 10, centerY, p5ctx.color(53, 185, 173));
+  drawDashedGuide(p5ctx, x0 + 10, centerY, x0 + w - 10, centerY, p5ctx.color(PALETTE.teal));
   const guides = [{ py: centerY - ampPx, label: 'y = A' }, { py: centerY + ampPx, label: 'y = -A' }];
   guides.forEach(({ py, label }) => {
-    drawDashedGuide(p5ctx, x0 + 10, py, x0 + w - 10, py, p5ctx.color(180), 1, [3, 3]);
-    drawLabel(p5ctx, label, x0 + w - 42, py - 10, { fill: [97, 112, 117], font: 'Space Mono', size: 10, align: ['LEFT', 'CENTER'] });
+    drawDashedGuide(p5ctx, x0 + 10, py, x0 + w - 10, py, p5ctx.color(PALETTE.path), 1, [3, 3]);
+    drawLabel(p5ctx, label, x0 + w - 42, py - 10, { fill: PALETTE.mutedRGB, font: 'Space Mono', size: 10, align: ['LEFT', 'CENTER'] });
   });
 
   drawSpringCoilVertical(p5ctx, cx, ceilingY, massY - massSize / 2);
 
   p5ctx.push();
-  p5ctx.fill(255, 107, 53); p5ctx.stroke(16, 33, 38); p5ctx.strokeWeight(2);
+  p5ctx.fill(PALETTE.orange); p5ctx.stroke(PALETTE.ink); p5ctx.strokeWeight(2);
   p5ctx.rectMode(p5ctx.CENTER);
   p5ctx.rect(cx, massY, massSize, massSize);
   p5ctx.rectMode(p5ctx.CORNER);
@@ -200,7 +200,7 @@ function drawReferenceScene(p5ctx, phase, A, history, width, height) {
   const circle = drawCircleColumn(p5ctx, phase, A, colW, 0, colW, height, centerY, ampPx);
   const sine = drawSinusoidColumn(p5ctx, phase, A, history, colW * 2, 0, colW, height, centerY, ampPx);
 
-  const lineColor = p5ctx.color(53, 185, 173, 160);
+  const lineColor = p5ctx.color(PALETTE.teal + 'a0'); // teal at 160 alpha — cross-column guide
   drawDashedGuide(p5ctx, spring.cx, spring.massY, colW, spring.massY, lineColor, 1.5, [3, 3]);
   drawDashedGuide(p5ctx, colW, circle.py, circle.px, circle.py, lineColor, 1.5, [3, 3]);
   drawDashedGuide(p5ctx, circle.px, circle.py, colW * 2, circle.py, lineColor, 1.5, [3, 3]);
@@ -219,7 +219,7 @@ function drawSpringCoil(p5ctx, x1, x2, y) {
 
   p5ctx.push();
   p5ctx.noFill();
-  p5ctx.stroke(16, 33, 38);
+  p5ctx.stroke(PALETTE.ink);
   p5ctx.strokeWeight(3);
   p5ctx.beginShape();
   p5ctx.vertex(x1, y);
@@ -240,7 +240,7 @@ function drawSpringCoilVertical(p5ctx, x, y1, y2) {
 
   p5ctx.push();
   p5ctx.noFill();
-  p5ctx.stroke(16, 33, 38);
+  p5ctx.stroke(PALETTE.ink);
   p5ctx.strokeWeight(3);
   p5ctx.beginShape();
   p5ctx.vertex(x, y1);
@@ -265,7 +265,7 @@ function drawSpringSystem(p5ctx, oscillator, params, width, height, vectorOption
 
   // Floor hatching
   p5ctx.push();
-  p5ctx.stroke(16, 33, 38, 41); // ~.16 alpha
+  p5ctx.stroke(PALETTE.ink + '29'); // ~.16 alpha
   p5ctx.strokeWeight(1);
   for (let i = 0; i < width; i += 28) {
     p5ctx.line(i, floorY + 32, i, floorY + 38);
@@ -274,7 +274,7 @@ function drawSpringSystem(p5ctx, oscillator, params, width, height, vectorOption
   p5ctx.pop();
 
   // Equilibrium guide
-  drawDashedGuide(p5ctx, equilibrium, 32, equilibrium, floorY + 80, p5ctx.color(53, 185, 173));
+  drawDashedGuide(p5ctx, equilibrium, 32, equilibrium, floorY + 80, p5ctx.color(PALETTE.teal));
 
   // Displacement/velocity/acceleration vectors — all anchored at x=equilibrium,
   // stacked at different y-offsets from the mass, each with its own endpoint
@@ -300,12 +300,12 @@ function drawSpringSystem(p5ctx, oscillator, params, width, height, vectorOption
   // Wall
   p5ctx.push();
   p5ctx.noStroke();
-  p5ctx.fill(16, 33, 38);
+  p5ctx.fill(PALETTE.ink);
   p5ctx.rect(32, floorY - 75, 25, 150);
   p5ctx.pop();
 
   p5ctx.push();
-  p5ctx.stroke(239, 243, 237);
+  p5ctx.stroke(PALETTE.paper);
   p5ctx.strokeWeight(1);
   for (let y = floorY - 70; y < floorY + 70; y += 12) {
     p5ctx.line(32, y, 57, y + 12);
@@ -316,8 +316,8 @@ function drawSpringSystem(p5ctx, oscillator, params, width, height, vectorOption
   drawSpringCoil(p5ctx, 57, massX - massSize / 2, floorY);
 
   p5ctx.push();
-  p5ctx.fill(255, 107, 53);
-  p5ctx.stroke(16, 33, 38);
+  p5ctx.fill(PALETTE.orange);
+  p5ctx.stroke(PALETTE.ink);
   p5ctx.strokeWeight(2);
   p5ctx.rectMode(p5ctx.CENTER);
   p5ctx.rect(massX, floorY, massSize, massSize);
@@ -326,7 +326,7 @@ function drawSpringSystem(p5ctx, oscillator, params, width, height, vectorOption
 
   drawLabel(p5ctx, params.m.toFixed(1) + ' kg', massX, floorY + 4, { font: 'Space Mono', weight: 'BOLD', size: 12 });
 
-  drawLabel(p5ctx, 'equilibrium', equilibrium, 24, { fill: [53, 185, 173], size: 11, align: ['CENTER', 'BASELINE'] });
+  drawLabel(p5ctx, 'equilibrium', equilibrium, 24, { fill: PALETTE.tealRGB, size: 11, align: ['CENTER', 'BASELINE'] });
 }
 
 // The length slider's max value (matches configureControlRanges() in
@@ -347,7 +347,7 @@ function drawPendulumSystem(p5ctx, oscillator, params, width, height) {
 
   // Floor hatching
   p5ctx.push();
-  p5ctx.stroke(16, 33, 38, 41);
+  p5ctx.stroke(PALETTE.ink + '29');
   p5ctx.strokeWeight(1);
   for (let x = 0; x < width; x += 28) {
     p5ctx.line(x, height - 32, x + 14, height - 18);
@@ -356,12 +356,12 @@ function drawPendulumSystem(p5ctx, oscillator, params, width, height) {
   p5ctx.pop();
 
   // Equilibrium guide
-  drawDashedGuide(p5ctx, pivotX, pivotY, pivotX, pivotY + rodLength + 24, p5ctx.color(53, 185, 173));
+  drawDashedGuide(p5ctx, pivotX, pivotY, pivotX, pivotY + rodLength + 24, p5ctx.color(PALETTE.teal));
 
   // Swing-arc guide
   p5ctx.push();
   p5ctx.noFill();
-  p5ctx.stroke(255, 107, 53, 61); // ~.24 alpha
+  p5ctx.stroke(PALETTE.orange + '3d'); // ~.24 alpha swing-arc guide
   p5ctx.strokeWeight(2);
   p5ctx.arc(pivotX, pivotY, rodLength * 2, rodLength * 2,
     p5ctx.HALF_PI - 0.9, p5ctx.HALF_PI + 0.9);
@@ -375,7 +375,7 @@ function drawPendulumSystem(p5ctx, oscillator, params, width, height) {
 
   // Rod
   p5ctx.push();
-  p5ctx.stroke(16, 33, 38);
+  p5ctx.stroke(PALETTE.ink);
   p5ctx.strokeWeight(4);
   p5ctx.line(pivotX, pivotY, bobX, bobY);
   p5ctx.pop();
@@ -383,19 +383,19 @@ function drawPendulumSystem(p5ctx, oscillator, params, width, height) {
   // Pivot point
   p5ctx.push();
   p5ctx.noStroke();
-  p5ctx.fill(16, 33, 38);
+  p5ctx.fill(PALETTE.ink);
   p5ctx.circle(pivotX, pivotY, 14);
   p5ctx.pop();
 
   // Bob
   p5ctx.push();
-  p5ctx.fill(255, 107, 53);
-  p5ctx.stroke(16, 33, 38);
+  p5ctx.fill(PALETTE.orange);
+  p5ctx.stroke(PALETTE.ink);
   p5ctx.strokeWeight(2);
   p5ctx.circle(bobX, bobY, bobRadius * 2);
   p5ctx.pop();
 
   drawLabel(p5ctx, params.m.toFixed(1) + ' kg', bobX, bobY + 4, { font: 'Space Mono', weight: 'BOLD', size: 11 });
 
-  drawLabel(p5ctx, 'equilibrium', pivotX, pivotY + rodLength + 42, { fill: [53, 185, 173], size: 11, align: ['CENTER', 'BASELINE'] });
+  drawLabel(p5ctx, 'equilibrium', pivotX, pivotY + rodLength + 42, { fill: PALETTE.tealRGB, size: 11, align: ['CENTER', 'BASELINE'] });
 }

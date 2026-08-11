@@ -1,4 +1,40 @@
 // -------------------------------------------------------------------------
+// Color palette — canonical JS source of truth, mirroring shared/sim-style.css
+// :root. Canvas code cannot read CSS vars, so every sim references PALETTE
+// instead of inline hex/rgb literals. Entries are hex strings (p5 accepts
+// them directly); *RGB forms exist for array consumers (drawLabel fill,
+// stroke(...arr) spreads). Two non-CSS additions, both with 2+ uses:
+//   accent — darker accent than raw --acid for velocity/accel arrows,
+//            which read poorly at full acid saturation on --panel.
+//   path   — neutral for orbit paths / dashed guides, slightly darker than
+//            --line so it stays visible against --panel.
+// -------------------------------------------------------------------------
+
+const PALETTE = {
+  ink:   '#102126',
+  paper: '#eff3ed',
+  panel: '#f8faf6',
+  line:  '#c9d2c7',
+  acid:  '#dff34b',
+  orange:'#ff6b35',
+  teal:  '#35b9ad',
+  muted: '#617075',
+  white: '#ffffff',
+  accent:'#bf5a00',
+  path:  '#b4beb2',
+  inkRGB:   [16, 33, 38],
+  paperRGB: [239, 243, 237],
+  panelRGB: [248, 250, 246],
+  lineRGB:  [201, 210, 199],
+  acidRGB:  [223, 243, 75],
+  orangeRGB:[255, 107, 53],
+  tealRGB:  [53, 185, 173],
+  mutedRGB: [97, 117, 117],
+  accentRGB:[191, 90, 0],
+  pathRGB:  [180, 190, 178],
+};
+
+// -------------------------------------------------------------------------
 // Arrow drawing
 // -------------------------------------------------------------------------
 
@@ -134,7 +170,7 @@ function drawTrailDots(p5ctx, trail, projector, r = 255, g = 107, b = 53, maxAlp
 // in scope. `font`/`weight` are optional — omit to inherit whatever the
 // canvas's current text style already is (matches prior call-site behavior
 // where not every label explicitly set a font).
-function drawLabel(p5ctx, text, x, y, { fill = [16, 33, 38], size = 11, weight = null, font = null, align = ['CENTER', 'CENTER'] } = {}) {
+function drawLabel(p5ctx, text, x, y, { fill = PALETTE.inkRGB, size = 11, weight = null, font = null, align = ['CENTER', 'CENTER'] } = {}) {
   p5ctx.push();
   p5ctx.noStroke();
   p5ctx.fill(fill);

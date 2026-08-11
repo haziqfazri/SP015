@@ -18,16 +18,16 @@
    ========================================================================= */
 
 const COLORS = {
-  waveLine: '#102126',   // --ink
-  particle: '#ff6b35',   // --orange
-  referenceParticle: '#35b9ad', // --teal
-  vyArrow: '#35b9ad',
-  propagationArrow: '#ff6b35', // --orange — deliberately different from vyArrow's
+  waveLine: PALETTE.ink,   // --ink
+  particle: PALETTE.orange,   // --orange
+  referenceParticle: PALETTE.teal, // --teal
+  vyArrow: PALETTE.teal,
+  propagationArrow: PALETTE.orange, // --orange — deliberately different from vyArrow's
                                // teal, so wave velocity (horizontal) and particle
                                // velocity (vertical) never look like the same kind
                                // of vector at a glance
-  guide: '#617075',       // --muted
-  axis: '#c9d2c7'         // --line
+  guide: PALETTE.muted,       // --muted
+  axis: PALETTE.line         // --line
 };
 
 // -------------------------------------------------------------------------
@@ -38,7 +38,7 @@ const COLORS = {
 // consistency across the whole project's sims.
 // -------------------------------------------------------------------------
 const AXIS = {
-  color: '#617075',   // --muted
+  color: PALETTE.muted,   // --muted
   tickLength: 5,
   tickCountX: 7,       // fixed count, per project decision — not interval-based
   font: 'Space Mono',
@@ -203,7 +203,7 @@ function drawWaveformPanel(ctx, controller, panelWidthPx, panelHeightPx) {
   const plotH = panelHeightPx - pad.top - pad.bottom;
   const centerY = plotY + plotH / 2;
 
-  ctx.background(248, 250, 246); // --panel, matches .canvas-shell background
+  ctx.background(PALETTE.panel); // --panel, matches .canvas-shell background
 
   // Centreline (y = 0)
   ctx.push();
@@ -300,7 +300,7 @@ function drawHistoryPanel(ctx, controller, panelWidthPx, panelHeightPx) {
   const plotH = panelHeightPx - pad.top - pad.bottom;
   const centerY = plotY + plotH / 2;
 
-  ctx.background(248, 250, 246);
+  ctx.background(PALETTE.panel);
 
   // Centreline
   ctx.push();

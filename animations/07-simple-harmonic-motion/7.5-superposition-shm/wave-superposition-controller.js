@@ -154,7 +154,7 @@ class SimulationController {
   }
 
   render(p) {
-    p.background(248, 250, 246);
+    p.background(PALETTE.panel);
     drawPulseScene(p, this);
   }
 

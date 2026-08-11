@@ -207,7 +207,7 @@ class Particle {
     noStroke();
     fill(bodyColor);
     circle(p.x, p.y, PARTICLE_BODY_DIAMETER);
-    stroke(255, 255, 255, 160);
+    stroke(PALETTE.white + 'a0'); // white ring at 160 alpha (particle outline)
     strokeWeight(2);
     noFill();
     circle(p.x, p.y, PARTICLE_BODY_DIAMETER - 4);
@@ -232,7 +232,7 @@ class AngleIndicator {
 
     push();
     drawingContext.setLineDash([4, 4]);
-    stroke(180);
+    stroke(PALETTE.path);
     strokeWeight(1.3);
     line(cx, cy, cx + orbit.radius, cy);
     drawingContext.setLineDash([]);

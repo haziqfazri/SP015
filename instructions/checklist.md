@@ -25,6 +25,8 @@
 ## UI consistency
 - [ ] Uses `shared/sim-style.css` unmodified; topic CSS only adds
       sim-specific rules, doesn't redeclare shared ones
+- [ ] Colors reference `PALETTE` from `shared/sim-utils.js` — no inline
+      hex, `rgb()`, or opaque-number literals in canvas code
 - [ ] Fonts, colors, spacing match the established palette (§4 of
       `coding.md`) — no new ad hoc hex colors or spacing values
 - [ ] Readouts show correct units and consistent decimal formatting

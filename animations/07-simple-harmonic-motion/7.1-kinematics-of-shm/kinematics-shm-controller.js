@@ -19,9 +19,9 @@ class SimulationController {
     const cnv = createCanvas(holder.clientWidth, holder.clientHeight);
     cnv.parent('canvas-holder');
 
-    this.displacementVectorArrow = new VectorArrow(color(255, 107, 53), 3);
-    this.velocityVectorArrow = new VectorArrow(color(191, 90, 0), 3);
-    this.accelVectorArrow = new VectorArrow(color(0, 0, 0), 3);
+    this.displacementVectorArrow = new VectorArrow(color(PALETTE.orange), 3);
+    this.velocityVectorArrow = new VectorArrow(color(PALETTE.accent), 3);
+    this.accelVectorArrow = new VectorArrow(color(PALETTE.ink), 3);
 
     pixelDensity(1);
     frameRate(60);
@@ -125,7 +125,7 @@ class SimulationController {
   }
 
   render() {
-    background(248, 250, 246); // --panel
+    background(PALETTE.panel); // --panel
 
     if (this.ui.system === 'spring') {
       drawSpringSystem(window, this.springOscillator, this.ui.physicsParams(), width, height, {

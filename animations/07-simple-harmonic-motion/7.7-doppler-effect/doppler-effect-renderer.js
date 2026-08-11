@@ -21,7 +21,7 @@ function pxPerMetre(plotW) {
 
 function drawMotionLine(p, plotX, plotW, centerY) {
   p.push();
-  p.stroke('#c9d2c7'); // --line
+  p.stroke(PALETTE.line); // --line
   p.strokeWeight(1);
   p.line(plotX, centerY, plotX + plotW, centerY);
   p.pop();
@@ -40,7 +40,7 @@ function drawWavefronts(p, controller, plotX, plotW, centerY) {
     if (radiusM <= 0 || radiusM > DISPLAY.wavefrontMaxRadius) return;
 
     const alpha = 1 - radiusM / DISPLAY.wavefrontMaxRadius;
-    p.stroke(53, 185, 173, alpha * 200); // --teal, fading
+    p.stroke(...PALETTE.tealRGB, alpha * 200); // --teal, fading
     p.strokeWeight(1.5);
     p.circle(xToPx(emitX, plotX, plotW), centerY, radiusM * scale * 2);
   });
@@ -58,7 +58,7 @@ function drawBodyMarker(p, x, plotX, plotW, centerY, colorVal, label) {
   p.pop();
 
   p.push();
-  p.fill('#102126'); // --ink
+  p.fill(PALETTE.ink); // --ink
   p.noStroke();
   p.textAlign(p.CENTER, p.BOTTOM);
   p.textSize(11);
@@ -77,7 +77,7 @@ function drawVelocityArrow(p, x, velocity, plotX, plotW, centerY) {
   const tipX = px + dir * len;
   const y = centerY + DISPLAY.bodyRadius + 14;
 
-  drawArrowCtx(p, px, y, tipX, y, '#ff6b35', 3); // --orange
+  drawArrowCtx(p, px, y, tipX, y, PALETTE.orange, 3); // --orange
 }
 
 // Approaching / Receding / Passing label, drawn near the moving body.
@@ -89,7 +89,7 @@ function drawStatusLabel(p, x, plotX, plotW, centerY, text) {
   const px = xToPx(x, plotX, plotW);
 
   p.push();
-  p.fill('#617075'); // --muted
+  p.fill(PALETTE.muted); // --muted
   p.noStroke();
   p.textAlign(p.CENTER, p.TOP);
   p.textSize(11);
@@ -109,7 +109,7 @@ function drawDopplerScene(p, controller) {
   const plotH = p.height - pad.top - pad.bottom;
   const centerY = plotY + plotH / 2;
 
-  p.background(248, 250, 246); // --panel
+  p.background(PALETTE.panel); // --panel
 
   drawMotionLine(p, plotX, plotW, centerY);
   drawWavefronts(p, controller, plotX, plotW, centerY);
@@ -118,8 +118,8 @@ function drawDopplerScene(p, controller) {
   const sourceX = doppler.sourcePositionAt(t);
   const observerX = doppler.observerPositionAt(t);
 
-  drawBodyMarker(p, sourceX, plotX, plotW, centerY, '#ff6b35', 'SOURCE');   // --orange
-  drawBodyMarker(p, observerX, plotX, plotW, centerY, '#35b9ad', 'OBSERVER'); // --teal
+  drawBodyMarker(p, sourceX, plotX, plotW, centerY, PALETTE.orange, 'SOURCE');   // --orange
+  drawBodyMarker(p, observerX, plotX, plotW, centerY, PALETTE.teal, 'OBSERVER'); // --teal
 
   const moverX = doppler.moverPositionAt(t);
   drawVelocityArrow(p, moverX, doppler.moverSpeed(), plotX, plotW, centerY);

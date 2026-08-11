@@ -38,18 +38,18 @@ class SimulationController {
     textSize(16);
 
     COLORS = {
-        bg: color(248, 250, 246),        // matches --panel
-        grid: color(201, 210, 199),      // matches --line
-        orbitPath: color(180, 190, 178),
-        orbitPathB: color(180, 190, 178), // distinguished by particle color, not path color
-        ball: color(255, 107, 53),       // --orange, Particle A
-        ballB: color(53, 185, 173),      // --teal, Particle B
-        vector: color(16, 33, 38),       // --ink
-        arc: color(255, 107, 53),        // --orange
-        ink: color(16, 33, 38),
-        velocity: color(53, 185, 173),   // --teal
-        accel: color(191, 90, 0),        // darker accent standing in for --acid (better contrast than raw acid on --panel)
-        force: color(16, 33, 38)
+        bg: color(PALETTE.panel),        // matches --panel
+        grid: color(PALETTE.line),      // matches --line
+        orbitPath: color(PALETTE.path),
+        orbitPathB: color(PALETTE.path), // distinguished by particle color, not path color
+        ball: color(PALETTE.orange),       // --orange, Particle A
+        ballB: color(PALETTE.teal),      // --teal, Particle B
+        vector: color(PALETTE.ink),       // --ink
+        arc: color(PALETTE.orange),        // --orange
+        ink: color(PALETTE.ink),
+        velocity: color(PALETTE.teal),   // --teal
+        accel: color(PALETTE.accent),        // darker accent standing in for --acid (better contrast than raw acid on --panel)
+        force: color(PALETTE.ink)
     };
 
     const cx = width / 2;

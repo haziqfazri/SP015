@@ -37,11 +37,11 @@ function drawScene(ctx, controller, width, height) {
   const plotH = height - pad.top - pad.bottom;
   const centerY = plotY + plotH / 2;
 
-  ctx.background(248, 250, 246); // --panel
+  ctx.background(PALETTE.panel); // --panel
 
   // Equilibrium / reference guide
   ctx.push();
-  ctx.stroke('#c9d2c7'); // --line
+  ctx.stroke(PALETTE.line); // --line
   ctx.strokeWeight(1);
   ctx.line(plotX, centerY, plotX + plotW, centerY);
   ctx.pop();
@@ -54,7 +54,7 @@ function drawScene(ctx, controller, width, height) {
 
   ctx.push();
   ctx.noStroke();
-  ctx.fill('#ff6b35'); // --orange
+  ctx.fill(PALETTE.orange); // --orange
   ctx.circle(px, py, 14);
   ctx.pop();
 }

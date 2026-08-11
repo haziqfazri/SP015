@@ -137,11 +137,21 @@ There is no hard line-count threshold and no requirement to use every role in
 **Fonts, colors, spacing**
 - Fonts: `DM Sans` (display/labels), `Space Mono` (mono/readouts/formulas)
   — loaded via Google Fonts, declared as `--display`/`--mono` CSS vars.
-- Palette (from `shared/sim-style.css` `:root`): `--ink #102126`,
-  `--paper #eff3ed`, `--panel #f8faf6`, `--line #c9d2c7`, `--acid #dff34b`,
-  `--orange #ff6b35`, `--teal #35b9ad`, `--muted #617075`. Orange is the
-  default "primary curve/accent" color; teal is the secondary/reference
-  color; never introduce a new hex color when one of these fits.
+- **Palette (single source of truth):** the CSS custom propreties in
+  `shared/sim-style.css` `:root` define the visual palette; every canvas
+  color must come from the JS mirror `PALETTE` in `shared/sim-utils.js`
+  — never an inline hex or raw `rgb()` literal. If a genuinely new
+  colour is unavoidable, add it to `PALETTE` with a rationale comment
+  and update the CSS side only if the colour is used in HTML/CSS as well.
+  `SIMCOLORS` (or `COLORS`/`DISPLAY`) in a topic file should be set
+  from `PALETTE` entries, not redefined.
+  `--ink #102126`, `--paper #eff3ed`, `--panel #f8faf6`,
+  `--line #c9d2c7`, `--acid #dff34b`, `--orange #ff6b35`,
+  `--teal #35b9ad`, `--muted #617075` plus two shared additions:
+  `--accent #bf5a00` (darker accent for velocity/accel arrows on light
+  background) and `--path #b4beb2` (neutral for orbit paths/dashed
+  guides — all mapped to `PALETTE.accent` / `PALETTE.path`). Never
+  introduce a new hex color when one of these fits.
 - Spacing follows the existing rhythm: `.control-row` margin-bottom `21px`,
   `.stage`/`.controls` padding `28px`, `.button-grid` gap `9px`. Match
   these rather than picking new values.

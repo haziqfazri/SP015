@@ -110,6 +110,7 @@ Call `ui.updateReadouts(...)` from the callback that actually changes the values
 
 `shared/sim-utils.js` provides (all ctx-explicit — pass `window` in global mode or a `p5.Graphics`/instance ref):
 
+- `PALETTE` — canonical JS color constants (hex + array forms) mirroring `shared/sim-style.css :root`. No inline hex/rgb literals in sim code.
 - `drawArrowCtx(ctx, x0, y0, x1, y1, colorVal, weight, maxHeadSize)` — arrow drawing
 - `normalizedArrowLength(magnitude, min, max, minLen, maxLen)` — scale vectors on screen
 - `VectorArrow` — arrows with optional labels at the midpoint
