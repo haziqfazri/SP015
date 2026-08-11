@@ -26,7 +26,7 @@ SP015/
     05-circular-motion/         <- Level 2 (sim + sketch)
     07-simple-harmonic-motion/
       7.1-kinematics-of-shm/    <- Level 3 (full split)
-      7.2-graphs-shm/           <- Level 1 compact (sim file), instance mode, 5 canvases
+      7.2-graphs-shm/           <- Level 3 (full split), instance mode, 5 canvases
       7.4-progressive-wave-shm/ <- Level 3, global + Graphics buffer
       7.5-superposition-shm/    <- Level 3, instance mode, 3+ canvases
       7.6-application-of-standing-waves/  <- Level 3

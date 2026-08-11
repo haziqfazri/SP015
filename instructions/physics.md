@@ -10,7 +10,7 @@
 - Readouts always show units in the formatted string, not just the label
   (e.g. `'+0.35 m'`, `'20 N/m'`, `'4.0 rad/s'`).
 - Mass defaults to an explicit assumed value when not a slider (e.g.
-  `assumedMass: 1.00` kg in `shm-graphs-analysis`), stated in a UI note so
+  `assumedMass: 1.00` kg in `7.2-graphs-shm`), stated in a UI note so
   students know it's fixed, not derived.
 
 ## 2. Coordinate system & vector conventions
