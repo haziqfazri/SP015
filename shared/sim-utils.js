@@ -243,7 +243,7 @@ class AudioTone {
 class PlaybackState {
   constructor({ buttonEl, playLabel = '▶ Play', pauseLabel = '⏸ Pause', onPlay, onPause }) {
     this.isPlaying = false;
-    this.buttonEL = buttonEl;
+    this.buttonEl = buttonEl;
     this.playLabel = playLabel;
     this.pauseLabel = pauseLabel;
     this.onPlay = onPlay || (() => {});
@@ -252,8 +252,8 @@ class PlaybackState {
   }
 
   _setLabel() {
-    if (this.buttonEL) {
-      this.buttonEL.textContent = this.isPlaying ? this.pauseLabel : this.playLabel;
+    if (this.buttonEl) {
+      this.buttonEl.textContent = this.isPlaying ? this.pauseLabel : this.playLabel;
     }
   }
 

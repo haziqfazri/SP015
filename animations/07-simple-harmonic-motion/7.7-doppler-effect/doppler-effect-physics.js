@@ -18,8 +18,8 @@
 // -------------------------------------------------------------------------
 // PHYSICS — fixed constants. wavefrontVisualSpeed/wavefrontPulseRate are a
 // disclosed visual simplification (see index.html's on-screen note): the
-// true speed of sound (340 m/s) is what actually drives f' and every
-// readout. At 340 m/s, wavefront rings would cross this sim's meter-scale
+// true speed of sound (343 m/s at 20°C) is what actually drives f' and every
+// readout. At 343 m/s, wavefront rings would cross this sim's meter-scale
 // domain in a fraction of a second — too fast to ever see more than one
 // ring on screen. wavefrontVisualSpeed is a slower, stylized expansion
 // rate used ONLY for drawing the rings; it never enters the Doppler
@@ -27,7 +27,7 @@
 // geometry never looks supersonic.
 // -------------------------------------------------------------------------
 const PHYSICS = {
-  waveSpeed: 340,             // m/s — real speed of sound; drives f' and all readouts
+  waveSpeed: 343,             // m/s — real speed of sound at 20°C; drives f' and all readouts
   wavefrontVisualSpeed: 150,  // m/s — stylized ring-expansion rate, display only (> moverSpeedMax)
   wavefrontPulseRate: 20,     // Hz — visual ring-emission rate, decoupled from sourceFrequency
   wavefrontLookbackTime: 0.4, // s — how far back in time wavefronts() considers emissions;

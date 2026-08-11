@@ -47,12 +47,13 @@ Start from [`templates/`](templates/README.md), which has the full build order a
 | Topic | Simulation | Status |
 |---|---|---|
 | 2.3 | Projectile Motion | ✅ Done |
-| 7.1 – 7.2 | Oscillation Laboratory / SHM Graphs Analysis | ✅ Done |
-| 7.4 | Properties of Waves | ✅ Done |
+| 7.1 | Kinematics of Simple Harmonic Motion | ✅ Done |
+| 7.2 | SHM Graphs Analysis | ✅ Done |
+| 7.4 | Progressive Waves | ✅ Done |
 | 7.5 | Superposition of Waves | ✅ Done — pulse superposition + interference |
 | 7.6 | Application of Standing Waves | ✅ Done |
 | 7.7 | Doppler Effect | ✅ Done |
-| Circular Motion | Uniform Circular Motion | ✅ Done |
+| 5 | Uniform Circular Motion | ✅ Done |
 | — | *(next SP015 topic)* | ⬜ Planned |
 
 Curriculum specs: [`Curriculum Specifications (CS) Physics SP015.pdf`](Curriculum%20Specifications%20(CS)%20Physics%20SP015.pdf), [`Curriculum Specifications (CS) Physics SP025.pdf`](Curriculum%20Specifications%20(CS)%20Physics%20SP025.pdf).

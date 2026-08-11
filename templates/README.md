@@ -51,9 +51,8 @@ and the decision rule for choosing between them.
 
 - Only sim-specific CSS goes in the topic `.css` file — everything generic
   is already in `shared/sim-style.css`.
-- If this sim needs vector arrows and isn't global mode, don't re-fork a
-  third arrow implementation — reuse `wave-renderer.js`'s `drawArrowCtx`
-  pattern or promote one to `shared/`.
+- If this sim needs vector arrows, use `drawArrowCtx` or `VectorArrow` from
+  `shared/sim-utils.js` instead of creating a local arrow implementation.
 - Script load order matters: `sim-utils.js` → physics → renderer →
   controller → ui-manager → sketch.
 

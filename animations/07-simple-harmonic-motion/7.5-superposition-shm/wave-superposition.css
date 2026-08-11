@@ -93,11 +93,6 @@
    ------------------------------------------------------------------------- */
 
 @media (max-width: 800px) {
-  .amp-step-group .system-option {
-    font-size: 11px;
-    padding: 6px 2px;
-  }
-
   .interference-panel {
     height: 120px;
     margin-bottom: 10px;

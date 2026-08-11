@@ -25,14 +25,6 @@
 
 /* -------------------------------------------------------------------------
    Responsive
-   Shared breakpoints already stack .sim-grid and shrink .canvas-shell. At
-   narrow widths, six harmonic-stepper buttons need a bit more breathing
-   room than the shared compact-switch default provides.
+   Shared breakpoints stack .sim-grid and shrink .canvas-shell. Stepper buttons
+   inherit responsive sizing from shared/sim-style.css .stepper-group.
    ------------------------------------------------------------------------- */
-
-@media (max-width: 800px) {
-  .harmonic-group .system-option {
-    font-size: 11px;
-    padding: 7px 2px;
-  }
-}
