@@ -1,6 +1,39 @@
-const VELOCITY_PX_PER_MS = 100;   // px per (m/s) — direct scale, no normalization
-const ACCEL_PX_PER_MS2 = 10;    // px per (m/s²) — direct scale, no normalization
-const FORCE_PX_PER_N = 6;     // px per newton — direct scale, no normalization
+/* =========================================================================
+   KINEMATICS-SHM-RENDERER.JS — Topic 7.1, SP015.
+   Free drawing functions only. No physics math beyond unit→pixel mapping,
+   no held state. Each takes an explicit p5 context (window in global
+   mode) plus already-computed state. Load after physics.js.
+   ========================================================================= */
+
+// -------------------------------------------------------------------------
+// DISPLAY — renderer-only visual scales. The two amplitude/length-anchored
+// entries read their maxima from LIMITS (physics.js) so the renderer's
+// pixels-per-metre stays coupled to the slider ranges by construction,
+// instead of a hand-synced comment.
+// -------------------------------------------------------------------------
+
+const DISPLAY = {
+  velocityPxPerMs: 100,  // px per (m/s) — direct scale, no normalization
+  accelPxPerMs2: 10,     // px per (m/s²) — direct scale, no normalization
+  forcePxPerN: 6,        // px per newton — direct scale, no normalization
+
+  // Reference-tab v/a arrow scaling — single source of truth.
+  // |v| = ωA ≤ (2π/0.5)·2 ≈ 25.1 m/s, |a| = ω²A ≤ (2π/0.5)²·2 ≈ 315.8 m/s².
+  // These are the FULL magnitudes — arrow length stays constant per slider
+  // setting; the SHM quantity is the arrow's vertical component (tip height).
+  // minLen/maxLen bound the pixel length so the arrow fits the circle column.
+  referenceVector: { vMagMax: 25.1, aMagMax: 315.8, minLen: 24, maxLen: 84 },
+
+  // Max of the amplitude slider (LIMITS.reference.amplitudeMax) — used to
+  // fix a pixels-per-metre scale so the three columns actually grow/shrink
+  // with A, instead of always normalizing to the same fixed size.
+  referenceMaxAmplitudeM: LIMITS.reference.amplitudeMax,
+
+  // Max of the length slider (LIMITS.pendulum.lengthMax) — used to fix a
+  // pixels-per-metre scale so the rod actually grows/shrinks with L,
+  // instead of L canceling out of the scale factor.
+  pendulumMaxLengthM: LIMITS.pendulum.lengthMax,
+};
 
 // =========================================================================
 // drawSinusoidColumn — scrolling y-vs-t trace for the Reference Circle tab.
@@ -71,12 +104,13 @@ function drawSinusoidColumn(p5ctx, phase, A, history, x0, y0, w, h, centerY, amp
 // position, matching the "always normalize to available space" convention
 // drawSinusoidColumn already uses.
 // =========================================================================
-function drawCircleColumn(p5ctx, phase, A, x0, y0, w, h, centerY, ampPx) {
+function drawCircleColumn(p5ctx, phase, A, omega, x0, y0, w, h, centerY, ampPx, vectorOptions = {}) {
   const cx = x0 + w / 2;
   const cy = centerY;
   const r = ampPx;
-  const px = cx + r * Math.cos(phase.theta);
-  const py = cy - r * Math.sin(phase.theta);
+  const theta = phase.theta;
+  const px = cx + r * Math.cos(theta);
+  const py = cy - r * Math.sin(theta);
 
   drawLabel(p5ctx, 'circular motion', x0 + 6, y0 + 2, { font: 'Space Mono', weight: 'BOLD', size: 12, align: ['LEFT', 'TOP'] });
 
@@ -99,13 +133,13 @@ function drawCircleColumn(p5ctx, phase, A, x0, y0, w, h, centerY, ampPx) {
   p5ctx.beginShape();
   const steps = 24;
   for (let i = 0; i <= steps; i++) {
-    const a = (phase.theta * i) / steps;
+    const a = (theta * i) / steps;
     p5ctx.vertex(cx + arcR * Math.cos(a), cy - arcR * Math.sin(a));
   }
   p5ctx.endShape();
   p5ctx.pop();
 
-  const labelAngle = phase.theta / 2;
+  const labelAngle = theta / 2;
   drawLabel(p5ctx, '\u03B8', cx + (arcR + 16) * Math.cos(labelAngle), cy - (arcR + 16) * Math.sin(labelAngle), {
     fill: PALETTE.orangeRGB, font: 'Space Mono', weight: 'BOLD', size: 13
   });
@@ -117,6 +151,38 @@ function drawCircleColumn(p5ctx, phase, A, x0, y0, w, h, centerY, ampPx) {
 
   drawDashedGuide(p5ctx, px, py, px, cy, p5ctx.color(PALETTE.teal), 1.5, [3, 3]);
 
+  // ---- velocity / acceleration vectors on the reference circle ----
+  // Arrow length maps the FULL magnitude (ωA / ω²A), constant per slider
+  // setting. The SHM quantity is the arrow's vertical component — the
+  // tip's y-offset from the orbit point. SP015 7.1(c.i)/(c.ii).
+
+  let vTipY = null, aTipY = null;
+  const { showVelocity, showAcceleration, velocityArrow, accelArrow } = vectorOptions;
+
+  if (showVelocity) {
+    const vMag = omega * A;
+    const lenV = normalizedArrowLength(vMag, 0, DISPLAY.referenceVector.vMagMax, DISPLAY.referenceVector.minLen, DISPLAY.referenceVector.maxLen);
+    const tipVx = px - lenV * Math.sin(theta);
+    vTipY = py - lenV * Math.cos(theta);
+
+    velocityArrow.draw(p5ctx, px, py, tipVx, vTipY, 'v', true);
+    if (Math.abs(lenV * Math.cos(theta)) > 1e-6) {
+      drawDashedGuide(p5ctx, tipVx, vTipY, px, vTipY, p5ctx.color(PALETTE.teal + 'a0'), 1.5, [3, 3]);
+    }
+  }
+
+  if (showAcceleration) {
+    const aMag = omega * omega * A;
+    const lenA = normalizedArrowLength(aMag, 0, DISPLAY.referenceVector.aMagMax, DISPLAY.referenceVector.minLen, DISPLAY.referenceVector.maxLen);
+    const tipAx = px - lenA * Math.cos(theta);
+    aTipY = py + lenA * Math.sin(theta);
+
+    accelArrow.draw(p5ctx, px, py, tipAx, aTipY, 'a', true);
+    if (Math.abs(lenA * Math.sin(theta)) > 1e-6) {
+      drawDashedGuide(p5ctx, tipAx, aTipY, px, aTipY, p5ctx.color(PALETTE.teal + 'a0'), 1.5, [3, 3]);
+    }
+  }
+
   p5ctx.push();
   p5ctx.noStroke(); p5ctx.fill(PALETTE.ink);
   p5ctx.circle(cx, cy, 7);
@@ -127,7 +193,7 @@ function drawCircleColumn(p5ctx, phase, A, x0, y0, w, h, centerY, ampPx) {
   p5ctx.circle(px, py, 14);
   p5ctx.pop();
 
-  return { cx, cy, px, py, r };
+  return { cx, cy, px, py, r, vTipY, aTipY };
 }
 
 // =========================================================================
@@ -175,37 +241,49 @@ function drawVerticalSpringColumn(p5ctx, phase, A, x0, y0, w, h, centerY, ampPx)
   return { cx, massY };
 }
 
-// The amplitude slider's max value (matches ampControl's max in
-// oscillation.html) — used to fix a pixels-per-metre scale so the three
-// columns actually grow/shrink with A, instead of always normalizing to
-// the same fixed size regardless of amplitude.
-const REFERENCE_MAX_AMPLITUDE = 2;
-
 // =========================================================================
 // drawReferenceScene — combines the three columns left to right (vertical
 // spring, circle, sinusoid), sharing one centerY/ampPx scale so a dashed
 // line drawn at the "current" height passes through all three at once.
 // =========================================================================
-function drawReferenceScene(p5ctx, phase, A, history, width, height) {
+function drawReferenceScene(p5ctx, phase, A, omega, history, width, height, vectorOptions = {}) {
   const colW = width / 3;
   const marginTop = 34, marginBottom = 34;
   const usableH = height - marginTop - marginBottom;
 
   let maxAmpPx = (usableH / 2) * 0.72;
   maxAmpPx = Math.min(maxAmpPx, colW / 2 - 40); // circle needs horizontal room too
-  const pxPerUnitAmplitude = maxAmpPx / REFERENCE_MAX_AMPLITUDE;
+  const pxPerUnitAmplitude = maxAmpPx / DISPLAY.referenceMaxAmplitudeM; // now scales live with the slider
   const ampPx = A * pxPerUnitAmplitude; // now scales live with the slider
   const centerY = marginTop + usableH / 2;
 
   const spring = drawVerticalSpringColumn(p5ctx, phase, A, 0, 0, colW, height, centerY, ampPx);
-  const circle = drawCircleColumn(p5ctx, phase, A, colW, 0, colW, height, centerY, ampPx);
+  const circle = drawCircleColumn(p5ctx, phase, A, omega, colW, 0, colW, height, centerY, ampPx, vectorOptions);
   const sine = drawSinusoidColumn(p5ctx, phase, A, history, colW * 2, 0, colW, height, centerY, ampPx);
 
   const lineColor = p5ctx.color(PALETTE.teal + 'a0'); // teal at 160 alpha — cross-column guide
+
+  // Position cross-column guides — existing.
   drawDashedGuide(p5ctx, spring.cx, spring.massY, colW, spring.massY, lineColor, 1.5, [3, 3]);
   drawDashedGuide(p5ctx, colW, circle.py, circle.px, circle.py, lineColor, 1.5, [3, 3]);
   drawDashedGuide(p5ctx, circle.px, circle.py, colW * 2, circle.py, lineColor, 1.5, [3, 3]);
   drawDashedGuide(p5ctx, colW * 2, sine.dotY, sine.dotX, sine.dotY, lineColor, 1.5, [3, 3]);
+
+  // Velocity / acceleration arrows at the spring-mass, and cross-column
+  // guides connecting them to the circle's projected tip heights.
+  // Colours match the spring-tab convention: v = accent, a = ink.
+
+  if (circle.vTipY !== null && Math.abs(circle.vTipY - spring.massY) > 1e-3) {
+    drawArrowCtx(p5ctx, spring.cx, spring.massY, spring.cx, circle.vTipY, p5ctx.color(PALETTE.accent), 3, 9);
+    const velLine = p5ctx.color(PALETTE.accent + '40'); // accent at ~25% alpha
+    drawDashedGuide(p5ctx, spring.cx, circle.vTipY, circle.px, circle.vTipY, velLine, 1, [3, 3]);
+  }
+
+  if (circle.aTipY !== null && Math.abs(circle.aTipY - spring.massY) > 1e-3) {
+    drawArrowCtx(p5ctx, spring.cx, spring.massY, spring.cx, circle.aTipY, p5ctx.color(PALETTE.ink), 2.5, 9);
+    const accelLine = p5ctx.color(PALETTE.ink + '30'); // ink at ~19% alpha
+    drawDashedGuide(p5ctx, spring.cx, circle.aTipY, circle.px, circle.aTipY, accelLine, 1, [3, 3]);
+  }
 }
 
 // =========================================================================
@@ -257,7 +335,7 @@ function drawSpringCoilVertical(p5ctx, x, y1, y2) {
 }
 
 function drawSpringSystem(p5ctx, oscillator, params, width, height, vectorOptions = {}) {
-  const { showDisplacement, showVelocity, showAccel, showForce, displacementArrow, velocityArrow, accelArrow, forceArrow } = vectorOptions;
+  const { showDisplacement, showVelocity, showAccel, showForce, displacementArrow, velocityArrow, accelArrow, forceArrow, acceleration = 0, force = 0 } = vectorOptions;
   const floorY = height * 0.7;
   const equilibrium = width * 0.59;
   const massSize = Math.min(70, 44 + params.m * 7);
@@ -280,14 +358,15 @@ function drawSpringSystem(p5ctx, oscillator, params, width, height, vectorOption
   // Displacement/velocity/acceleration vectors — all anchored at x=equilibrium,
   // stacked at different y-offsets from the mass, each with its own endpoint
   // length. Config-driven since the three are structurally identical.
-  const vectorA = oscillator.acceleration(params); // SP015 7.1: a = -kx/m, single source of truth
+  // acceleration/force are pre-computed by the controller (renderer does
+  // only unit→pixel mapping here).
   const forceEndX = showForce
-    ? equilibrium + oscillator.restoringForce(params) * FORCE_PX_PER_N
+    ? equilibrium + force * DISPLAY.forcePxPerN
     : equilibrium;
   const vectors = [
     { show: showDisplacement, arrow: displacementArrow, y: floorY + 61, endX: massX, label: 'x' },
-    { show: showVelocity, arrow: velocityArrow, y: floorY - 40, endX: equilibrium + oscillator.v * VELOCITY_PX_PER_MS, label: 'v' },
-    { show: showAccel, arrow: accelArrow, y: floorY - 70, endX: equilibrium + vectorA * ACCEL_PX_PER_MS2, label: 'a' },
+    { show: showVelocity, arrow: velocityArrow, y: floorY - 40, endX: equilibrium + oscillator.v * DISPLAY.velocityPxPerMs, label: 'v' },
+    { show: showAccel, arrow: accelArrow, y: floorY - 70, endX: equilibrium + acceleration * DISPLAY.accelPxPerMs2, label: 'a' },
     { show: showForce, arrow: forceArrow, y: floorY - 100, endX: forceEndX, label: 'F' },
   ];
   vectors.forEach(({ show, arrow, y, endX, label }) => {
@@ -334,16 +413,11 @@ function drawSpringSystem(p5ctx, oscillator, params, width, height, vectorOption
   drawLabel(p5ctx, 'equilibrium', equilibrium, 24, { fill: PALETTE.tealRGB, size: 11, align: ['CENTER', 'BASELINE'] });
 }
 
-// The length slider's max value (matches configureControlRanges() in
-// UIManager) — used to fix a pixels-per-metre scale so the rod actually
-// grows/shrinks with L, instead of L canceling out of the scale factor.
-const PENDULUM_MAX_LENGTH_M = 4;
-
 function drawPendulumSystem(p5ctx, oscillator, params, width, height) {
   const pivotX = width / 2, pivotY = 46;
   const pxPerMetre = Math.min(
-    (height * 0.48) / PENDULUM_MAX_LENGTH_M,
-    (width * 0.29) / PENDULUM_MAX_LENGTH_M
+    (height * 0.48) / DISPLAY.pendulumMaxLengthM,
+    (width * 0.29) / DISPLAY.pendulumMaxLengthM
   );
   const rodLength = params.L * pxPerMetre;
   const bobX = pivotX + rodLength * Math.sin(oscillator.x);

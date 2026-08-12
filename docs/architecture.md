@@ -398,6 +398,13 @@ Duplication observed that should be reconciled next time it's touched:
   (7.6's `drawExtremaMarkers`) are not yet a shared helper — only one sim
   uses this pattern so far. Revisit if a future sim (e.g. another
   standing-wave-adjacent topic) needs the same marker+label behavior.
+- **`SignalHistory` cutoff-straddling interpolation** (7.1's rolling
+  `{t, y}` window for the sinusoid trace — keeps the single sample
+  straddling the cutoff so the trace's leading edge never gaps) is a
+  single-consumer local pattern. The repo's shared rolling-buffer guidance
+  (cap + trim from front) covers the general case; the interpolation
+  refinement is subtle enough that it should stay in 7.1 until a second sim
+  needs the same windowed trace behavior.
 
 ## 7. Future expansion
  

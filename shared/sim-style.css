@@ -3,8 +3,8 @@
    simulations. Link this BEFORE your topic-specific stylesheet so topic
    CSS can override/extend these rules, never duplicate them.
 
-   Extracted from circular-motion (style.css) and oscillation
-   (oscillation.css) after those two sims turned out to share ~90% of
+   Extracted from circular-motion (style.css) and 7.1 kinematics-of-shm
+   (kinematics-shm.css) after those two sims turned out to share ~90% of
    their CSS verbatim.
    ========================================================================= */
 

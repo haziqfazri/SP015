@@ -12,13 +12,8 @@ class UIManager {
     this.showForceVector = false;
     this.playbackState = null;
 
-    // Assigned by SimulationController after construction.
-    this.onSystemChange = null;   // (system) => {}
-    this.onParamsChange = null;   // () => {}  (slider moved; caller should reset)
-    this.onPlayToggle = null;     // (isPlaying) => {}
-    this.onReset = null;          // () => {}
-    this.onStep = null;           // (dt) => {}
-    this.onDisplayChange = null;
+    // Filled in by SimulationController via Object.assign (coding.md §2).
+    this.callbacks = {};
 
     this._lastReadout = {};
     this._cacheEls();
@@ -143,30 +138,48 @@ class UIManager {
       this.els.springButton.classList.toggle('is-active', system === 'spring');
       this.els.pendulumButton.classList.toggle('is-active', system === 'pendulum');
       this.els.referenceButton.classList.toggle('is-active', system === 'reference');
-      this.els.vectorToggleGroup.classList.toggle('hidden', system !== 'spring');
       this.els.springButton.setAttribute('aria-pressed', String(system === 'spring'));
       this.els.pendulumButton.setAttribute('aria-pressed', String(system === 'pendulum'));
       this.els.referenceButton.setAttribute('aria-pressed', String(system === 'reference'));
 
       const isReference = system === 'reference';
+      const isPendulum = system === 'pendulum';
       this.els.simGrid.classList.toggle('stacked-layout', isReference);
       this.els.springPendulumControls.classList.toggle('hidden', isReference);
       this.els.referenceControls.classList.toggle('hidden', !isReference);
-      this.els.readoutsPanel.classList.toggle('hidden', isReference);
+
+      // Vector toggle group: show on spring & reference, hide on pendulum.
+      this.els.vectorToggleGroup.classList.toggle('hidden', isPendulum);
+      // On the reference tab, position is always drawn and force is
+      // undefined — hide those two checkboxes.
+      this.els.displacementVectorToggle.parentElement.classList.toggle('hidden', isReference);
+      this.els.forceVectorToggle.parentElement.classList.toggle('hidden', isReference);
 
       if (isReference) {
+        this.els.readoutsPanel.classList.toggle('hidden', false);
+        this.els.forceReadout.classList.toggle('hidden', true);
+        this.els.positionLabel.textContent = 'Displacement y';
+        this.els.velocityLabel.textContent = 'Velocity';
+        this.els.accelerationLabel.textContent = 'Acceleration';
+        this.els.unitHint.textContent = 'y(t) / metres\u00A0\u00A0|\u00A0\u00A0v(t) / m\u00B7s\u207B\u00B9\u00A0\u00A0|\u00A0\u00A0a(t) / m\u00B7s\u207B\u00B2';
+
         this.els.springTheory.style.display = 'none';
         this.els.pendulumTheory.style.display = 'none';
-        this.els.periodTheoryContent.style.display = 'none'; // footer bar itself stays, just emptied
-        this.els.canvasLabel.style.display = 'none'; // canvas draws its own column titles now
+        this.els.periodTheoryContent.style.display = 'none';
+        this.els.canvasLabel.style.display = 'none';
       } else {
+        // Restore standard layout labels (spring/pendulum).
+        this.els.readoutsPanel.classList.toggle('hidden', false);
         this.els.periodTheoryContent.style.display = 'block';
         this.els.canvasLabel.style.display = 'block';
         this.configureControlRanges();
         this.updateLabels();
+        // Unhide the checkboxes that reference mode hides.
+        this.els.displacementVectorToggle.parentElement.classList.toggle('hidden', false);
+        this.els.forceVectorToggle.parentElement.classList.toggle('hidden', false);
       }
 
-      if (this.onSystemChange) this.onSystemChange(system);
+      if (this.callbacks.onSystemChange) this.callbacks.onSystemChange(system);
     };
 
     this.els.springButton.addEventListener('click', () => setSystem('spring'));
@@ -179,7 +192,7 @@ class UIManager {
     controls.forEach((control) => {
       control.addEventListener('input', () => {
         this.updateReferenceControlOutputs();
-        if (this.onParamsChange) this.onParamsChange();
+        if (this.callbacks.onParamsChange) this.callbacks.onParamsChange();
       });
     });
   }
@@ -194,19 +207,19 @@ class UIManager {
   _bindVectorToggles() {
     this.els.displacementVectorToggle.addEventListener('change', () => {
       this.showDisplacementVector = this.els.displacementVectorToggle.checked;
-      if (this.onDisplayChange) this.onDisplayChange();
+      if (this.callbacks.onDisplayChange) this.callbacks.onDisplayChange();
     });
     this.els.velocityVectorToggle.addEventListener('change', () => {
       this.showVelocityVector = this.els.velocityVectorToggle.checked;
-      if (this.onDisplayChange) this.onDisplayChange();
+      if (this.callbacks.onDisplayChange) this.callbacks.onDisplayChange();
     });
     this.els.accelerationVectorToggle.addEventListener('change', () => {
       this.showAccelerationVector = this.els.accelerationVectorToggle.checked;
-      if (this.onDisplayChange) this.onDisplayChange();
+      if (this.callbacks.onDisplayChange) this.callbacks.onDisplayChange();
     });
     this.els.forceVectorToggle.addEventListener('change', () => {
       this.showForceVector = this.els.forceVectorToggle.checked;
-      if (this.onDisplayChange) this.onDisplayChange();
+      if (this.callbacks.onDisplayChange) this.callbacks.onDisplayChange();
     });
   }
 
@@ -218,7 +231,7 @@ class UIManager {
     ];
     controls.forEach((control) => {
       control.addEventListener('input', () => {
-        if (this.onParamsChange) this.onParamsChange();
+        if (this.callbacks.onParamsChange) this.callbacks.onParamsChange();
       });
     });
   }
@@ -230,11 +243,11 @@ class UIManager {
       pauseLabel: '⏸ Pause',
       onPlay: () => {
         this.isPlaying = true;
-        if (this.onPlayToggle) this.onPlayToggle(true);
+        if (this.callbacks.onPlayToggle) this.callbacks.onPlayToggle(true);
       },
       onPause: () => {
         this.isPlaying = false;
-        if (this.onPlayToggle) this.onPlayToggle(false);
+        if (this.callbacks.onPlayToggle) this.callbacks.onPlayToggle(false);
       }
     });
 
@@ -244,43 +257,34 @@ class UIManager {
 
     this.els.resetButton.addEventListener('click', () => {
       this.playbackState.pause();
-      if (this.onReset) this.onReset();
+      if (this.callbacks.onReset) this.callbacks.onReset();
     });
 
     this.els.stepButton.addEventListener('click', () => {
       this.playbackState.pause();
-      if (this.onStep) this.onStep(0.05);
+      if (this.callbacks.onStep) this.callbacks.onStep(LIMITS.ui.stepDt);
     });
   }
 
-  setPlayLabel(isPlaying) {
-    this.els.playPauseLabel.textContent = isPlaying ? '⏸ Pause' : '▶ Play';
-  }
-
-  // Swaps slider min/max/step/default when the system toggles, matching
-  // the vanilla version's configureControlRanges().
+  // Swaps slider min/max/step/default when the system toggles, reading the
+  // ranges from the LIMITS constant block (single source of truth).
   configureControlRanges() {
-    if (this.system === 'spring') {
-      this.els.parameterControl.min = '2';
-      this.els.parameterControl.max = '80';
-      this.els.parameterControl.step = '1';
-      this.els.parameterControl.value = '20';
+    const isSpring = this.system === 'spring';
+    const L = isSpring ? LIMITS.spring : LIMITS.pendulum;
 
-      this.els.displacementControl.min = '-0.7';
-      this.els.displacementControl.max = '0.7';
-      this.els.displacementControl.step = '0.05';
-      this.els.displacementControl.value = '0.35';
-    } else {
-      this.els.parameterControl.min = '0.3';
-      this.els.parameterControl.max = '4';
-      this.els.parameterControl.step = '0.1';
-      this.els.parameterControl.value = '3.5';
+    const param = isSpring
+      ? { min: L.kMin, max: L.kMax, step: L.kStep, value: L.kDefault }
+      : { min: L.lengthMin, max: L.lengthMax, step: L.lengthStep, value: L.lengthDefault };
 
-      this.els.displacementControl.min = '-0.9';
-      this.els.displacementControl.max = '0.9';
-      this.els.displacementControl.step = '0.05';
-      this.els.displacementControl.value = '0.45';
-    }
+    this.els.parameterControl.min = String(param.min);
+    this.els.parameterControl.max = String(param.max);
+    this.els.parameterControl.step = String(param.step);
+    this.els.parameterControl.value = String(param.value);
+
+    this.els.displacementControl.min = String(L.initialMin);
+    this.els.displacementControl.max = String(L.initialMax);
+    this.els.displacementControl.step = String(L.initialStep);
+    this.els.displacementControl.value = String(L.initialDefault);
   }
 
   // Swaps static label/copy text between the two systems.
@@ -359,5 +363,18 @@ class UIManager {
       updateReadout(store, 'velocity', this.els.velocityValue, signedFixed(oscillator.v * 180 / Math.PI, 1) + '°/s');
       updateReadout(store, 'acceleration', this.els.accelerationValue, signedFixed(oscillator.acceleration(physics) * 180 / Math.PI, 1) + '°/s\u00b2');
     }
+  }
+
+  // Reference-tab live readouts — t-dependent, called per-frame by
+  // SimulationController._stepReference (the legitimate per-frame case
+  // per architecture.md §5) and once on reset.
+  updateReferenceReadout(phase, { A, omega }) {
+    const store = this._lastReadout;
+    const time = phase.t.toFixed(2) + ' s';
+
+    updateReadout(store, 'time', this.els.timeValue, time);
+    updateReadout(store, 'position', this.els.positionValue, signedFixed(phase.y(A), 3) + ' m');
+    updateReadout(store, 'velocity', this.els.velocityValue, signedFixed(phase.vY(A, omega), 3) + ' m/s');
+    updateReadout(store, 'acceleration', this.els.accelerationValue, signedFixed(phase.aY(A, omega), 3) + ' m/s\u00b2');
   }
 }

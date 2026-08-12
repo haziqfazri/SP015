@@ -1,3 +1,14 @@
+/* =========================================================================
+   KINEMATICS-SHM-CONTROLLER.JS — Topic 7.1, SP015.
+   SimulationController only: owns the physics objects, mode state, and
+   playback state. No physics derivations, no drawing code. p5 GLOBAL
+   mode — setup()/draw()/windowResized() live in sketch.js and call into
+   this controller's update()/render(), rather than this file owning p5
+   lifecycle calls itself (contrast with 7.2's/7.5's instance-mode
+   controllers). Load after physics.js and renderer.js, before ui.js and
+   sketch.js.
+   ========================================================================= */
+
 class SimulationController {
   constructor() {
     // Both oscillators are kept alive at all times (not recreated on
@@ -16,48 +27,44 @@ class SimulationController {
   }
 
   init() {
-    const holder = document.getElementById('canvas-holder');
-    const cnv = createCanvas(holder.clientWidth, holder.clientHeight);
-    cnv.parent('canvas-holder');
-
     this.displacementVectorArrow = new VectorArrow(color(PALETTE.orange), 3);
     this.velocityVectorArrow = new VectorArrow(color(PALETTE.accent), 3);
     this.accelVectorArrow = new VectorArrow(color(PALETTE.ink), 3);
     this.forceVectorArrow = new VectorArrow(color(PALETTE.ink), 3);
 
-    pixelDensity(1);
-    frameRate(60);
-
-    // Wire UIManager's hooks back into the controller. UIManager never
+    // Wire UIManager's callbacks back into the controller. UIManager never
     // touches the oscillators or the p5 canvas directly — it only reports
     // that something changed, and the controller decides what to do.
-    this.ui.onSystemChange = () => { 
-      this.resize();
-      this._resetActive(); 
-      this._requestRedrawIfPaused(); 
-    };
-    this.ui.onParamsChange = () => { this._resetActive(); this._requestRedrawIfPaused(); };
-    this.ui.onReset = () => { this._resetActive(); this._requestRedrawIfPaused(); };
-    this.ui.onDisplayChange = () => this._requestRedrawIfPaused();
-    this.ui.onStep = (dt) => { this._stepActive(dt); this._requestRedrawIfPaused(); };
-    this.ui.onPlayToggle = (isPlaying) => {
-      if (isPlaying) {
-        loop();
-      } else {
-        noLoop();
-        redraw(); // catch the final frame so the canvas doesn't freeze mid-frame
-      }
-    };
+    Object.assign(this.ui.callbacks, {
+      onSystemChange: () => {
+        this.resize();
+        this._resetActive();
+        this._requestRedrawIfPaused();
+      },
+      onParamsChange: () => { this._resetActive(); this._requestRedrawIfPaused(); },
+      onReset: () => { this._resetActive(); this._requestRedrawIfPaused(); },
+      onDisplayChange: () => this._requestRedrawIfPaused(),
+      onStep: (dt) => { this._stepActive(dt); this._requestRedrawIfPaused(); },
+      onPlayToggle: (isPlaying) => {
+        if (isPlaying) {
+          loop();
+        } else {
+          noLoop();
+          redraw(); // catch the final frame so the canvas doesn't freeze mid-frame
+        }
+      },
+    });
 
     this.ui.configureControlRanges();
     this.ui.updateLabels();
     this.ui.updateReferenceControlOutputs();
     this._resetActive();
-
-    noLoop();  // sim starts paused; draw() only runs on explicit redraw() until Play is pressed
-    redraw();  // render one initial frame so the canvas isn't blank on load
   }
 
+  // Single resize path shared by windowResized() (sketch.js) and the
+  // system toggle — the Reference tab swaps the canvas-shell to a taller
+  // stacked layout, so a mode switch can change canvas size (unlike 7.6,
+  // whose modes all share one canvas height).
   resize() {
     const holder = document.getElementById('canvas-holder');
     resizeCanvas(holder.clientWidth, holder.clientHeight);
@@ -88,6 +95,7 @@ class SimulationController {
     this.signalHistory.clear();
     this._syncReferenceHistoryWindow();
     this.signalHistory.push(this.referencePhase.t, this.referencePhase.y(this.ui.referenceParams().A)); // seed t=0 at equilibrium so the trace never starts mid-jump
+    this.ui.updateReferenceReadout(this.referencePhase, this.ui.referenceParams());
   }
 
   _syncReferenceHistoryWindow() {
@@ -112,6 +120,7 @@ class SimulationController {
     this.referencePhase.advance(dt, omega);
     const y = this.referencePhase.y(A);
     this.signalHistory.push(this.referencePhase.t, y);
+    this.ui.updateReferenceReadout(this.referencePhase, { A, omega });
   }
 
   _requestRedrawIfPaused() {
@@ -119,10 +128,11 @@ class SimulationController {
     if (!isPlaying) redraw();
   }
 
-  update() {
+  // dt is clamped by the caller (sketch.js) before reaching here —
+  // coding.md §3's "dt always clamped" convention.
+  update(dt) {
     const isPlaying = this.ui.playbackState?.isPlaying ?? this.ui.isPlaying;
     if (!isPlaying) return;
-    const dt = Math.min(deltaTime / 1000, 0.03); // clamp so tab-switch stalls don't blow up the integration
     this._stepActive(dt);
   }
 
@@ -130,7 +140,8 @@ class SimulationController {
     background(PALETTE.panel); // --panel
 
     if (this.ui.system === 'spring') {
-      drawSpringSystem(window, this.springOscillator, this.ui.physicsParams(), width, height, {
+      const physics = this.ui.physicsParams();
+      drawSpringSystem(window, this.springOscillator, physics, width, height, {
         showDisplacement: this.ui.showDisplacementVector,
         showVelocity: this.ui.showVelocityVector,
         showAccel: this.ui.showAccelerationVector,
@@ -139,12 +150,20 @@ class SimulationController {
         velocityArrow: this.velocityVectorArrow,
         accelArrow: this.accelVectorArrow,
         forceArrow: this.forceVectorArrow,
+        // Renderer is unit→pixel only — derive the physical quantities here.
+        acceleration: this.springOscillator.acceleration(physics),
+        force: this.springOscillator.restoringForce(physics),
       });
     } else if (this.ui.system === 'pendulum') {
       drawPendulumSystem(window, this.pendulumOscillator, this.ui.physicsParams(), width, height);
     } else {
-      const { A } = this.ui.referenceParams();
-      drawReferenceScene(window, this.referencePhase, A, this.signalHistory, width, height);
+      const { A, omega } = this.ui.referenceParams();
+      drawReferenceScene(window, this.referencePhase, A, omega, this.signalHistory, width, height, {
+        showVelocity: this.ui.showVelocityVector,
+        showAcceleration: this.ui.showAccelerationVector,
+        velocityArrow: this.velocityVectorArrow,
+        accelArrow: this.accelVectorArrow,
+      });
     }
   }
 }

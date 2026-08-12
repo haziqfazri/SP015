@@ -1,5 +1,44 @@
-const G = 9.81;            // gravitational acceleration, m/s^2
-const TRAIL_MAX = 42;       // matches the vanilla version's trail length cap
+/* =========================================================================
+   KINEMATICS-SHM-PHYSICS.JS — Topic 7.1, SP015.
+   Constants and physics classes only. No DOM, no canvas. Load first after
+   shared/sim-utils.js.
+   ========================================================================= */
+
+// -------------------------------------------------------------------------
+// PHYSICS — fixed physical constants.
+// -------------------------------------------------------------------------
+
+const PHYSICS = {
+  g: 9.81,        // gravitational acceleration, m/s^2
+  trailMax: 42,   // trail length cap (matches the vanilla version's cap)
+};
+
+// -------------------------------------------------------------------------
+// LIMITS — single source of truth for slider ranges/defaults. index.html's
+// min/max/value attributes are cosmetic fallbacks only (coding.md §3);
+// UIManager.configureControlRanges() sets them from here.
+// -------------------------------------------------------------------------
+
+const LIMITS = {
+  spring: {
+    massMin: 0.2, massMax: 5, massDefault: 1, massStep: 0.1,       // kg
+    kMin: 2, kMax: 80, kDefault: 20, kStep: 1,                       // N/m
+    initialMin: -0.7, initialMax: 0.7, initialDefault: 0.35, initialStep: 0.05, // m
+  },
+  pendulum: {
+    massMin: 0.2, massMax: 5, massDefault: 1, massStep: 0.1,       // kg
+    lengthMin: 0.3, lengthMax: 4, lengthDefault: 3.5, lengthStep: 0.1, // m
+    initialMin: -0.9, initialMax: 0.9, initialDefault: 0.45, initialStep: 0.05, // rad
+  },
+  reference: {
+    amplitudeMin: 1, amplitudeMax: 2, amplitudeDefault: 1.5, amplitudeStep: 0.05, // m
+    periodMin: 0.5, periodMax: 6, periodDefault: 2, periodStep: 0.05, // s
+  },
+  ui: {
+    stepDt: 0.05,  // s advanced by a single "Step" button press
+    maxDt: 0.03,   // s — clamp for update() so tab-switch stalls don't blow up integration
+  },
+};
 
 // =========================================================================
 // Oscillator — abstract base. Holds shared state; physics is supplied by
@@ -46,7 +85,7 @@ class Oscillator {
 
   pushTrail() {
     this.trail.push(this.x);
-    if (this.trail.length > TRAIL_MAX) this.trail.shift();
+    if (this.trail.length > PHYSICS.trailMax) this.trail.shift();
   }
 }
 
@@ -79,7 +118,7 @@ class SpringOscillator extends Oscillator {
 // =========================================================================
 class PendulumOscillator extends Oscillator {
   integrate(dt, { m, L }) {
-    const a = -(G / L) * Math.sin(this.x);
+    const a = -(PHYSICS.g / L) * Math.sin(this.x);
     this.v += a * dt;
     this.x += this.v * dt;
     this.t += dt;
@@ -87,11 +126,11 @@ class PendulumOscillator extends Oscillator {
   }
 
   acceleration({ L }) {
-    return -(G / L) * Math.sin(this.x);
+    return -(PHYSICS.g / L) * Math.sin(this.x);
   }
 
   period({ L }) {
-    return 2 * Math.PI * Math.sqrt(L / G);
+    return 2 * Math.PI * Math.sqrt(L / PHYSICS.g);
   }
 }
 
@@ -124,6 +163,19 @@ class ReferencePhase {
   // θ=0 starts at equilibrium moving upward toward the first peak.
   y(A) {
     return A * Math.sin(this.theta);
+  }
+
+  // Instantaneous SHM velocity — vertical component of the tangential
+  // velocity vector.  SP015 7.1(c.i): v = ωA cos ωt.
+  vY(A, omega) {
+    return omega * A * Math.cos(this.theta);
+  }
+
+  // Instantaneous SHM acceleration — vertical component of the
+  // radial-inward centripetal vector.  SP015 7.1(c.ii): a = −ω²y,
+  // equivalent to −ω²A sin ωt.
+  aY(A, omega) {
+    return -omega * omega * A * Math.sin(this.theta);
   }
 }
 

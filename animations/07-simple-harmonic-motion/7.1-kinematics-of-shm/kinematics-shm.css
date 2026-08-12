@@ -1,10 +1,11 @@
 /* =========================================================================
-   oscillation.css — oscillation-topic-specific overrides.
+   KINEMATICS-SHM.CSS — Topic 7.1 (Kinematics of SHM) topic-specific
+   overrides.
 
-   Everything this sim shared with circular-motion (readouts, controls,
-   buttons, theory strip, responsive rules, etc.) now lives in
+   Everything this sim shares with the other sims (readouts, controls,
+   buttons, theory strip, responsive rules, etc.) lives in
    ../shared/sim-style.css, which is linked before this file in
-   oscillation.html.
+   index.html.
 
    What's left here is specific to this sim's three-tab layout (Spring–
    Mass / Pendulum / Reference Circle), where the "Reference Circle" tab

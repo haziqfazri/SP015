@@ -9,7 +9,7 @@
 
 // -------------------------------------------------------------------------
 // VARIANT A — GLOBAL MODE (single shared canvas; matches
-// simple-harmonic-motion/oscillation-sketch.js and
+// simple-harmonic-motion/kinematics-shm-sketch.js and
 // circular-motion/circular-motion-sketch.js). Use this unless the sim
 // needs more than one canvas.
 // -------------------------------------------------------------------------
