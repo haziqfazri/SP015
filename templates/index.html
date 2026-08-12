@@ -12,6 +12,10 @@
 <!-- p5.js latest -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.4/p5.min.js"></script>
 
+<!-- KaTeX for math notation (theory-strip formulas, label symbols) -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.18.2/dist/katex.min.css" integrity="sha384-qArEAQvOPs1o7K1iAybhs66g8nYTXVt4VLOQ3abu+OMLJyPNfaH4Wpko0X2epHJ+" crossorigin="anonymous">
+<script src="https://cdn.jsdelivr.net/npm/katex@0.18.2/dist/katex.min.js" integrity="sha384-IHT6Yddb0KLCzZaxQ/so1j3xkJ8R6hOkCR06ma9NDHGn0Z4ClKcGtQ6qqsflRPxR" crossorigin="anonymous"></script>
+
 <!-- Shared styles first so topic CSS can override -->
 <link rel="stylesheet" href="../../../shared/sim-style.css">
 <link rel="stylesheet" href="template.css">
@@ -88,7 +92,7 @@
    </section>
    <section class="theory-card">
     <h2>Key Equations</h2>
-    <span class="formula">y = f(x)</span>
+    <span class="formula" data-latex="y = f(x)">y = f(x)</span>
    </section>
   </footer>
 

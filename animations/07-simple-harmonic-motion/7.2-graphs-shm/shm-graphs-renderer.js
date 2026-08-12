@@ -203,7 +203,7 @@ function drawEnergyDisplacementGraph(p, controller) {
  */
 function drawPhaseShiftGraph(p, controller) {
   const { phase } = controller;
-  const { amplitude: A, omega, cyclesEachSide } = PHASE_SHIFT;
+  const { amplitude: A, omega, cyclesEachSide, referenceCurveColor } = PHASE_SHIFT;
   const T = (2 * Math.PI) / omega;
   const tMax = cyclesEachSide * T;
   const tMin = -tMax;
@@ -211,6 +211,7 @@ function drawPhaseShiftGraph(p, controller) {
   const pad = DISPLAY.graphPadding;
   const plotW = p.width - pad.left - pad.right;
   const plotH = p.height - pad.top - pad.bottom;
+  const axisY = pad.top + plotH / 2;
 
   const toXY = (tVal, xVal) => {
     const px = pad.left + ((tVal - tMin) / (tMax - tMin)) * plotW;
@@ -224,7 +225,7 @@ function drawPhaseShiftGraph(p, controller) {
   p.strokeWeight(1);
   const zeroTX = toXY(0, 0).x;
   p.line(zeroTX, pad.top, zeroTX, pad.top + plotH);
-  p.line(pad.left, pad.top + plotH / 2, pad.left + plotW, pad.top + plotH / 2);
+  p.line(pad.left, axisY, pad.left + plotW, axisY);
   p.pop();
 
   p.push();
@@ -235,6 +236,67 @@ function drawPhaseShiftGraph(p, controller) {
   p.text('Displacement, x (m)', pad.left, pad.top - 2);
   p.textAlign(p.RIGHT, p.TOP);
   p.text('Time, t (s)', p.width - pad.right, pad.top + plotH + 4);
+  p.pop();
+
+  // T-based gridlines: quarter-period tick marks on the t-axis. T is fixed
+  // (PHASE_SHIFT.omega), so the grid reads in units of one period, which is
+  // the natural scale for phase offsets (±T/4 = ±π/2, ±T/2 = ±π, ...).
+  const quarterSteps = cyclesEachSide * 4; // n ∈ [-8, 8]: t = n·T/4 spans [-2T, 2T]
+  for (let n = -quarterSteps; n <= quarterSteps; n++) {
+    const tickX = toXY((n * T) / 4, 0).x;
+    p.push();
+    p.stroke(PALETTE.line);
+    p.strokeWeight(1);
+    p.line(tickX, axisY - 3, tickX, axisY + 3);
+    p.pop();
+  }
+
+  // Half-period boundary labels in T units: t = n·T/2 → n/2 as "0", "T/2",
+  // "−T", "−3T/2", "2T", ... (odd multiples of T/2 show as nT/2).
+  const halfSteps = cyclesEachSide * 2; // n ∈ [-4, 4]: t = n·T/2
+  const labelHalfPeriod = (n) => {
+    const f = n / 2;
+    if (f === 0) return '0';
+    if (Number.isInteger(f)) {
+      const sign = f < 0 ? '\u2212' : '';
+      return `${sign}${Math.abs(f) === 1 ? '' : Math.abs(f)}T`;
+    }
+    const sign = f < 0 ? '\u2212' : '';
+    const odd = Math.abs(n); // odd numerator: 1, 3, ... (leading 1 omitted)
+    return `${sign}${odd === 1 ? '' : odd}T/2`;
+  };
+  for (let n = -halfSteps; n <= halfSteps; n++) {
+    const labelX = toXY((n * T) / 2, 0).x;
+    drawLabel(p, labelHalfPeriod(n), labelX, axisY + 16, {
+      fill: PALETTE.mutedRGB, size: 9, align: ['CENTER', 'TOP'],
+    });
+  }
+
+  // Dashed horizontal guides at ±A so the amplitude bounds read directly.
+  const topY = toXY(0, A).y;
+  const bottomY = toXY(0, -A).y;
+  p.push();
+  p.drawingContext.setLineDash([4, 5]);
+  p.stroke(PALETTE.muted);
+  p.strokeWeight(1);
+  p.line(pad.left, topY, pad.left + plotW, topY);
+  p.line(pad.left, bottomY, pad.left + plotW, bottomY);
+  p.drawingContext.setLineDash([]);
+  p.pop();
+
+  drawLabel(p, 'A', pad.left + plotW - 4, topY + 12, { fill: PALETTE.mutedRGB, size: 9, align: ['RIGHT', 'CENTER'] });
+  drawLabel(p, '\u2212A', pad.left + plotW - 4, bottomY - 12, { fill: PALETTE.mutedRGB, size: 9, align: ['RIGHT', 'CENTER'] });
+
+  // Faint dashed φ = 0 reference curve, drawn beneath the active curve so
+  // the horizontal shift caused by φ is directly visible (SP015 7.2).
+  const refSteps = 240;
+  p.push();
+  p.stroke(referenceCurveColor);
+  p.strokeWeight(1);
+  drawDashedCurve(p, (i) => {
+    const tVal = tMin + ((tMax - tMin) * i) / refSteps;
+    return toXY(tVal, A * Math.sin(omega * tVal));
+  }, refSteps);
   p.pop();
 
   // Curve: x = A sin(ωt + φ) — SP015 7.2, general phase form of 7.1(b).

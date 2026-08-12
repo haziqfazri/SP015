@@ -12,6 +12,10 @@
 <!-- p5.js latest -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.4/p5.min.js"></script>
 
+<!-- KaTeX for math notation (theory-strip formulas, label symbols) -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.18.2/dist/katex.min.css" integrity="sha384-qArEAQvOPs1o7K1iAybhs66g8nYTXVt4VLOQ3abu+OMLJyPNfaH4Wpko0X2epHJ+" crossorigin="anonymous">
+<script src="https://cdn.jsdelivr.net/npm/katex@0.18.2/dist/katex.min.js" integrity="sha384-IHT6Yddb0KLCzZaxQ/so1j3xkJ8R6hOkCR06ma9NDHGn0Z4ClKcGtQ6qqsflRPxR" crossorigin="anonymous"></script>
+
 <!-- Shared styles first so topic CSS can override -->
 <link rel="stylesheet" href="../../../shared/sim-style.css">
 <link rel="stylesheet" href="standing-waves.css">
@@ -58,15 +62,15 @@
       <output id="val-harmonic-label" class="readout-value">Fundamental (1st Harmonic)</output>
      </div>
      <div class="readout">
-      <span class="readout-label">Frequency, f</span>
+      <span class="readout-label">Frequency, <span class="katex-inline" data-latex="f">f</span></span>
       <output id="val-frequency" class="readout-value">0.0 Hz</output>
      </div>
      <div class="readout">
-      <span class="readout-label">Wavelength, &lambda;</span>
+      <span class="readout-label">Wavelength, <span class="katex-inline" data-latex="\lambda">λ</span></span>
       <output id="val-wavelength" class="readout-value">0.00 m</output>
      </div>
      <div class="readout" id="wave-speed-readout">
-      <span class="readout-label">Wave Speed, v</span>
+      <span class="readout-label">Wave Speed, <span class="katex-inline" data-latex="v">v</span></span>
       <output id="val-wave-speed" class="readout-value">0.0 m/s</output>
      </div>
     </section>
@@ -84,7 +88,7 @@
     <div id="stringControls">
      <div class="control-row">
       <div class="control-meta">
-       <label for="tension-slider">Tension, T</label>
+       <label for="tension-slider">Tension, <span class="katex-inline" data-latex="T">T</span></label>
        <output id="tension-live" class="control-value">10.0 N</output>
       </div>
       <input id="tension-slider" type="range" min="1" max="50" step="0.5" value="10">
@@ -92,7 +96,7 @@
 
      <div class="control-row">
       <div class="control-meta">
-       <label for="mu-slider">Linear Density, &mu;</label>
+       <label for="mu-slider">Linear Density, <span class="katex-inline" data-latex="\mu">μ</span></label>
        <output id="mu-live" class="control-value">2.00 g/m</output>
       </div>
       <input id="mu-slider" type="range" min="0.0005" max="0.01" step="0.0005" value="0.002">
@@ -100,14 +104,14 @@
 
      <div class="control-row">
       <div class="control-meta">
-       <label for="string-length-slider">Length, L</label>
+       <label for="string-length-slider">Length, <span class="katex-inline" data-latex="L">L</span></label>
        <output id="string-length-live" class="control-value">1.00 m</output>
       </div>
       <input id="string-length-slider" type="range" min="0.2" max="2.0" step="0.05" value="1.0">
      </div>
 
      <div class="control-row">
-      <div class="control-meta"><label>Harmonic Number, n</label></div>
+      <div class="control-meta"><label>Harmonic Number, <span class="katex-inline" data-latex="n">n</span></label></div>
       <div class="system-switch compact stepper-group" id="string-harmonic-group" role="group" aria-label="String harmonic selection"></div>
       <p class="control-note">Both ends fixed &mdash; every integer n is allowed.</p>
      </div>
@@ -117,14 +121,14 @@
     <div id="openControls" class="hidden">
      <div class="control-row">
       <div class="control-meta">
-       <label for="open-length-slider">Length, L</label>
+       <label for="open-length-slider">Length, <span class="katex-inline" data-latex="L">L</span></label>
        <output id="open-length-live" class="control-value">1.00 m</output>
       </div>
       <input id="open-length-slider" type="range" min="0.2" max="2.0" step="0.05" value="1.0">
      </div>
 
      <div class="control-row">
-      <div class="control-meta"><label>Harmonic Number, n</label></div>
+      <div class="control-meta"><label>Harmonic Number, <span class="katex-inline" data-latex="n">n</span></label></div>
       <div class="system-switch compact stepper-group" id="open-harmonic-group" role="group" aria-label="Open column harmonic selection"></div>
       <p class="control-note">Both ends open (antinodes) &mdash; every integer n is allowed.</p>
      </div>
@@ -134,14 +138,14 @@
     <div id="closedControls" class="hidden">
      <div class="control-row">
       <div class="control-meta">
-       <label for="closed-length-slider">Length, L</label>
+       <label for="closed-length-slider">Length, <span class="katex-inline" data-latex="L">L</span></label>
        <output id="closed-length-live" class="control-value">1.00 m</output>
       </div>
       <input id="closed-length-slider" type="range" min="0.2" max="2.0" step="0.05" value="1.0">
      </div>
 
      <div class="control-row">
-      <div class="control-meta"><label>Harmonic Number, n</label></div>
+      <div class="control-meta"><label>Harmonic Number, <span class="katex-inline" data-latex="n">n</span></label></div>
       <div class="system-switch compact stepper-group" id="closed-harmonic-group" role="group" aria-label="Closed column harmonic selection"></div>
       <p class="control-note">One end closed (node), one end open (antinode) &mdash; only odd n exist.</p>
      </div>
@@ -167,7 +171,7 @@
       frequencies where both ends are displacement nodes. Wave speed
       depends on the string's tension and mass per unit length.
      </p>
-     <span class="formula">f<sub>n</sub> = nv / 2L &nbsp;&nbsp; v = &radic;(T/&mu;)</span>
+     <span class="formula" data-latex="f_n = \frac{nv}{2L} \quad v = \sqrt{\frac{T}{\mu}}">f_n = nv / 2L    v = √(T/μ)</span>
     </div>
     <div id="openTheoryContent" style="display:none">
      <h2>Learning Outcome — 7.6(a.ii)</h2>
@@ -176,7 +180,7 @@
       ends are displacement antinodes, so every harmonic (n = 1, 2, 3, ...)
       is possible &mdash; the same frequency pattern as the fixed-fixed string.
      </p>
-     <span class="formula">f<sub>n</sub> = nv / 2L &nbsp;&nbsp; v = 343 m/s</span>
+     <span class="formula" data-latex="f_n = \frac{nv}{2L} \quad v = 343\ \text{m/s}">f_n = nv / 2L    v = 343 m/s</span>
     </div>
     <div id="closedTheoryContent" style="display:none">
      <h2>Learning Outcome — 7.6(a.ii)</h2>
@@ -185,7 +189,7 @@
       closed end and an antinode at the open end. This boundary condition
       only fits odd-numbered harmonics &mdash; even harmonics cannot exist.
      </p>
-     <span class="formula">f<sub>n</sub> = nv / 4L &nbsp; (n = 1, 3, 5, ...)</span>
+     <span class="formula" data-latex="f_n = \frac{nv}{4L}\ (n = 1, 3, 5, \dots)">f_n = nv / 4L  (n = 1, 3, 5, ...)</span>
     </div>
    </section>
    <section class="theory-card">

@@ -5,17 +5,14 @@
    ========================================================================= */
 
 // -------------------------------------------------------------------------
-// KaTeX rendering — PILOT, local to this sim (see doppler-effect.css's
-// header comment on the promotion rule). One function handles both the
+// KaTeX rendering — renderMath() is promoted to shared/sim-utils.js; its
+// CSS lives in shared/sim-style.css. One function handles both the
 // one-time static pass (theory-strip formulas, static label notation)
 // and the runtime re-render the mode-swapped speed-subscript needs, so
 // there's a single code path for "put math on the page" rather than an
 // auto-render mechanism for static content plus a separate manual API
 // for dynamic content.
 // -------------------------------------------------------------------------
-function renderMath(el, latex, displayMode = false) {
-  katex.render(latex, el, { throwOnError: false, displayMode });
-}
 
 class UIManager {
   constructor(callbacks) {

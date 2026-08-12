@@ -80,6 +80,19 @@ class UIManager {
     this._bindToggles();
     this._bindButtons();
     this._bindDirectionSwitch();
+    this._renderStaticMath();
+  }
+
+  // One-time pass over every element carrying a data-latex attribute
+  // (theory-strip formulas, static readout/control label notation).
+  // .formula elements render in displayMode; .katex-inline renders inline.
+  // The two theory-strip equation spans also carry data-latex defaults so
+  // they're correct on first paint — updateEquations() takes over
+  // re-rendering them with the direction-resolved sign after that.
+  _renderStaticMath() {
+    document.querySelectorAll('[data-latex]').forEach((el) => {
+      renderMath(el, el.dataset.latex, el.classList.contains('formula'));
+    });
   }
 
   // Registers controller callbacks in one call so wiring stays in one place
@@ -189,11 +202,12 @@ class UIManager {
 
   // Updates the theory strip's y(x,t) and vy equations to show the
   // resolved sign for the current propagation direction, instead of the
-  // general ± form. Both texts arrive pre-built from the controller,
-  // which owns the sign-resolution logic (it already tracks direction).
+  // general ± form. Both strings are TeX source built by the controller,
+  // which owns the sign-resolution logic (it already tracks direction) —
+  // this method re-renders the cached <span class="formula"> elements.
   updateEquations({ yxtText, vyText }) {
-    updateReadout(this._lastReadout, 'equationYxt', this.el.equationYxt, yxtText);
-    updateReadout(this._lastReadout, 'equationVy', this.el.equationVy, vyText);
+    renderMath(this.el.equationYxt, yxtText, true);
+    renderMath(this.el.equationVy, vyText, true);
   }
 
   // Every value arrives pre-formatted (string) from the controller, which

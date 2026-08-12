@@ -147,6 +147,28 @@ function drawDashedGuide(p5ctx, x0, y0, x1, y1, colorVal, weight = 2, dash = [6,
   p5ctx.pop();
 }
 
+// Sweeps a dashed polyline through `count` sample points produced by
+// pointFn(i) (i = 0..count, each returning {x, y}) and strokes them.
+// Promoted from 7.2's phase reference curve, which needed the same
+// setLineDash + beginShape sweep 7.6's drawCurve already used in dashed
+// mode. Caller owns the stroke style (color/weight); the explicit p5
+// context means both global-mode (window) and instance-mode (p) sketches
+// can use it — unlike drawDashedGuide, which draws a single straight
+// segment, this sweeps a curve.
+function drawDashedCurve(p5ctx, pointFn, count = 200, dash = [4, 5]) {
+  p5ctx.push();
+  p5ctx.noFill();
+  p5ctx.drawingContext.setLineDash(dash);
+  p5ctx.beginShape();
+  for (let i = 0; i <= count; i++) {
+    const { x, y } = pointFn(i);
+    p5ctx.vertex(x, y);
+  }
+  p5ctx.endShape();
+  p5ctx.drawingContext.setLineDash([]);
+  p5ctx.pop();
+}
+
 // Renders a fading trail of dots. `projector` maps a stored state value
 // (a metre displacement, an angle, whatever your sim tracks) to an
 // {x, y} canvas position, so any sim can reuse this one loop.
@@ -198,6 +220,21 @@ function updateReadout(store, key, el, formattedValue) {
     el.textContent = formattedValue;
     store[key] = formattedValue;
   }
+}
+
+// -------------------------------------------------------------------------
+// KaTeX math rendering
+// Promoted from 7.7 (Doppler Effect) — the second sim to adopt KaTeX
+// triggered the repo's promotion rule. Every sim that uses math notation
+// links KaTeX in its <head> and renders any element carrying a data-latex
+// attribute with this helper. `.formula` elements (theory-strip equations)
+// render in displayMode (centered, full-size); everything else renders
+// inline. throwOnError is off so a typo in a TeX string never blanks the
+// whole page — the raw fallback text stays visible.
+// -------------------------------------------------------------------------
+
+function renderMath(el, latex, displayMode = false) {
+  katex.render(latex, el, { throwOnError: false, displayMode });
 }
 
 // -------------------------------------------------------------------------

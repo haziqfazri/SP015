@@ -9,8 +9,20 @@ class UIManager {
     this.callbacks = callbacks;
     this._lastReadout = {};
     this._cacheElements();
+    this._renderStaticMath();
     this._initPlaybackState();
     this._bindEvents();
+  }
+
+  // One-time pass over every element carrying a data-latex attribute
+  // (theory-strip formulas, static readout/control label notation).
+  // .formula elements render in displayMode; .katex-inline renders inline.
+  // All three modes' theory content is authored with data-latex, so the
+  // single pass covers the hidden-by-default variants too.
+  _renderStaticMath() {
+    document.querySelectorAll('[data-latex]').forEach((el) => {
+      renderMath(el, el.dataset.latex, el.classList.contains('formula'));
+    });
   }
 
   _cacheElements() {

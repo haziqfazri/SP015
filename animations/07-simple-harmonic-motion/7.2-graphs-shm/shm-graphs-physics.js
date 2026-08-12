@@ -44,6 +44,7 @@ const PHASE_SHIFT = {
   omega: LIMITS.omegaDefault,         // rad/s, fixed
   phaseStep: Math.PI / 2,             // rad per button click
   cyclesEachSide: 2,                  // 2 full cycles for t>=0 and t<0
+  referenceCurveColor: PALETTE.path,  // faint φ=0 guide curve (no new palette entry)
 };
 
 // -------------------------------------------------------------------------
@@ -137,4 +138,16 @@ function wrapPhase(phi) {
 function formatPhase(phi) {
   const multiple = wrapPhase(phi) / Math.PI;
   return `${signedFixed(multiple, 2)}\u03C0 rad`;
+}
+
+// Time equivalent of a phase offset: Δt = −φ/ω. Sign convention: a positive
+// φ shifts x = A sin(ωt + φ) LEFT along the t-axis (the curve reaches each
+// value earlier), so Δt is negative — matches the UI's "−π/2 shifts right,
+// +π/2 shifts left" wording. Returns seconds and fraction of one period.
+function phaseTimeShift(phi, omega) {
+  const dtSeconds = -phi / omega;
+  return {
+    dtSeconds,
+    dtPeriodFraction: dtSeconds / ((2 * Math.PI) / omega),
+  };
 }

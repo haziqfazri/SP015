@@ -11,6 +11,7 @@ class UIManager {
     this._lastReadout = {}; // diffing store for updateReadout()
     this.playbackState = null;
     this._cacheElements();
+    this._renderStaticMath();
     this._applyLimits(); // LIMITS is the single source of truth for slider
     // ranges/defaults; index.html's static min/max/value
     // attributes are just a cosmetic fallback for
@@ -54,9 +55,19 @@ class UIManager {
 
       // Phase Shift mode
       phaseLabel: document.getElementById('phase-label'),
+      phaseShiftNote: document.getElementById('phase-shift-note'),
       btnPhaseMinus: document.getElementById('btn-phase-minus'),
       btnPhasePlus: document.getElementById('btn-phase-plus'),
     };
+  }
+
+  // One-time pass over every element carrying a data-latex attribute
+  // (theory-strip formulas, readout/control label notation).
+  // .formula elements render in displayMode; .katex-inline renders inline.
+  _renderStaticMath() {
+    document.querySelectorAll('[data-latex]').forEach((el) => {
+      renderMath(el, el.dataset.latex, el.classList.contains('formula'));
+    });
   }
 
   _applyLimits() {
@@ -155,9 +166,25 @@ class UIManager {
 
   // Phase readout is display-only and only changes on a button click, not
   // per frame, so it's a direct write rather than going through the
-  // per-frame updateReadout() diffing store.
+  // per-frame updateReadout() diffing store. Also updates the Δt time-shift
+  // note (SP015 7.2): a positive φ shifts the graph left (earlier), so the
+  // shift reads negative — matching the control-note wording.
   updatePhaseReadout(phase) {
     this.el.phaseLabel.textContent = `\u03C6 = ${formatPhase(phase)}`;
+
+    const { dtSeconds, dtPeriodFraction } = phaseTimeShift(phase, PHASE_SHIFT.omega);
+    const periodFraction = Math.abs(dtPeriodFraction);
+    // Compare within tolerance — raw equality on dtPeriodFraction is fragile:
+    // e.g. +π/2 yields 0.25000000000000006, −π/2 yields exactly 0.25.
+    const near = (a, b) => Math.abs(a - b) < 1e-9;
+    const periodText = near(periodFraction, 0)
+      ? 'no shift'
+      : near(periodFraction, 0.25)
+        ? `T/4 ${dtSeconds < 0 ? 'left' : 'right'}`
+        : near(periodFraction, 0.5)
+          ? `T/2 ${dtSeconds < 0 ? 'left' : 'right'}`
+          : `${periodFraction.toFixed(2)}T ${dtSeconds < 0 ? 'left' : 'right'}`;
+    this.el.phaseShiftNote.textContent = `\u0394t = ${signedFixed(dtSeconds, 2)} s (${periodText})`;
   }
 
   // Called once per frame by the controller with the latest physics state.

@@ -233,7 +233,13 @@ What each stage actually does, based on the code:
   It never touches physics state or the canvas. It also owns writing
   formatted values back into readout `<output>`/`<span>` elements, usually
   through the shared `updateReadout(store, key, el, value)` diffing helper
-  so unchanged text isn't rewritten every frame.
+  so unchanged text isn't rewritten every frame. It also owns the KaTeX
+  rendering pass: a one-time `_renderStaticMath()` sweep over every
+  `[data-latex]` element (called from the constructor after element
+  caching), plus targeted `renderMath()` re-renders wherever a math span's
+  TeX changes at runtime (e.g. 7.1's spring→pendulum label swap, 7.4's
+  direction-resolved ± equations). See §6's KaTeX entry for the full
+  convention.
 - **SimulationController** is the only class that talks to both UIManager
   and the physics classes. It has no drawing code and no physics
   derivations of its own — it decides *when* to step/reset/redraw and
@@ -333,8 +339,9 @@ Currently in `shared/`:
   dual-canvas panels). For the specific palette, fonts, spacing rhythm, and button/slider placement
 rules, see `instructions/coding.md` for the day-to-day UI conventions.
 - `sim-utils.js` — `PALETTE`, `drawArrowCtx`, `normalizedArrowLength`,
-  `VectorArrow`, `signedFixed`, `drawDashedGuide`, `drawTrailDots`,
-  `drawLabel`, `updateReadout`, `AudioTone`, `PlaybackState`.
+  `VectorArrow`, `signedFixed`, `drawDashedGuide`, `drawDashedCurve`,
+  `drawTrailDots`, `drawLabel`, `updateReadout`, `renderMath`, `AudioTone`,
+  `PlaybackState`.
   `PALETTE` is the canonical JS color source (hex + array forms), mirroring
   `shared/sim-style.css` `:root`. Every sim must reference `PALETTE.*` for
   canvas colors — no inline hex or RGB literals. `PALETTE.accent` and
@@ -342,6 +349,28 @@ rules, see `instructions/coding.md` for the day-to-day UI conventions.
   `drawArrowCtx`/`VectorArrow` are ctx-explicit and canonical, so any future
   sim needing arrows (interference vectors, force diagrams, etc.) uses this instead
   of writing a new one.
+
+  **KaTeX — math notation is a repo-wide convention, not a per-sim choice.**
+  Every sim links KaTeX 0.18.2 in its `<head>` (CSS + JS) — copy the
+  canonical `<link>`/`<script>` tags with their SRI integrity attributes
+  verbatim from `shared/sim-style.css`'s KaTeX comment block (single source
+  of truth for version + hashes) — and renders math via
+  `renderMath(el, latex, displayMode)` from `sim-utils.js`. Two element
+  conventions (mirrored by the `.formula .katex` / `.katex-inline` rules in
+  `sim-style.css`):
+  - `.formula` elements (theory-strip equations) carry a `data-latex`
+    attribute and render in displayMode — centered, full-size, colored via
+    the existing `--orange` `.formula` rule.
+  - Inline notation in readout/control labels and prose uses
+    `<span class="katex-inline" data-latex="...">fallback text</span>`,
+    rendered inline at 1em.
+  Raw HTML entities (`&omega;`, `&lambda;`, `<sub>`, `&radic;`, ...) are
+  not used for math notation. Numeric live values (`.readout-value`,
+  `.control-value` outputs) stay plain DOM text — never wrapped in KaTeX.
+  Render once in the UIManager constructor (`_renderStaticMath()`); call
+  `renderMath()` again only when a span's TeX changes at runtime. Promoted
+  from the 7.7 pilot when 7.2/7.4/7.5 adopted it (see 7.7's
+  `doppler-effect-ui.js` history for the original).
 Duplication observed that should be reconciled next time it's touched:
 - **`PHYSICS`/`LIMITS`/`DISPLAY` constant-block convention** is repeated
   by hand in every sim rather than scaffolded — fine as-is, but worth a

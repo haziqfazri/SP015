@@ -103,9 +103,10 @@ function drawEndCap(mode, side, x, plotY, plotH) {
 
 // Small local curve-sweep helper — samples valueFn(x) across the domain
 // and strokes it. Not shared/sim-utils.js's drawDashedGuide, which draws
-// a single straight segment, not a swept curve.
-function drawCurve(valueFn, length, plotX, plotW, centerY, ampPx, dashed) {
-  if (dashed) drawingContext.setLineDash([4, 5]);
+// a single straight segment, not a swept curve. Dashed curves use the
+// shared drawDashedCurve() instead — this one stays for the solid
+// animated displacement curve.
+function drawCurve(valueFn, length, plotX, plotW, centerY, ampPx) {
   beginShape();
   const steps = DISPLAY.sampleCount;
   for (let i = 0; i <= steps; i++) {
@@ -114,7 +115,6 @@ function drawCurve(valueFn, length, plotX, plotW, centerY, ampPx, dashed) {
     vertex(xToPx(x, length, plotX, plotW), yToPx(y, centerY, ampPx));
   }
   endShape();
-  if (dashed) drawingContext.setLineDash([]);
 }
 
 // Faint dashed max-envelope (+-1 * envelopeAt(x)) so the standing wave's
@@ -124,8 +124,14 @@ function drawStaticEnvelope(object, length, plotX, plotW, centerY, amp) {
   noFill();
   stroke(...DISPLAY.envelopeColor);
   strokeWeight(1.5);
-  drawCurve((x) => object.envelopeAt(x), length, plotX, plotW, centerY, amp, true);
-  drawCurve((x) => -object.envelopeAt(x), length, plotX, plotW, centerY, amp, true);
+  drawDashedCurve(window, (i) => {
+    const x = (length * i) / DISPLAY.sampleCount;
+    return { x: xToPx(x, length, plotX, plotW), y: yToPx(object.envelopeAt(x), centerY, amp) };
+  }, DISPLAY.sampleCount);
+  drawDashedCurve(window, (i) => {
+    const x = (length * i) / DISPLAY.sampleCount;
+    return { x: xToPx(x, length, plotX, plotW), y: yToPx(-object.envelopeAt(x), centerY, amp) };
+  }, DISPLAY.sampleCount);
   pop();
 }
 
@@ -139,7 +145,7 @@ function drawAnimatedCurve(object, t, length, plotX, plotW, centerY, amp) {
   strokeWeight(3);
   drawCurve(
     (x) => object.displacementAt(x, t, amp) / amp,
-    length, plotX, plotW, centerY, amp, false
+    length, plotX, plotW, centerY, amp
   );
   pop();
 }

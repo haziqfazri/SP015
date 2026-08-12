@@ -51,6 +51,12 @@ and the decision rule for choosing between them.
 
 - Only sim-specific CSS goes in the topic `.css` file — everything generic
   is already in `shared/sim-style.css`.
+- Math notation uses KaTeX, not HTML entities: copy the canonical KaTeX
+  `<link>`/`<script>` head tags (version + SRI hashes) from
+  `shared/sim-style.css`'s KaTeX comment block, author notation as
+  `data-latex` attributes, and let the template's `_renderStaticMath()`
+  render them via the shared `renderMath()` helper. Theory-strip equations
+  use `.formula` (displayMode); inline label symbols use `.katex-inline`.
 - If this sim needs vector arrows, use `drawArrowCtx` or `VectorArrow` from
   `shared/sim-utils.js` instead of creating a local arrow implementation.
 - Script load order matters: `sim-utils.js` → physics → renderer →

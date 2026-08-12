@@ -30,7 +30,7 @@ SP015/
       7.4-progressive-wave-shm/ <- Level 3, global + Graphics buffer
       7.5-superposition-shm/    <- Level 3, instance mode, 3+ canvases
       7.6-application-of-standing-waves/  <- Level 3
-      7.7-doppler-effect/       <- Level 3, uses KaTeX
+      7.7-doppler-effect/       <- Level 3, uses KaTeX (all sims now do)
   docs/
     architecture.md             <- authoritative architecture/patterns
   instructions/
@@ -116,6 +116,7 @@ Call `ui.updateReadouts(...)` from the callback that actually changes the values
 - `VectorArrow` — arrows with optional labels at the midpoint
 - `signedFixed(value, decimals)` — "+0.35" / "-1.20" formatting
 - `drawDashedGuide(p5ctx, x0, y0, x1, y1, colorVal, weight, dash)` — dashed reference lines
+- `drawDashedCurve(p5ctx, pointFn, count, dash)` — dashed swept curves (e.g. reference/envelope guides)
 - `drawTrailDots(p5ctx, trail, projector, r, g, b, maxAlpha)` — fading motion trail
 - `drawLabel(p5ctx, text, x, y, { fill, size, weight, font, align })` — styled text label
 - `updateReadout(store, key, el, formattedValue)` — diffed DOM writes
@@ -178,6 +179,10 @@ Call `ui.updateReadouts(...)` from the callback that actually changes the values
 ### Fonts
 
 `DM Sans` (display/labels), `Space Mono` (mono/readouts/formulas), declared as `--display`/`--mono` CSS vars.
+
+### Math notation
+
+All sims use KaTeX (repo-wide since the 7.7 pilot was promoted to `shared/`): link KaTeX 0.18.2 in `<head>`, render `data-latex` elements via the shared `renderMath()` (`sim-utils.js`), `.formula` = displayMode (theory-strip equations), `.katex-inline` = inline (label symbols). No HTML entities (`&omega;`, `<sub>`, `&radic;`...) for math. Numeric live readouts stay plain DOM text. UIManager does one `_renderStaticMath()` pass at construction; re-render only on runtime TeX changes (mode swaps, resolved ± signs).
 
 ### Layout
 - Shell: `.app-shell > .lab-frame > .topbar, .system-bar?, .sim-grid, .theory-strip`

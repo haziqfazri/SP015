@@ -137,6 +137,26 @@ There is no hard line-count threshold and no requirement to use every role in
 **Fonts, colors, spacing**
 - Fonts: `DM Sans` (display/labels), `Space Mono` (mono/readouts/formulas)
   — loaded via Google Fonts, declared as `--display`/`--mono` CSS vars.
+
+**Math notation — KaTeX (repo-wide convention)**
+- Every sim links KaTeX 0.18.2 in its `<head>` (CSS + JS) — copy the
+  canonical `<link>`/`<script>` tags with their SRI integrity attributes
+  verbatim from `shared/sim-style.css`'s KaTeX comment block (the single
+  source of truth for version + hashes; never retype them) — and renders
+  math through `renderMath()` in `shared/sim-utils.js`.
+- Theory-strip equations are `<span class="formula" data-latex="...">…</span>`
+  — rendered in displayMode (centered, full-size).
+- Inline notation in readout/control labels and prose uses
+  `<span class="katex-inline" data-latex="...">fallback</span>` — rendered
+  inline at 1em. Keep a readable plain-text fallback inside the element.
+- Do **not** use HTML entities or `<sub>`/`<sup>` for math notation
+  (`&omega;`, `&lambda;`, `&radic;`, `&frac12;`, etc.). Numeric live
+  readout values (`.readout-value`/`.control-value` outputs) are plain DOM
+  text, never wrapped in KaTeX.
+- UIManager runs a one-time `_renderStaticMath()` pass (query every
+  `[data-latex]`, `.formula` → displayMode) from the constructor; call
+  `renderMath()` directly only when a math span's TeX changes at runtime
+  (e.g. a mode switch that swaps a symbol or resolves a ± sign).
 - **Palette (single source of truth):** the CSS custom propreties in
   `shared/sim-style.css` `:root` define the visual palette; every canvas
   color must come from the JS mirror `PALETTE` in `shared/sim-utils.js`

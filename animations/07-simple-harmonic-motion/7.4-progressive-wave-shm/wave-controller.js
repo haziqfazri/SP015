@@ -147,12 +147,13 @@ class SimulationController {
   // vy show the same resolved sign, since vy = dy/dt shares the identical
   // phase argument (no calculus shown to students — this is presented as
   // a given equation, matching the theory strip's existing style).
+  // Strings are TeX source — UIManager renders them through renderMath().
   _refreshEquations() {
-    const sign = this.state.direction === DIRECTION.POSITIVE ? '\u2212' : '+'; // − or +
+    const sign = this.state.direction === DIRECTION.POSITIVE ? '-' : '+';
 
     this.ui.updateEquations({
-      yxtText: `y(x,t) = A sin(\u03C9t ${sign} kx)`,
-      vyText: `v_y = A\u03C9 cos(\u03C9t ${sign} kx)`
+      yxtText: `y(x,t) = A\\sin(\\omega t ${sign} kx)`,
+      vyText: `v_y = A\\omega\\cos(\\omega t ${sign} kx)`
     });
   }
 

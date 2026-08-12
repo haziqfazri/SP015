@@ -12,6 +12,10 @@
 <!-- p5.js latest -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.4/p5.min.js"></script>
 
+<!-- KaTeX for math notation (theory-strip formulas, label symbols) -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.18.2/dist/katex.min.css" integrity="sha384-qArEAQvOPs1o7K1iAybhs66g8nYTXVt4VLOQ3abu+OMLJyPNfaH4Wpko0X2epHJ+" crossorigin="anonymous">
+<script src="https://cdn.jsdelivr.net/npm/katex@0.18.2/dist/katex.min.js" integrity="sha384-IHT6Yddb0KLCzZaxQ/so1j3xkJ8R6hOkCR06ma9NDHGn0Z4ClKcGtQ6qqsflRPxR" crossorigin="anonymous"></script>
+
 <link rel="stylesheet" href="../../../shared/sim-style.css">
 <link rel="stylesheet" href="kinematics-shm.css">
 </head>
@@ -105,7 +109,7 @@
 
      <div class="control-row">
       <div class="control-meta">
-       <label for="parameterControl" id="parameterLabel">Spring constant, k</label>
+       <label for="parameterControl" id="parameterLabel"><span id="parameterWord">Spring constant</span>, <span id="parameterSymbol" class="katex-inline" data-latex="k">k</span></label>
        <output id="parameterOutput" class="control-value">20 N/m</output>
       </div>
       <input id="parameterControl" type="range" min="2" max="80" step="1" value="20">
@@ -125,7 +129,7 @@
     <div class="control-row-group hidden" id="referenceControls">
      <div class="control-row">
       <div class="control-meta">
-       <label for="ampControl">Amplitude, A</label>
+       <label for="ampControl">Amplitude, <span class="katex-inline" data-latex="A">A</span></label>
        <output id="ampOutput" class="control-value">1.50 m</output>
       </div>
       <input id="ampControl" type="range" min="1" max="2" step="0.05" value="1.5">
@@ -134,7 +138,7 @@
 
      <div class="control-row">
       <div class="control-meta">
-       <label for="refPeriodControl">Period, T</label>
+       <label for="refPeriodControl">Period, <span class="katex-inline" data-latex="T">T</span></label>
        <output id="refPeriodOutput" class="control-value">2.00 s</output>
       </div>
       <input id="refPeriodControl" type="range" min="0.5" max="6" step="0.05" value="2">
@@ -156,19 +160,19 @@
     <div id="springTheory">
      <h2>Restoring force</h2>
      <p>Hooke's Law: the spring pulls the mass back toward equilibrium in proportion to its displacement, in the opposite direction.</p>
-     <span class="formula">F = −kx</span>
+     <span class="formula" data-latex="F = -kx">F = −kx</span>
     </div>
     <div id="pendulumTheory" style="display:none">
      <h2>Restoring torque</h2>
      <p>Gravity supplies the restoring torque. For large swing angles the motion is only approximately simple harmonic — this simulation uses the exact sine term, not the small-angle approximation.</p>
-     <span class="formula">a = −(g/L)·sin θ</span>
+     <span class="formula" data-latex="a = -\frac{g}{L}\sin\theta">a = −(g/L)·sin θ</span>
     </div>
    </section>
    <section class="theory-card">
     <div id="periodTheoryContent">
      <h2>Period (undamped, ideal)</h2>
      <p><span id="periodValue" class="mono" style="font-weight:700;color:var(--orange)">1.40 s</span></p>
-     <p id="periodNote" style="margin-top:8px">T = 2π√(m/k) — independent of amplitude for an ideal spring.</p>
+      <p id="periodNote" style="margin-top:8px"><span id="periodFormula" class="katex-inline" data-latex="T = 2\pi\sqrt{m/k}">T = 2π√(m/k)</span><span id="periodNoteWord"> — independent of amplitude for an ideal spring.</span></p>
     </div>
    </section>
   </footer>

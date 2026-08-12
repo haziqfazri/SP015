@@ -243,6 +243,13 @@ class SimulationController {
 // p5.js lifecycle
 // =========================================================================
 function setup() {
+  // One-time KaTeX pass over static [data-latex] elements (theory-strip
+  // formulas, readout/control label notation). Runs before init so the
+  // page's math is rendered on first paint.
+  document.querySelectorAll('[data-latex]').forEach((el) => {
+    renderMath(el, el.dataset.latex, el.classList.contains('formula'));
+  });
+
   simulation = new SimulationController();
   simulation.init();
 }

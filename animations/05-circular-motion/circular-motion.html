@@ -12,6 +12,10 @@
 <!-- p5.js latest -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.4/p5.min.js"></script>
 
+<!-- KaTeX for math notation (theory-strip formulas, label symbols) -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.18.2/dist/katex.min.css" integrity="sha384-qArEAQvOPs1o7K1iAybhs66g8nYTXVt4VLOQ3abu+OMLJyPNfaH4Wpko0X2epHJ+" crossorigin="anonymous">
+<script src="https://cdn.jsdelivr.net/npm/katex@0.18.2/dist/katex.min.js" integrity="sha384-IHT6Yddb0KLCzZaxQ/so1j3xkJ8R6hOkCR06ma9NDHGn0Z4ClKcGtQ6qqsflRPxR" crossorigin="anonymous"></script>
+
 <link rel="stylesheet" href="../../../shared/sim-style.css">
 <link rel="stylesheet" href="circular-motion.css">
 </head>
@@ -64,11 +68,11 @@
       <output id="val-radius" class="readout-value">200.0 px</output>
      </div>
      <div class="readout">
-      <span class="readout-label">Angular Pos. (θ)</span>
+      <span class="readout-label">Angular Pos. (<span class="katex-inline" data-latex="\theta">θ</span>)</span>
       <output id="val-rad" class="readout-value">0.000 rad</output>
      </div>
      <div class="readout">
-      <span class="readout-label">Angular Vel. (ω)</span>
+      <span class="readout-label">Angular Vel. (<span class="katex-inline" data-latex="\omega">ω</span>)</span>
       <output id="val-omega" class="readout-value">1.26 rad/s</output>
      </div>
      <div class="readout">
@@ -80,15 +84,15 @@
       <output id="val-time" class="readout-value">0.0 s</output>
      </div>
      <div class="readout">
-      <span class="readout-label">Speed (v)</span>
+      <span class="readout-label">Speed (<span class="katex-inline" data-latex="v">v</span>)</span>
       <output id="val-speed" class="readout-value">0.00 m/s</output>
      </div>
      <div class="readout">
-      <span class="readout-label">Accel. (a_c)</span>
+      <span class="readout-label">Accel. (<span class="katex-inline" data-latex="a_c">a_c</span>)</span>
       <output id="val-accel" class="readout-value">0.00 m/s²</output>
      </div>
      <div class="readout">
-      <span class="readout-label">Force (F_c)</span>
+      <span class="readout-label">Force (<span class="katex-inline" data-latex="F_c">F_c</span>)</span>
       <output id="val-force" class="readout-value">0.00 N</output>
      </div>
     </section>
@@ -110,7 +114,7 @@
 
      <div class="control-row">
       <div class="control-meta">
-       <label for="a-period-slider">Period (T)</label>
+       <label for="a-period-slider">Period (<span class="katex-inline" data-latex="T">T</span>)</label>
        <output id="a-period-live" class="control-value">5.00 s</output>
       </div>
       <input id="a-period-slider" type="range" min="1" max="5" step="0.01" value="5">
@@ -118,7 +122,7 @@
 
      <div class="control-row">
       <div class="control-meta">
-       <label for="a-freq-slider">Frequency (f)</label>
+       <label for="a-freq-slider">Frequency (<span class="katex-inline" data-latex="f">f</span>)</label>
        <output id="a-freq-live" class="control-value">0.200 Hz</output>
       </div>
       <input id="a-freq-slider" type="range" min="0.2" max="1" step="0.001" value="0.200">
@@ -126,7 +130,7 @@
 
      <div class="control-row">
       <div class="control-meta">
-       <label for="a-omega-slider">Angular Velocity (ω)</label>
+       <label for="a-omega-slider">Angular Velocity (<span class="katex-inline" data-latex="\omega">ω</span>)</label>
        <output id="a-omega-live" class="control-value">1.26 rad/s</output>
       </div>
       <input id="a-omega-slider" type="range" step="0.01" value="1.2566370614359172">
@@ -134,7 +138,7 @@
 
      <div class="control-row">
       <div class="control-meta">
-       <label for="a-mass-slider">Mass (m)</label>
+       <label for="a-mass-slider">Mass (<span class="katex-inline" data-latex="m">m</span>)</label>
        <output id="a-mass-live" class="control-value">1.00 kg</output>
       </div>
       <input id="a-mass-slider" type="range" min="0.1" max="5" step="0.05" value="1">
@@ -162,7 +166,7 @@
 
      <div class="control-row">
       <div class="control-meta">
-       <label for="b-period-slider">Period (T)</label>
+       <label for="b-period-slider">Period (<span class="katex-inline" data-latex="T">T</span>)</label>
        <output id="b-period-live" class="control-value">3.00 s</output>
       </div>
       <input id="b-period-slider" type="range" min="1" max="5" step="0.01" value="3">
@@ -170,7 +174,7 @@
 
      <div class="control-row">
       <div class="control-meta">
-       <label for="b-freq-slider">Frequency (f)</label>
+       <label for="b-freq-slider">Frequency (<span class="katex-inline" data-latex="f">f</span>)</label>
        <output id="b-freq-live" class="control-value">0.333 Hz</output>
       </div>
       <input id="b-freq-slider" type="range" min="0.2" max="1" step="0.001" value="0.333">
@@ -178,7 +182,7 @@
 
      <div class="control-row">
       <div class="control-meta">
-       <label for="b-omega-slider">Angular Velocity (ω)</label>
+       <label for="b-omega-slider">Angular Velocity (<span class="katex-inline" data-latex="\omega">ω</span>)</label>
        <output id="b-omega-live" class="control-value">2.09 rad/s</output>
       </div>
       <input id="b-omega-slider" type="range" step="0.01" value="2.0944">
@@ -186,7 +190,7 @@
 
      <div class="control-row">
       <div class="control-meta">
-       <label for="b-mass-slider">Mass (m)</label>
+       <label for="b-mass-slider">Mass (<span class="katex-inline" data-latex="m">m</span>)</label>
        <output id="b-mass-live" class="control-value">1.00 kg</output>
       </div>
       <input id="b-mass-slider" type="range" min="0.1" max="5" step="0.05" value="1">
@@ -214,12 +218,12 @@
    <section class="theory-card">
     <h2>Centripetal force</h2>
     <p>The net force on a particle in uniform circular motion always points toward the center, continuously redirecting the velocity without changing its magnitude.</p>
-    <span class="formula">F = mω²r</span>
+    <span class="formula" data-latex="F = m\omega^2 r">F = mω²r</span>
    </section>
    <section class="theory-card">
     <h2>Period</h2>
     <p><span id="periodValue" class="mono" style="font-weight:700;color:var(--orange)">5.00 s</span></p>
-    <p style="margin-top:8px">T = 2π / ω — the time for one full revolution, independent of mass.</p>
+    <p style="margin-top:8px"><span class="katex-inline" data-latex="T = \frac{2\pi}{\omega}">T = 2π / ω</span> — the time for one full revolution, independent of mass.</p>
    </section>
   </footer>
 

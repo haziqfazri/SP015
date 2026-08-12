@@ -5,6 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Properties of Waves — SP015</title>
 
+<!-- KaTeX for math notation (theory-strip formulas, label symbols) -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.18.2/dist/katex.min.css" integrity="sha384-qArEAQvOPs1o7K1iAybhs66g8nYTXVt4VLOQ3abu+OMLJyPNfaH4Wpko0X2epHJ+" crossorigin="anonymous">
+<script src="https://cdn.jsdelivr.net/npm/katex@0.18.2/dist/katex.min.js" integrity="sha384-IHT6Yddb0KLCzZaxQ/so1j3xkJ8R6hOkCR06ma9NDHGn0Z4ClKcGtQ6qqsflRPxR" crossorigin="anonymous"></script>
+
 <!-- Shared styles first, topic-specific overrides after -->
 <link rel="stylesheet" href="../../../shared/sim-style.css">
 <link rel="stylesheet" href="wave-properties.css">
@@ -54,7 +58,7 @@
           </label>
           <label class="check">
             <input type="checkbox" id="toggle-vy-arrow">
-            <span>Show reference particle velocity, v<sub>y</sub></span>
+            <span>Show reference particle velocity, <span class="katex-inline" data-latex="v_y">v_y</span></span>
           </label>
           <label class="check">
             <input type="checkbox" id="toggle-guides">
@@ -77,27 +81,27 @@
         <!-- Readouts -->
         <div class="readouts readouts--dense" id="readouts">
           <div class="readout">
-            <span class="readout-label">Wavelength, &lambda; (derived)</span>
+            <span class="readout-label">Wavelength, <span class="katex-inline" data-latex="\lambda">λ</span> (derived)</span>
             <span class="readout-value mono" id="readout-lambda">&mdash; m</span>
           </div>
           <div class="readout">
-            <span class="readout-label">Frequency, f</span>
+            <span class="readout-label">Frequency, <span class="katex-inline" data-latex="f">f</span></span>
             <span class="readout-value mono" id="readout-f">&mdash; Hz</span>
           </div>
           <div class="readout">
-            <span class="readout-label">Period, T</span>
+            <span class="readout-label">Period, <span class="katex-inline" data-latex="T">T</span></span>
             <span class="readout-value mono" id="readout-T">&mdash; s</span>
           </div>
           <div class="readout">
-            <span class="readout-label">Wave speed, v</span>
+            <span class="readout-label">Wave speed, <span class="katex-inline" data-latex="v">v</span></span>
             <span class="readout-value mono" id="readout-v">&mdash; m/s</span>
           </div>
           <div class="readout">
-            <span class="readout-label">Wave number, k</span>
+            <span class="readout-label">Wave number, <span class="katex-inline" data-latex="k">k</span></span>
             <span class="readout-value mono" id="readout-k">&mdash; rad/m</span>
           </div>
           <div class="readout">
-            <span class="readout-label">Angular frequency, &omega;</span>
+            <span class="readout-label">Angular frequency, <span class="katex-inline" data-latex="\omega">ω</span></span>
             <span class="readout-value mono" id="readout-omega">&mdash; rad/s</span>
           </div>
           <div class="readout">
@@ -105,7 +109,7 @@
             <span class="readout-value mono" id="readout-y">&mdash; m</span>
           </div>
           <div class="readout">
-            <span class="readout-label">Particle velocity, v<sub>y</sub></span>
+            <span class="readout-label">Particle velocity, <span class="katex-inline" data-latex="v_y">v_y</span></span>
             <span class="readout-value mono" id="readout-vy">&mdash; m/s</span>
           </div>
         </div>
@@ -121,7 +125,7 @@
 
         <div class="control-row">
           <div class="control-meta">
-            <label for="slider-amplitude">Amplitude, A</label>
+            <label for="slider-amplitude">Amplitude, <span class="katex-inline" data-latex="A">A</span></label>
             <span class="control-value" id="value-amplitude">&mdash; m</span>
           </div>
           <input type="range" id="slider-amplitude">
@@ -129,16 +133,16 @@
 
         <div class="control-row">
           <div class="control-meta">
-            <label for="slider-wave-speed">Wave speed (medium), v</label>
+            <label for="slider-wave-speed">Wave speed (medium), <span class="katex-inline" data-latex="v">v</span></label>
             <span class="control-value" id="value-wave-speed">&mdash; m/s</span>
           </div>
           <input type="range" id="slider-wave-speed">
-          <p class="control-note">A property of the medium. Wavelength (&lambda;) is derived from v and f — see the readouts below.</p>
+          <p class="control-note">A property of the medium. Wavelength (<span class="katex-inline" data-latex="\lambda">λ</span>) is derived from v and f — see the readouts below.</p>
         </div>
 
         <div class="control-row">
           <div class="control-meta">
-            <label for="slider-frequency">Frequency, f</label>
+            <label for="slider-frequency">Frequency, <span class="katex-inline" data-latex="f">f</span></label>
             <span class="control-value" id="value-frequency">&mdash; Hz</span>
           </div>
           <input type="range" id="slider-frequency">
@@ -146,7 +150,7 @@
 
         <div class="control-row">
           <div class="control-meta">
-            <label for="slider-particle-count">Number of particles, n</label>
+            <label for="slider-particle-count">Number of particles, <span class="katex-inline" data-latex="n">n</span></label>
             <span class="control-value" id="value-particle-count">&mdash;</span>
           </div>
           <input type="range" id="slider-particle-count">
@@ -173,9 +177,9 @@
       </div>
       <div class="theory-card">
         <h2>Key Equations</h2>
-        <span class="formula" id="equation-yxt">y(x,t) = A sin(&omega;t &plusmn; kx)</span>
-        <span class="formula" id="equation-vy">v<sub>y</sub> = A&omega; cos(&omega;t &plusmn; kx)</span>
-        <span class="formula">v = f&lambda;,&nbsp; k = 2&pi;/&lambda;</span>
+        <span class="formula" id="equation-yxt" data-latex="y(x,t) = A\sin(\omega t \pm kx)">y(x,t) = A sin(ωt ± kx)</span>
+        <span class="formula" id="equation-vy" data-latex="v_y = A\omega\cos(\omega t \pm kx)">v_y = Aω cos(ωt ± kx)</span>
+        <span class="formula" data-latex="v = f\lambda,\quad k = \frac{2\pi}{\lambda}">v = fλ,&nbsp; k = 2π/λ</span>
       </div>
     </div>
 

@@ -21,7 +21,17 @@ class UIManager {
 
     this._lastReadout = {};
     this._cacheEls();
+    this._renderStaticMath();
     this._bindControls();
+  }
+
+  // One-time pass over every element carrying a data-latex attribute
+  // (theory-strip formulas, static readout/control label notation).
+  // .formula elements render in displayMode; .katex-inline renders inline.
+  _renderStaticMath() {
+    document.querySelectorAll('[data-latex]').forEach((el) => {
+      renderMath(el, el.dataset.latex, el.classList.contains('formula'));
+    });
   }
 
   _cacheEls() {
@@ -47,7 +57,8 @@ class UIManager {
 
       parameterControl: document.getElementById('parameterControl'),
       parameterOutput: document.getElementById('parameterOutput'),
-      parameterLabel: document.getElementById('parameterLabel'),
+      parameterWord: document.getElementById('parameterWord'),
+      parameterSymbol: document.getElementById('parameterSymbol'),
       parameterNote: document.getElementById('parameterNote'),
 
       displacementControl: document.getElementById('displacementControl'),
@@ -72,11 +83,11 @@ class UIManager {
       forceValue: document.getElementById('forceValue'),
       forceReadout: document.getElementById('forceReadout'),
       periodValue: document.getElementById('periodValue'),
-      periodNote: document.getElementById('periodNote'),
-
       springTheory: document.getElementById('springTheory'),
       pendulumTheory: document.getElementById('pendulumTheory'),
       periodTheoryContent: document.getElementById('periodTheoryContent'),
+      periodFormula: document.getElementById('periodFormula'),
+      periodNoteWord: document.getElementById('periodNoteWord'),
       readoutsPanel: document.getElementById('readoutsPanel'),
 
       playPauseButton: document.getElementById('playPauseButton'),
@@ -274,7 +285,8 @@ class UIManager {
       ? 'horizontal mass-spring system'
       : 'simple pendulum';
 
-    this.els.parameterLabel.textContent = spring ? 'Spring constant, k' : 'String length, L';
+    this.els.parameterWord.textContent = spring ? 'Spring constant' : 'String length';
+    renderMath(this.els.parameterSymbol, spring ? 'k' : 'L');
     this.els.parameterNote.textContent = spring
       ? 'A stiffer spring pulls the mass back harder, shortening the period.'
       : 'A longer string means a larger arc for the same angle, lengthening the period.';
@@ -289,9 +301,12 @@ class UIManager {
     this.els.accelerationLabel.textContent = spring ? 'Acceleration' : 'Angular acceleration';
     this.els.forceReadout.classList.toggle('hidden', !spring); // restoring force: spring-only for now
 
-    this.els.periodNote.textContent = spring
-      ? 'T = 2π√(m/k) — independent of amplitude for an ideal spring.'
-      : 'T = 2π√(L/g) — exact only for small angles; large swings run slightly slower than this.';
+    renderMath(this.els.periodFormula, spring
+      ? 'T = 2\\pi\\sqrt{m/k}'
+      : 'T = 2\\pi\\sqrt{L/g}');
+    this.els.periodNoteWord.textContent = spring
+      ? ' — independent of amplitude for an ideal spring.'
+      : ' — exact only for small angles; large swings run slightly slower than this.';
 
     this.els.springTheory.style.display = spring ? 'block' : 'none';
     this.els.pendulumTheory.style.display = spring ? 'none' : 'block';

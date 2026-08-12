@@ -6,6 +6,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>SHM Graphs — Topic 7.2 | SP015</title>
 
+  <!-- KaTeX for math notation (theory-strip formulas, label symbols) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.18.2/dist/katex.min.css" integrity="sha384-qArEAQvOPs1o7K1iAybhs66g8nYTXVt4VLOQ3abu+OMLJyPNfaH4Wpko0X2epHJ+" crossorigin="anonymous" />
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.18.2/dist/katex.min.js" integrity="sha384-IHT6Yddb0KLCzZaxQ/so1j3xkJ8R6hOkCR06ma9NDHGn0Z4ClKcGtQ6qqsflRPxR" crossorigin="anonymous"></script>
+
   <!-- Shared styles first so topic CSS can override -->
   <link rel="stylesheet" href="../../../shared/sim-style.css" />
   <link rel="stylesheet" href="shm-graphs.css" />
@@ -82,27 +86,27 @@
           <!-- Readouts: dense variant since we have 6 values -->
           <div class="readouts readouts--dense">
             <div class="readout">
-              <span class="readout-label">Displacement, x</span>
+              <span class="readout-label">Displacement, <span class="katex-inline" data-latex="x">x</span></span>
               <span class="readout-value mono" id="readout-x">+0.00 m</span>
             </div>
             <div class="readout">
-              <span class="readout-label">Velocity, v</span>
+              <span class="readout-label">Velocity, <span class="katex-inline" data-latex="v">v</span></span>
               <span class="readout-value mono" id="readout-v">+0.00 m/s</span>
             </div>
             <div class="readout">
-              <span class="readout-label">Acceleration, a</span>
-              <span class="readout-value mono" id="readout-a">+0.00 m/s&sup2;</span>
+              <span class="readout-label">Acceleration, <span class="katex-inline" data-latex="a">a</span></span>
+              <span class="readout-value mono" id="readout-a">+0.00 m/s²</span>
             </div>
             <div class="readout">
-              <span class="readout-label">Kinetic Energy, E<sub>K</sub></span>
+              <span class="readout-label">Kinetic Energy, <span class="katex-inline" data-latex="E_K">E_K</span></span>
               <span class="readout-value mono" id="readout-ek">0.00 J</span>
             </div>
             <div class="readout">
-              <span class="readout-label">Potential Energy, E<sub>P</sub></span>
+              <span class="readout-label">Potential Energy, <span class="katex-inline" data-latex="E_P">E_P</span></span>
               <span class="readout-value mono" id="readout-ep">0.00 J</span>
             </div>
             <div class="readout">
-              <span class="readout-label">Total Energy, E</span>
+              <span class="readout-label">Total Energy, <span class="katex-inline" data-latex="E">E</span></span>
               <span class="readout-value mono" id="readout-etotal">0.00 J</span>
             </div>
           </div>
@@ -112,11 +116,11 @@
         <section class="stage hidden" id="phaseShiftStage">
           <div class="stage-top">
             <h2>Phase-Shifted Displacement–Time Graph</h2>
-            <span class="mono" id="phase-label">&phi; = +0.00&pi; rad</span>
+            <span class="mono" id="phase-label">φ = +0.00π rad</span>
           </div>
 
           <div class="canvas-shell" id="phase-shell">
-            <span class="canvas-label">DISPLACEMENT–TIME, x = A sin(&omega;t + &phi;)</span>
+            <span class="canvas-label">DISPLACEMENT–TIME, <span class="katex-inline" data-latex="x = A\sin(\omega t + \phi)">x = A sin(ωt + φ)</span></span>
             <div class="graph-holder" id="phase-holder"></div>
           </div>
         </section>
@@ -132,7 +136,7 @@
           <div id="standardControls">
             <div class="control-row">
               <div class="control-meta">
-                <label for="amplitude-slider">Amplitude, A</label>
+                <label for="amplitude-slider">Amplitude, <span class="katex-inline" data-latex="A">A</span></label>
                 <span class="control-value" id="amplitude-value">0.20 m</span>
               </div>
               <input type="range" id="amplitude-slider" min="0.05" max="0.30" step="0.01" value="0.20" />
@@ -140,7 +144,7 @@
 
             <div class="control-row">
               <div class="control-meta">
-                <label for="omega-slider">Angular Frequency, &omega;</label>
+                <label for="omega-slider">Angular Frequency, <span class="katex-inline" data-latex="\omega">ω</span></label>
                 <span class="control-value" id="omega-value">4.0 rad/s</span>
               </div>
               <input type="range" id="omega-slider" min="2" max="12" step="0.1" value="4.0" />
@@ -151,15 +155,15 @@
             <div class="control-checks">
               <label class="check">
                 <input type="checkbox" id="check-ek" checked />
-                Show Kinetic Energy, E<sub>K</sub>
+                Show Kinetic Energy, <span class="katex-inline" data-latex="E_K">E_K</span>
               </label>
               <label class="check">
                 <input type="checkbox" id="check-ep" checked />
-                Show Potential Energy, E<sub>P</sub>
+                Show Potential Energy, <span class="katex-inline" data-latex="E_P">E_P</span>
               </label>
               <label class="check">
                 <input type="checkbox" id="check-etotal" checked />
-                Show Total Energy, E
+                Show Total Energy, <span class="katex-inline" data-latex="E">E</span>
               </label>
             </div>
 
@@ -172,21 +176,15 @@
 
           <!-- ---------- Phase Shift controls ---------- -->
           <div class="hidden" id="phaseShiftControls">
-            <p class="control-note">
-              Amplitude and angular frequency are fixed in this mode
-              (A = 0.20 m, &omega; = 4.0 rad/s) so the graph isolates the
-              effect of &phi; alone.
-            </p>
             <div class="control-row">
               <div class="control-meta">
-                <label>Phase Offset, &phi;</label>
+                <label>Phase Offset, <span class="katex-inline" data-latex="\phi">φ</span></label>
               </div>
               <div class="system-switch phase-step-group" role="group" aria-label="Phase offset step">
-                <button type="button" class="system-option" id="btn-phase-minus">&minus;&pi;/2</button>
-                <button type="button" class="system-option" id="btn-phase-plus">+&pi;/2</button>
+                <button type="button" class="system-option" id="btn-phase-minus">−π/2</button>
+                <button type="button" class="system-option" id="btn-phase-plus">+π/2</button>
               </div>
-              <p class="control-note">&minus;&pi;/2 shifts the graph right (later); +&pi;/2 shifts it left (earlier).
-              </p>
+              <p class="control-note mono" id="phase-shift-note">Δt = +0.00 s (no shift)</p>
             </div>
           </div>
         </aside>
@@ -204,11 +202,10 @@
         </div>
         <div class="theory-card">
           <h2>Key Equations</h2>
-          <p>
-            x = A sin(&omega;t) &nbsp;|&nbsp; v = &plusmn;&omega;&radic;(A&sup2; &minus; x&sup2;) &nbsp;|&nbsp; a =
-            &minus;&omega;&sup2;x
-            <span class="formula">E = E<sub>K</sub> + E<sub>P</sub> = &frac12;m&omega;&sup2;A&sup2; (constant)</span>
-          </p>
+          <span class="formula" data-latex="x = A\sin(\omega t)">x = A sin(ωt)</span>
+          <span class="formula" data-latex="v = \pm\omega\sqrt{A^2 - x^2}">v = ±ω√(A² − x²)</span>
+          <span class="formula" data-latex="a = -\omega^2 x">a = −ω²x</span>
+          <span class="formula" data-latex="E = E_K + E_P = \tfrac{1}{2}m\omega^2 A^2">E = E_K + E_P = ½mω²A² (constant)</span>
         </div>
       </div>
 

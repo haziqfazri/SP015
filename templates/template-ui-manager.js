@@ -39,8 +39,21 @@ class UIManager {
     };
 
     this._applyLimits();
+    this._renderStaticMath();
     this._bindSliders();
     this._bindButtons();
+  }
+
+  // One-time pass over every element carrying a data-latex attribute
+  // (theory-strip formulas, static readout/control label notation).
+  // .formula elements render in displayMode (centered, full-size);
+  // .katex-inline label spans render inline. renderMath() lives in
+  // shared/sim-utils.js — re-run this (or call renderMath directly) only
+  // when a math span's text changes at runtime, e.g. on a mode switch.
+  _renderStaticMath() {
+    document.querySelectorAll('[data-latex]').forEach((el) => {
+      renderMath(el, el.dataset.latex, el.classList.contains('formula'));
+    });
   }
 
   // Registers controller callbacks in one call so wiring stays in one

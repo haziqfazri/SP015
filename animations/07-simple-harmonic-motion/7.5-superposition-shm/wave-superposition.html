@@ -12,6 +12,10 @@
 <!-- p5.js latest -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.4/p5.min.js"></script>
 
+<!-- KaTeX for math notation (theory-strip formulas, label symbols) -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.18.2/dist/katex.min.css" integrity="sha384-qArEAQvOPs1o7K1iAybhs66g8nYTXVt4VLOQ3abu+OMLJyPNfaH4Wpko0X2epHJ+" crossorigin="anonymous">
+<script src="https://cdn.jsdelivr.net/npm/katex@0.18.2/dist/katex.min.js" integrity="sha384-IHT6Yddb0KLCzZaxQ/so1j3xkJ8R6hOkCR06ma9NDHGn0Z4ClKcGtQ6qqsflRPxR" crossorigin="anonymous"></script>
+
 <!-- Shared styles first so topic CSS can override -->
 <link rel="stylesheet" href="../../../shared/sim-style.css">
 <link rel="stylesheet" href="wave-superposition.css">
@@ -76,19 +80,19 @@
 
     <section class="readouts readouts--dense" id="readoutsPanel" aria-label="Live simulation values">
      <div class="readout">
-      <span class="readout-label">Amplitude, A (Wave A)</span>
+      <span class="readout-label">Amplitude, <span class="katex-inline" data-latex="A">A</span> (Wave A)</span>
       <output id="val-amp-a" class="readout-value">+0.20 m</output>
      </div>
      <div class="readout">
-      <span class="readout-label">Amplitude, A (Wave B)</span>
+      <span class="readout-label">Amplitude, <span class="katex-inline" data-latex="A">A</span> (Wave B)</span>
       <output id="val-amp-b" class="readout-value">+0.20 m</output>
      </div>
      <div class="readout">
-      <span class="readout-label">Separation, &Delta;x</span>
+      <span class="readout-label">Separation, <span class="katex-inline" data-latex="\Delta x">Δx</span></span>
       <output id="val-separation" class="readout-value">0.00 m</output>
      </div>
      <div class="readout">
-      <span class="readout-label">Resultant Peak, y<sub>max</sub></span>
+      <span class="readout-label">Resultant Peak, <span class="katex-inline" data-latex="y_{\max}">y_max</span></span>
       <output id="val-resultant-peak" class="readout-value">0.00 m</output>
      </div>
     </section>
@@ -167,27 +171,27 @@
 
     <section class="readouts readouts--dense" id="interferenceReadoutsPanel" aria-label="Live simulation values">
      <div class="readout">
-      <span class="readout-label">Amplitude, A</span>
+      <span class="readout-label">Amplitude, <span class="katex-inline" data-latex="A">A</span></span>
       <output id="val-interference-amp" class="readout-value">0.20 m</output>
      </div>
      <div class="readout">
-      <span class="readout-label">Wavelength, &lambda;</span>
+      <span class="readout-label">Wavelength, <span class="katex-inline" data-latex="\lambda">λ</span></span>
       <output id="val-wavelength" class="readout-value">1.50 m</output>
      </div>
      <div class="readout">
-      <span class="readout-label">Angular Frequency, &omega;</span>
+      <span class="readout-label">Angular Frequency, <span class="katex-inline" data-latex="\omega">ω</span></span>
       <output id="val-interference-omega" class="readout-value">6.0 rad/s</output>
      </div>
      <div class="readout">
-      <span class="readout-label">Wave Number, k</span>
+      <span class="readout-label">Wave Number, <span class="katex-inline" data-latex="k">k</span></span>
       <output id="val-k" class="readout-value">4.19 rad/m</output>
      </div>
      <div class="readout">
-      <span class="readout-label">Phase Difference, &Delta;&phi;</span>
+      <span class="readout-label">Phase Difference, <span class="katex-inline" data-latex="\Delta\phi">Δφ</span></span>
       <output id="val-phase-diff" class="readout-value">0.00 rad</output>
      </div>
      <div class="readout">
-      <span class="readout-label">Resultant Peak, y<sub>max</sub></span>
+      <span class="readout-label">Resultant Peak, <span class="katex-inline" data-latex="y_{\max}">y_max</span></span>
       <output id="val-interference-peak" class="readout-value">0.00 m</output>
      </div>
     </section>
@@ -203,7 +207,7 @@
 
     <div class="control-row">
      <div class="control-meta">
-      <label for="interference-amp-slider">Amplitude, A</label>
+      <label for="interference-amp-slider">Amplitude, <span class="katex-inline" data-latex="A">A</span></label>
       <output id="interference-amp-live" class="control-value">0.20 m</output>
      </div>
      <input id="interference-amp-slider" type="range" min="0.05" max="0.30" step="0.01" value="0.20">
@@ -211,7 +215,7 @@
 
     <div class="control-row">
      <div class="control-meta">
-      <label for="wavelength-slider">Wavelength, &lambda;</label>
+      <label for="wavelength-slider">Wavelength, <span class="katex-inline" data-latex="\lambda">λ</span></label>
       <output id="wavelength-live" class="control-value">1.50 m</output>
      </div>
      <input id="wavelength-slider" type="range" min="0.5" max="3" step="0.05" value="1.5">
@@ -219,7 +223,7 @@
 
     <div class="control-row">
      <div class="control-meta">
-      <label for="interference-omega-slider">Angular Frequency, &omega;</label>
+      <label for="interference-omega-slider">Angular Frequency, <span class="katex-inline" data-latex="\omega">ω</span></label>
       <output id="interference-omega-live" class="control-value">6.0 rad/s</output>
      </div>
      <input id="interference-omega-slider" type="range" min="2" max="12" step="0.1" value="6.0">
@@ -227,11 +231,11 @@
 
     <div class="control-row">
      <div class="control-meta">
-      <label for="phase-diff-slider">Phase Difference, &Delta;&phi;</label>
+      <label for="phase-diff-slider">Phase Difference, <span class="katex-inline" data-latex="\Delta\phi">Δφ</span></label>
       <output id="phase-diff-live" class="control-value">0</output>
      </div>
      <input id="phase-diff-slider" type="range" min="0" max="6.283185307" step="0.0174533" value="0">
-     <p class="control-note">0 = fully constructive &middot; &pi; = fully destructive</p>
+     <p class="control-note"><span class="katex-inline" data-latex="0 = \text{fully constructive} \quad \pi = \text{fully destructive}">0 = fully constructive · π = fully destructive</span></p>
     </div>
 
     <div class="button-grid">
@@ -257,7 +261,7 @@
       destructive interference: when two waves meet, the resultant
       displacement is the sum of each wave's individual displacement.
      </p>
-     <span class="formula">y<sub>resultant</sub> = y<sub>A</sub> + y<sub>B</sub></span>
+     <span class="formula" data-latex="y_\text{resultant} = y_A + y_B">y_resultant = y_A + y_B</span>
     </div>
     <div id="interferenceTheoryContent" style="display:none">
      <h2>Learning Outcomes — 7.5(a), 7.5(c)</h2>
@@ -267,7 +271,7 @@
       because these waves never end, the interference pattern is
       continuous rather than a single momentary overlap.
      </p>
-     <span class="formula">y<sub>resultant</sub> = y<sub>A</sub> + y<sub>B</sub></span>
+     <span class="formula" data-latex="y_\text{resultant} = y_A + y_B">y_resultant = y_A + y_B</span>
     </div>
    </section>
    <section class="theory-card">
@@ -282,8 +286,9 @@
     <div id="interferenceTheoryContent2" style="display:none">
      <h2>Key Equations</h2>
      <p>
-      y = A sin(&omega;t &minus; kx) &nbsp;|&nbsp; k = 2&pi;/&lambda;
-      <span class="formula">&Delta;&phi; = 0 &rarr; 2A &nbsp;&nbsp; &Delta;&phi; = &pi; &rarr; 0</span>
+      <span class="katex-inline" data-latex="y = A\sin(\omega t - kx)">y = A sin(ωt − kx)</span> &nbsp;|&nbsp;
+      <span class="katex-inline" data-latex="k = \frac{2\pi}{\lambda}">k = 2π/λ</span>
+      <span class="formula" data-latex="\Delta\phi = 0 \Rightarrow 2A \quad \Delta\phi = \pi \Rightarrow 0">Δφ = 0 → 2A &nbsp;&nbsp; Δφ = π → 0</span>
      </p>
     </div>
    </section>

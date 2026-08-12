@@ -31,6 +31,9 @@
       `coding.md`) — no new ad hoc hex colors or spacing values
 - [ ] Readouts show correct units and consistent decimal formatting
       (`signedFixed` for signed quantities)
+- [ ] Math notation uses KaTeX (`data-latex` + shared `renderMath`), not
+      raw HTML entities or `<sub>`/`<sup>` markup; live numeric readouts
+      stay plain DOM text
 - [ ] Button/slider placement matches the standard `.button-grid` /
       `.control-row` layout
 - [ ] Theory strip text matches the LO wording and cites correct formulas
