@@ -167,11 +167,13 @@ There is no hard line-count threshold and no requirement to use every role in
   from `PALETTE` entries, not redefined.
   `--ink #102126`, `--paper #eff3ed`, `--panel #f8faf6`,
   `--line #c9d2c7`, `--acid #dff34b`, `--orange #ff6b35`,
-  `--teal #35b9ad`, `--muted #617075` plus two shared additions:
-  `--accent #bf5a00` (darker accent for velocity/accel arrows on light
-  background) and `--path #b4beb2` (neutral for orbit paths/dashed
-  guides — all mapped to `PALETTE.accent` / `PALETTE.path`). Never
-  introduce a new hex color when one of these fits.
+  `--teal #35b9ad`, `--muted #617075` (all defined in
+  `shared/sim-style.css` `:root`), plus two **JS-only** `PALETTE`
+  additions that have no CSS `:root` counterpart: `PALETTE.accent`
+  `#bf5a00` (darker accent for velocity/accel arrows on light
+  background) and `PALETTE.path` `#b4beb2` (neutral for orbit
+  paths/dashed guides). Never introduce a new hex color when one of
+  these fits.
 - Spacing follows the existing rhythm: `.control-row` margin-bottom `21px`,
   `.stage`/`.controls` padding `28px`, `.button-grid` gap `9px`. Match
   these rather than picking new values.

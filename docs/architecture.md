@@ -386,14 +386,12 @@ Duplication observed that should be reconciled next time it's touched:
   these rather than re-rolling local diffing/formatting logic (this has
   mostly been followed correctly already).
 - **Discrete-value stepper buttons** (`.system-switch.compact` reused for a
-  fixed set of selectable values rather than a mode toggle) now has two
-  independent uses: 7.5's `.amp-step-group` (signed amplitude steps) and
-  7.6's `.harmonic-group` (integer harmonic numbers, including a non-
-  contiguous odd-only set for the closed air column). This is a confirmed
-  second use of the same underlying pattern — worth promoting to a generic
-  `.stepper-group` modifier in `shared/sim-style.css` next time either
-  topic's stepper CSS is touched, rather than deferring further per §6
-  rule 3.
+  fixed set of selectable values rather than a mode toggle) has two
+  independent uses — 7.5's signed amplitude steps and 7.6's integer harmonic
+  numbers (including a non-contiguous odd-only set for the closed air
+  column). This second use was promoted to the shared `.stepper-group`
+  modifier in `shared/sim-style.css` (see §6's shared list) — both 7.5 and
+  7.6 now use `class="system-switch compact stepper-group"`.
 - **Node/antinode-style extrema markers with play-state-gated labels**
   (7.6's `drawExtremaMarkers`) are not yet a shared helper — only one sim
   uses this pattern so far. Revisit if a future sim (e.g. another

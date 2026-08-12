@@ -120,6 +120,7 @@ Call `ui.updateReadouts(...)` from the callback that actually changes the values
 - `drawTrailDots(p5ctx, trail, projector, r, g, b, maxAlpha)` — fading motion trail
 - `drawLabel(p5ctx, text, x, y, { fill, size, weight, font, align })` — styled text label
 - `updateReadout(store, key, el, formattedValue)` — diffed DOM writes
+- `renderMath(el, latex, displayMode)` — KaTeX rendering for `data-latex` elements
 - `AudioTone` — continuously-updatable tone (used by 7.7 Doppler)
 - `PlaybackState({ buttonEl, playLabel, pauseLabel, onPlay, onPause })` — play/pause state machine
 
