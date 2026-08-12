@@ -105,9 +105,10 @@ class UIManager {
   }
 
   // Harmonic-number stepper buttons — n is discrete, so this reuses the
-  // .system-switch.compact button-group pattern (7.5's amp-step-group)
-  // rather than a continuous range slider. Built from LIMITS.harmonics so
-  // the closed-column's odd-only set never needs a separate code path.
+  // shared .stepper-group modifier (introduced for 7.5's amplitude steps)
+  // on a .system-switch.compact button group rather than a continuous range
+  // slider. Built from LIMITS.harmonics so the closed-column's odd-only set
+  // never needs a separate code path.
   _buildHarmonicGroup(groupEl, harmonics, defaultValue) {
     groupEl.innerHTML = '';
     harmonics.forEach((n) => {
