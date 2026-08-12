@@ -84,7 +84,7 @@ Do not reach for instance mode just because a sim is "advanced." 7.6 has three p
 5. **Write renderer.** Free functions taking an explicit p5 context (`window` in global mode, `p5.Graphics`/instance in instance mode) plus already-computed state. No physics beyond unit→pixel mapping, no held state.
 6. **Write SimulationController.** Owns physics + UI, wires callbacks, drives play/pause/step/reset, owns playback state and history/trail buffers. No drawing, no physics derivations.
 7. **Write sketch entry point.** `setup()`/`draw()`/`windowResized()` for global, `DOMContentLoaded` bootstrap for instance.
-8. **Wire theory strip / readouts** to LO text and correct units. Cross-check against curriculum spec PDF.
+8. **Wire theory strip / readouts** to LO text and correct units. Cross-check against `SP015-curriculum-spec.md`.
 9. **Check for duplication.** Anything that's now the second copy of a helper (arrows, dashed guides, readout diffing, button patterns) must move to `shared/`.
 
 ---
@@ -226,7 +226,7 @@ SI throughout: m, s, kg, rad, Hz, N, J. Angles stored in radians, converted to d
 When calling a sim done, verify:
 
 - **Functionality:** Play/Pause/Reset/Step work. Sliders update live. Mode toggles sync `aria-pressed`. Resize works. Sim starts paused, never blank.
-- **Physics:** Equations match the spec PDF. Every equation cited with LO. Derived quantities are getters. `dt` is clamped. Simplifications stated.
+- **Physics:** Equations match `SP015-curriculum-spec.md`. Every equation cited with LO. Derived quantities are getters. `dt` is clamped. Simplifications stated.
 - **UI:** Uses `shared/sim-style.css` unmodified. Colors/fonts/spacing match palette. Readouts show correct units. Theory strip matches LO.
 - **Code:** Architecture no more complex than needed. File responsibilities respected (no DOM in physics, no physics in renderer). Constants are single source of truth. No duplicated helper from `shared/sim-utils.js`. Rolling buffers capped.
 - **Performance:** Readout writes diffed. Per-frame `updateReadouts` only for t-dependent values. Multi-canvas sims share one clock. No console errors.

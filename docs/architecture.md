@@ -9,10 +9,11 @@ repo, not an aspirational spec.
 This repo is a growing library of interactive p5.js simulations for teaching
 **Physics 1 (SP015)** at pre-university level, with **SP025** to follow later.
 Each simulation is a standalone teaching tool built against the official
-curriculum specification (see `Curriculum_Specifications_CS_Physics_SP015.pdf`
-/ `SP025.pdf`) — sliders map to real physical quantities, readouts use correct
-units and notation, and theory text matches the learning outcomes (LOs) cited
-in code comments (e.g. "SP015 7.1(c.iii)").
+curriculum specification (SP015 in `SP015-curriculum-spec.md` at the repo
+root; the SP025 spec is not yet converted to markdown) — sliders map to real
+physical quantities, readouts use correct units and notation, and theory text
+matches the learning outcomes (LOs) cited in code comments (e.g.
+"SP015 7.1(c.iii)").
 
 Two things matter equally: **pedagogical correctness** (equations, units,
 sign conventions, small-angle caveats, etc., usually justified in a comment)
@@ -27,6 +28,7 @@ The repository currently uses the following structure:
 ```text
 SP015/
 ├── README.md
+├── SP015-curriculum-spec.md
 ├── animations/
 │   ├── 02-kinematics-of-linear-motion/
 │   │   └── 2.3-projectile-motion/
@@ -211,7 +213,7 @@ Observed sequence for every sim in the repo so far:
    reach for it just because a sim is "advanced." See §5 for the full
    canvas-mode decision guidance.
 8. **Wire the theory strip / readouts** to match the LO text and correct
-   units, cross-checking against the curriculum spec PDF.
+   units, cross-checking against `SP015-curriculum-spec.md`.
 9. **Check for duplication against existing sims** — anything that's now
    the second copy of a helper (arrow drawing, dashed guides, readout
    diffing, button binding patterns, etc.) should move to `shared/`.

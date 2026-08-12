@@ -12,6 +12,7 @@ class SimulationController {
     this.displacementVectorArrow = null;
     this.velocityVectorArrow = null;
     this.accelVectorArrow = null;
+    this.forceVectorArrow = null;
   }
 
   init() {
@@ -22,6 +23,7 @@ class SimulationController {
     this.displacementVectorArrow = new VectorArrow(color(PALETTE.orange), 3);
     this.velocityVectorArrow = new VectorArrow(color(PALETTE.accent), 3);
     this.accelVectorArrow = new VectorArrow(color(PALETTE.ink), 3);
+    this.forceVectorArrow = new VectorArrow(color(PALETTE.ink), 3);
 
     pixelDensity(1);
     frameRate(60);
@@ -132,9 +134,11 @@ class SimulationController {
         showDisplacement: this.ui.showDisplacementVector,
         showVelocity: this.ui.showVelocityVector,
         showAccel: this.ui.showAccelerationVector,
+        showForce: this.ui.showForceVector,
         displacementArrow: this.displacementVectorArrow,
         velocityArrow: this.velocityVectorArrow,
         accelArrow: this.accelVectorArrow,
+        forceArrow: this.forceVectorArrow,
       });
     } else if (this.ui.system === 'pendulum') {
       drawPendulumSystem(window, this.pendulumOscillator, this.ui.physicsParams(), width, height);

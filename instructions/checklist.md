@@ -12,8 +12,9 @@
       never blank on load
 
 ## Physics accuracy
-- [ ] Equations match the SP015/SP025 spec exactly (check against the PDF,
-      not memory) — units, symbols, and sign conventions all correct
+- [ ] Equations match the SP015/SP025 spec exactly (check against
+      `SP015-curriculum-spec.md`, not memory) — units, symbols, and sign
+      conventions all correct
 - [ ] Every equation/simplification has a comment citing the LO
       (e.g. `SP015 7.1(c.iii)`)
 - [ ] Independent vs. derived quantities are correctly separated (derived

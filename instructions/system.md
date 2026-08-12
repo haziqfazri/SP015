@@ -7,7 +7,8 @@ A growing library of standalone, interactive p5.js simulations teaching
 maintained solo, with heavy use of AI coding assistants.
 
 **Audience:** SP015/SP025 students and their teachers, using each sim as a
-classroom or self-study visual aid alongside the official curriculum spec.
+classroom or self-study visual aid alongside the official curriculum spec
+(`SP015-curriculum-spec.md` for SP015).
 
 ## 2. Educational objectives
 
@@ -18,7 +19,8 @@ Every simulation should:
 - Let a student **change one variable and see the physical consequence**
   immediately (slider → motion/graph response), not just watch a fixed
   animation.
-- Use **correct units, signs, and notation** matching the curriculum spec —
+- Use **correct units, signs, and notation** matching the curriculum spec
+  (`SP015-curriculum-spec.md`) —
   a wrong sign convention teaches a wrong physics habit.
 - Show live **readouts** (position, velocity, energy, etc.) so the visual
   and the numbers reinforce each other.

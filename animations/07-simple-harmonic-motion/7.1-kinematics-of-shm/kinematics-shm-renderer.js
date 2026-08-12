@@ -1,5 +1,6 @@
 const VELOCITY_PX_PER_MS = 100;   // px per (m/s) — direct scale, no normalization
 const ACCEL_PX_PER_MS2 = 10;    // px per (m/s²) — direct scale, no normalization
+const FORCE_PX_PER_N = 6;     // px per newton — direct scale, no normalization
 
 // =========================================================================
 // drawSinusoidColumn — scrolling y-vs-t trace for the Reference Circle tab.
@@ -256,7 +257,7 @@ function drawSpringCoilVertical(p5ctx, x, y1, y2) {
 }
 
 function drawSpringSystem(p5ctx, oscillator, params, width, height, vectorOptions = {}) {
-  const { showDisplacement, showVelocity, showAccel, displacementArrow, velocityArrow, accelArrow } = vectorOptions;
+  const { showDisplacement, showVelocity, showAccel, showForce, displacementArrow, velocityArrow, accelArrow, forceArrow } = vectorOptions;
   const floorY = height * 0.7;
   const equilibrium = width * 0.59;
   const massSize = Math.min(70, 44 + params.m * 7);
@@ -280,10 +281,14 @@ function drawSpringSystem(p5ctx, oscillator, params, width, height, vectorOption
   // stacked at different y-offsets from the mass, each with its own endpoint
   // length. Config-driven since the three are structurally identical.
   const vectorA = oscillator.acceleration(params); // SP015 7.1: a = -kx/m, single source of truth
+  const forceEndX = showForce
+    ? equilibrium + oscillator.restoringForce(params) * FORCE_PX_PER_N
+    : equilibrium;
   const vectors = [
     { show: showDisplacement, arrow: displacementArrow, y: floorY + 61, endX: massX, label: 'x' },
     { show: showVelocity, arrow: velocityArrow, y: floorY - 40, endX: equilibrium + oscillator.v * VELOCITY_PX_PER_MS, label: 'v' },
     { show: showAccel, arrow: accelArrow, y: floorY - 70, endX: equilibrium + vectorA * ACCEL_PX_PER_MS2, label: 'a' },
+    { show: showForce, arrow: forceArrow, y: floorY - 100, endX: forceEndX, label: 'F' },
   ];
   vectors.forEach(({ show, arrow, y, endX, label }) => {
     if (show) arrow.draw(p5ctx, equilibrium, y, endX, y, label, true);

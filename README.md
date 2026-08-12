@@ -56,7 +56,7 @@ Start from [`templates/`](templates/README.md), which has the full build order a
 | 5 | Uniform Circular Motion | ✅ Done |
 | — | *(next SP015 topic)* | ⬜ Planned |
 
-Curriculum specs: [`Curriculum Specifications (CS) Physics SP015.pdf`](Curriculum%20Specifications%20(CS)%20Physics%20SP015.pdf), [`Curriculum Specifications (CS) Physics SP025.pdf`](Curriculum%20Specifications%20(CS)%20Physics%20SP025.pdf).
+Curriculum spec: [`SP015-curriculum-spec.md`](SP015-curriculum-spec.md). *(The SP025 spec is not yet converted to markdown.)*
 
 ---
 

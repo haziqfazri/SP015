@@ -43,7 +43,7 @@ and the decision rule for choosing between them.
       instance mode (2+ synced canvases) when needed. Do not introduce a
       second canvas or instance-mode architecture without a concrete reason.
 - [ ] **Wire the theory strip / readouts** to the LO text and correct
-      units, cross-checked against the curriculum spec PDF.
+      units, cross-checked against `SP015-curriculum-spec.md`.
 - [ ] **Check for duplication** against existing sims before calling it
       done — fold any second copy of a helper into `shared/` now, not later.
 

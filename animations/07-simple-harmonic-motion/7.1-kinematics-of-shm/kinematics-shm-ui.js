@@ -9,6 +9,7 @@ class UIManager {
     this.showDisplacementVector = false;
     this.showVelocityVector = false;
     this.showAccelerationVector = false;
+    this.showForceVector = false;
     this.playbackState = null;
 
     // Assigned by SimulationController after construction.
@@ -75,6 +76,7 @@ class UIManager {
       displacementVectorToggle: document.getElementById('toggleDisplacementVector'),
       velocityVectorToggle: document.getElementById('toggleVelocityVector'),
       accelerationVectorToggle: document.getElementById('toggleAccelerationVector'),
+      forceVectorToggle: document.getElementById('toggleForceVector'),
 
       timeValue: document.getElementById('timeValue'),
       positionValue: document.getElementById('positionValue'),
@@ -200,6 +202,10 @@ class UIManager {
     });
     this.els.accelerationVectorToggle.addEventListener('change', () => {
       this.showAccelerationVector = this.els.accelerationVectorToggle.checked;
+      if (this.onDisplayChange) this.onDisplayChange();
+    });
+    this.els.forceVectorToggle.addEventListener('change', () => {
+      this.showForceVector = this.els.forceVectorToggle.checked;
       if (this.onDisplayChange) this.onDisplayChange();
     });
   }
