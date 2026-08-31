@@ -1,7 +1,7 @@
 /* =========================================================================
    UNIFORM CIRCULAR MOTION SIMULATOR — PHASE 1
    Main sketch/controller entry point.
-   The simulation classes and shared helpers live in simulation.js.
+   The simulation classes and shared helpers live in circular-motion-sim.js.
    ========================================================================= */
 
 // Main simulation controller

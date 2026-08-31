@@ -164,8 +164,11 @@ class UIManager {
   _bindDirectionSwitch() {
     this.el.directionButtons.forEach((btn) => {
       btn.addEventListener('click', () => {
-        this.el.directionButtons.forEach((b) => b.classList.remove('is-active'));
-        btn.classList.add('is-active');
+        this.el.directionButtons.forEach((b) => {
+          const isActive = b === btn;
+          b.classList.toggle('is-active', isActive);
+          b.setAttribute('aria-pressed', String(isActive));
+        });
         const direction = btn.dataset.direction === 'negative' ? -1 : 1;
         if (this.callbacks.onDirectionChange) this.callbacks.onDirectionChange(direction);
       });

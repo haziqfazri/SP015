@@ -6,13 +6,14 @@
 
 const PX_PER_METER = 100; // 100px = 1m
 
-// Physical bounds derived from the slider ranges in index.html.
+// Physical bounds derived from the pixel-backed radius control range in
+// circular-motion.html. The UI exposes metres; the renderer stores pixels.
 // Used to normalize v, a, F onto a shared 0–1 range so their arrows
 // grow/shrink in sync regardless of how differently each quantity scales.
 const OMEGA_MIN = (Math.PI * 2) / 5;   // period slider max = 5s
 const OMEGA_MAX = (Math.PI * 2) / 1;   // period slider min = 1s
 const RADIUS_M_MIN = 50 / PX_PER_METER;   // radius slider min = 50px
-const RADIUS_M_MAX = 250 / PX_PER_METER;  // radius slider max = 250px
+const RADIUS_M_MAX = 140 / PX_PER_METER;  // radius slider max = 140px
 const MASS_MIN = 0.1;
 const MASS_MAX = 5;
 
@@ -370,7 +371,7 @@ class UIManager {
         radiusSlider.addEventListener('input', () => {
             const val = Number(radiusSlider.value);
             orbit.radius = val;
-            radiusLive.textContent = `${val.toFixed(0)} px`;
+            radiusLive.textContent = `${(val / PX_PER_METER).toFixed(2)} m`;
             if (this.onRadiusChange) this.onRadiusChange(val);
             this._requestRedrawIfPaused();
         });
@@ -533,7 +534,7 @@ class UIManager {
         const els = this.readoutEls;
         const last = this._lastReadout;
 
-        const radius = this.orbit.radius.toFixed(1);
+        const radius = `${(this.orbit.radius / PX_PER_METER).toFixed(2)} m`;
         const rad = p.theta.toFixed(3);
         const period = (TWO_PI / Math.abs(p.angularVelocity)).toFixed(2);
         const omega = p.angularVelocity.toFixed(2);

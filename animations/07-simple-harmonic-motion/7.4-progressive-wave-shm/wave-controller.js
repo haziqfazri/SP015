@@ -57,47 +57,63 @@ class SimulationController {
       onAmplitudeChange: (value) => {
         this.state.amplitude = value;
         this._refreshReadouts();
+        this._requestRedrawIfPaused();
       },
       onWaveSpeedChange: (value) => {
         this.state.waveSpeed = value;
         this._refreshReadouts();
+        this._requestRedrawIfPaused();
       },
       onFrequencyChange: (value) => {
         this.state.frequency = value;
         this._refreshReadouts();
+        this._requestRedrawIfPaused();
       },
       onParticleCountChange: (value) => {
         this.particleCount = value;
         this._refreshReadouts();
+        this._requestRedrawIfPaused();
       },
       onParticlesToggle: (checked) => {
         this.showParticles = checked;
+        this._requestRedrawIfPaused();
       },
       onVyArrowToggle: (checked) => {
         this.showVyArrow = checked;
+        this._requestRedrawIfPaused();
       },
       onGuidesToggle: (checked) => {
         this.showGuides = checked;
+        this._requestRedrawIfPaused();
       },
       onDirectionChange: (direction) => {
         this.state.direction = direction;
         this._refreshReadouts();
         this._refreshEquations();
+        this._requestRedrawIfPaused();
       },
       onPlayPause: () => {
         this.isPlaying = !this.isPlaying;
         this.ui.updatePlayPauseLabel(this.isPlaying);
+        if (this.isPlaying) loop();
+        else {
+          noLoop();
+          redraw();
+        }
       },
       onStep: () => {
         // Single fixed step regardless of play state — lets students
         // advance frame-by-frame while paused to inspect phase changes.
         this._advance(1 / 60);
+        this._requestRedrawIfPaused();
       },
       onReset: () => {
         this.state.reset();
         this.yHistory = [];
         this.isPlaying = false;
         this.ui.updatePlayPauseLabel(this.isPlaying);
+        noLoop();
+        redraw();
         this._refreshReadouts();
       }
     });
@@ -114,6 +130,10 @@ class SimulationController {
     this.state.advance(dt);
     this._recordHistory();
     this._refreshReadouts();
+  }
+
+  _requestRedrawIfPaused() {
+    if (!this.isPlaying) redraw();
   }
 
   // Reference particle sits at the centre of the visible x-range,

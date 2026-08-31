@@ -42,6 +42,8 @@ function setup() {
 
   lastFrameMs = performance.now();
   frameRate(60);
+  noLoop(); // starts paused; redraw only on input or after Play is pressed
+  redraw();
 }
 
 function draw() {
@@ -68,4 +70,5 @@ function windowResized() {
   ytPanelWidth = ytHolder.clientWidth;
   ytPanelHeight = ytHolder.clientHeight;
   ytBuffer.resizeCanvas(ytPanelWidth, ytPanelHeight);
+  if (!controller.isPlaying) redraw();
 }
