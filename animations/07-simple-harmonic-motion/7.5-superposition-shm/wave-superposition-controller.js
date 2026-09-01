@@ -23,7 +23,7 @@ class SimulationController {
       INTERFERENCE_LIMITS.ampDefault, INTERFERENCE_LIMITS.omegaDefault, INTERFERENCE_LIMITS.wavelengthDefault, 0, +1
     );
     const interferenceWaveB = new ProgressiveWave(
-      INTERFERENCE_LIMITS.ampDefault, INTERFERENCE_LIMITS.omegaDefault, INTERFERENCE_LIMITS.wavelengthDefault, INTERFERENCE_LIMITS.phaseDiffDefault, -1
+      INTERFERENCE_LIMITS.ampDefault, INTERFERENCE_LIMITS.omegaDefault, INTERFERENCE_LIMITS.wavelengthDefault, INTERFERENCE_LIMITS.phaseDiffDefault, +1
     );
     this.interference = new InterferenceSystem(interferenceWaveA, interferenceWaveB);
 

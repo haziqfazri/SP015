@@ -120,7 +120,7 @@ class UIManager {
   referenceParams() {
     const A = Number(this.els.ampControl.value);
     const T = Number(this.els.refPeriodControl.value);
-    return { A, omega: TWO_PI / T };
+    return { A, omega: (2 * Math.PI) / T };
   }
 
   _bindControls() {

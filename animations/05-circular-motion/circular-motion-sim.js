@@ -112,7 +112,7 @@ class Particle {
     const delta = this.angularVelocity * dt;
     this.theta += delta;
     this.unwrappedTheta += delta;
-    this.theta = ((this.theta % TWO_PI) + TWO_PI) % TWO_PI;
+    this.theta = ((this.theta % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
   }
 
   release() {
@@ -143,7 +143,7 @@ class Particle {
 
     // Snap to the first completed revolution boundary so the readout
     // resolves to exactly one revolution.
-    this.unwrappedTheta = sign * targetRevolutions * TWO_PI;
+    this.unwrappedTheta = sign * targetRevolutions * (2 * Math.PI);
     this.theta = 0;
   }
 
@@ -186,7 +186,7 @@ class Particle {
   }
 
   completedRevolutions() {
-    return Math.floor(Math.abs(this.unwrappedTheta) / TWO_PI);
+    return Math.floor(Math.abs(this.unwrappedTheta) / (2 * Math.PI));
   }
 
   drawBody() {
@@ -243,17 +243,19 @@ class AngleIndicator {
     noFill();
     stroke(this.colorVal);
     strokeWeight(2.5);
-    arc(cx, cy, this.arcRadius * 2, this.arcRadius * 2, 0, theta === 0 ? 0.0001 : theta);
+    const startAngle = particle.direction >= 0 ? 0 : theta;
+    const stopAngle = particle.direction >= 0 ? (theta === 0 ? 0.0001 : theta) : (2 * Math.PI);
+    arc(cx, cy, this.arcRadius * 2, this.arcRadius * 2, startAngle, stopAngle);
     pop();
 
     if (showLabels) {
-        const labelAngle = theta / 2;
+        const labelAngle = particle.direction >= 0 ? theta / 2 : (theta + 2 * Math.PI) / 2;
         const lx = cx + (this.arcRadius + 20) * cos(labelAngle);
         const ly = cy + (this.arcRadius + 20) * sin(labelAngle);
         push();
         noStroke();
         fill(this.colorVal);
-        textFont('IBM Plex Mono');
+        textFont('Space Mono');
         textStyle(BOLD);
         textSize(15);
         textAlign(CENTER, CENTER);
@@ -398,7 +400,7 @@ class UIManager {
         periodSlider.addEventListener('input', () => {
             const T = Number(periodSlider.value);
             const f = 1 / T;
-            const omega = TWO_PI / T;
+            const omega = (2 * Math.PI) / T;
             applyOmega(omega);
             periodLive.textContent = `${T.toFixed(2)} s`;
             freqLive.textContent = `${f.toFixed(3)} Hz`;
@@ -411,7 +413,7 @@ class UIManager {
         freqSlider.addEventListener('input', () => {
             const f = Number(freqSlider.value);
             const T = 1 / f;
-            const omega = TWO_PI * f;
+            const omega = (2 * Math.PI) * f;
             applyOmega(omega);
             freqLive.textContent = `${f.toFixed(3)} Hz`;
             periodLive.textContent = `${T.toFixed(2)} s`;
@@ -423,7 +425,7 @@ class UIManager {
 
         omegaSlider.addEventListener('input', () => {
             const omega = Number(omegaSlider.value);
-            const T = TWO_PI / omega;
+            const T = (2 * Math.PI) / omega;
             const f = 1 / T;
             applyOmega(omega);
             omegaLive.textContent = `${omega.toFixed(3)} rad/s`;
@@ -532,54 +534,21 @@ class UIManager {
     updateReadout() {
         const p = this.particle;
         const els = this.readoutEls;
-        const last = this._lastReadout;
+        const store = this._lastReadout;
 
-        const radius = `${(this.orbit.radius / PX_PER_METER).toFixed(2)} m`;
-        const rad = p.theta.toFixed(3);
-        const period = (TWO_PI / Math.abs(p.angularVelocity)).toFixed(2);
-        const omega = p.angularVelocity.toFixed(2);
-        const rev = p.completedRevolutions();
-        const time = p.elapsedTime.toFixed(2);
-        const speed = p.speed().toFixed(2);
-        const accel = p.centripetalAcceleration().toFixed(2);
-        const force = p.centripetalForce().toFixed(2);
+        updateReadout(store, 'radius', els.radius, `${(this.orbit.radius / PX_PER_METER).toFixed(2)} m`);
+        updateReadout(store, 'rad', els.rad, `${p.theta.toFixed(3)} rad`);
+        updateReadout(store, 'omega', els.omega, `${p.angularVelocity.toFixed(2)} rad/s`);
+        updateReadout(store, 'rev', els.rev, `${p.completedRevolutions()}`);
+        updateReadout(store, 'time', els.time, `${p.elapsedTime.toFixed(1)} s`);
+        updateReadout(store, 'speed', els.speed, `${p.speed().toFixed(2)} m/s`);
+        updateReadout(store, 'accel', els.accel, `${p.centripetalAcceleration().toFixed(2)} m/s²`);
+        updateReadout(store, 'force', els.force, `${p.centripetalForce().toFixed(2)} N`);
 
-        if (last.radius !== radius) {
-            els.radius.textContent = radius;
-            last.radius = radius;
+        const periodEl = document.getElementById('periodValue');
+        if (periodEl) {
+            const period = ((2 * Math.PI) / Math.abs(p.angularVelocity)).toFixed(2);
+            updateReadout(store, 'period', periodEl, `${period} s`);
         }
-        if (last.rad !== rad) {
-            els.rad.textContent = rad;
-            last.rad = rad;
-        }
-        if (last.omega !== omega) {
-            els.omega.textContent = omega;
-            last.omega = omega;
-        }
-        if (last.rev !== rev) {
-            els.rev.textContent = rev;
-            last.rev = rev;
-        }
-        if (last.time !== time) {
-            els.time.textContent = time;
-            last.time = time;
-        }
-        if (last.speed !== speed) {
-            els.speed.textContent = speed;
-            last.speed = speed;
-        }
-        if (last.accel !== accel) {
-            els.accel.textContent = accel;
-            last.accel = accel;
-        }
-        if (last.force !== force) {
-            els.force.textContent = force;
-            last.force = force;
-        }
-        if (last.period !== period) {
-            const periodEl = document.getElementById('periodValue');
-            if (periodEl) periodEl.textContent = `${period} s`;
-            last.period = period;
-        }
-     }
+    }
 }

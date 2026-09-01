@@ -37,7 +37,7 @@
    <div class="system-switch">
     <button id="springSystemButton" class="system-option is-active" type="button" aria-pressed="true">Spring–Mass</button>
     <button id="pendulumSystemButton" class="system-option" type="button" aria-pressed="false">Simple Pendulum</button>
-    <button id="referenceSystemButton" class="system-option" type="button" aria-pressed="false">Spring-Mass (Vertical)</button>
+    <button id="referenceSystemButton" class="system-option" type="button" aria-pressed="false">Reference Circle</button>
    </div>
   </nav>
 
@@ -164,19 +164,19 @@
     <div id="springTheory">
      <h2>Restoring force</h2>
      <p>Hooke's Law: the spring pulls the mass back toward equilibrium in proportion to its displacement, in the opposite direction.</p>
-     <span class="formula" data-latex="F = -kx">F = −kx</span>
+     <span class="formula" data-latex="F = -kx" aria-label="Hooke's law: F equals minus k x">F = −kx</span>
     </div>
     <div id="pendulumTheory" style="display:none">
      <h2>Restoring torque</h2>
      <p>Gravity supplies the restoring torque. For large swing angles the motion is only approximately simple harmonic — this simulation uses the exact sine term, not the small-angle approximation.</p>
-     <span class="formula" data-latex="a = -\frac{g}{L}\sin\theta">a = −(g/L)·sin θ</span>
+     <span class="formula" data-latex="a = -\frac{g}{L}\sin\theta" aria-label="Restoring acceleration: a equals minus g over L times sine theta">a = −(g/L)·sin θ</span>
     </div>
    </section>
    <section class="theory-card">
     <div id="periodTheoryContent">
      <h2>Period, T</h2>
      <p><span id="periodValue" class="mono" style="font-weight:700;color:var(--orange)">1.40 s</span></p>
-      <p id="periodNote" style="margin-top:8px"><span id="periodFormula" class="katex-inline" data-latex="T = 2\pi\sqrt{m/k}">T = 2π√(m/k)</span><span id="periodNoteWord"> — independent of amplitude for an ideal spring.</span></p>
+      <p id="periodNote" style="margin-top:8px"><span id="periodFormula" class="katex-inline" data-latex="T = 2\pi\sqrt{m/k}" aria-label="Period T equals two pi times square root of m over k">T = 2π√(m/k)</span><span id="periodNoteWord"> — independent of amplitude for an ideal spring.</span></p>
     </div>
    </section>
   </footer>

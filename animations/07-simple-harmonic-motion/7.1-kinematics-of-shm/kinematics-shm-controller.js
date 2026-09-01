@@ -100,7 +100,7 @@ class SimulationController {
 
   _syncReferenceHistoryWindow() {
     const { omega } = this.ui.referenceParams();
-    const period = TWO_PI / omega;
+    const period = (2 * Math.PI) / omega;
     this.signalHistory.setWindow(period * 3); // keep ~3 cycles visible
   }
 

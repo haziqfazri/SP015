@@ -139,7 +139,7 @@ class SimulationController {
       this._makeInstance('oscillator-holder', drawOscillator),
       this._makeInstance('xt-holder', (p, c) => drawTimeSeriesGraph(p, c, 'x', PALETTE.orange, 'x (m)')),
       this._makeInstance('vt-holder', (p, c) => drawTimeSeriesGraph(p, c, 'v', PALETTE.teal, 'v (m/s)')),
-      this._makeInstance('at-holder', (p, c) => drawTimeSeriesGraph(p, c, 'a', PALETTE.acid, 'a (m/s\u00B2)')),
+      this._makeInstance('at-holder', (p, c) => drawTimeSeriesGraph(p, c, 'a', PALETTE.ink, 'a (m/s\u00B2)')),
       this._makeInstance('ex-holder', drawEnergyDisplacementGraph),
     ];
   }

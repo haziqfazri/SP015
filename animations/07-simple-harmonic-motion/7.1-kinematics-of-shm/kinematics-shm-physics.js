@@ -156,7 +156,7 @@ class ReferencePhase {
   advance(dt, omega) {
     this.t += dt;
     this.unwrappedTheta += omega * dt;
-    this.theta = ((this.unwrappedTheta % TWO_PI) + TWO_PI) % TWO_PI;  // wrap to [0, 2π)
+    this.theta = ((this.unwrappedTheta % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);  // wrap to [0, 2π)
   }
 
   // y = A·sin(θ) — matches the reference diagram's convention where

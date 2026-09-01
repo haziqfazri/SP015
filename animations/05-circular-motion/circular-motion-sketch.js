@@ -33,7 +33,7 @@ class SimulationController {
     pixelDensity(1);
     angleMode(RADIANS);
 
-    textFont('Space Grotesk');
+    textFont('DM Sans');
     textStyle(BOLD);
     textSize(16);
 
@@ -151,7 +151,7 @@ class SimulationController {
 
                 if (this.ui.stopAfterOneRev && revsAfter > revsBefore) {
                     const sign = p.angularVelocity >= 0 ? 1 : -1;
-                    const targetUnwrapped = sign * (revsBefore + 1) * TWO_PI;
+                    const targetUnwrapped = sign * (revsBefore + 1) * (2 * Math.PI);
                     const exactDt = (targetUnwrapped - unwrappedBefore) / p.angularVelocity;
                     const overshoot = dt - exactDt;
                     p.elapsedTime -= overshoot;

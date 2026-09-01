@@ -44,13 +44,18 @@ class SimulationController {
     this.isPlaying = !this.isPlaying;
     this.ui.setPlayPauseLabel(this.isPlaying);
 
-    // GLOBAL MODE:
-    // if (this.isPlaying) { loop(); } else { noLoop(); redraw(); }
+    if (this.isPlaying) {
+      loop();
+    } else {
+      noLoop();
+      redraw();
+    }
   }
 
   _onStep() {
     this.isPlaying = false;
     this.ui.setPlayPauseLabel(false);
+    noLoop();
     this._advance(1 / 60); // one fixed frame's worth of time
     this._requestRedrawIfPaused();
   }
@@ -58,6 +63,7 @@ class SimulationController {
   _onReset() {
     this.isPlaying = false;
     this.ui.setPlayPauseLabel(false);
+    noLoop();
     this.state.reset();
     this._refreshReadouts();
     this._requestRedrawIfPaused();
@@ -76,8 +82,7 @@ class SimulationController {
   }
 
   _requestRedrawIfPaused() {
-    // GLOBAL MODE: if (!this.isPlaying) redraw();
-    // INSTANCE MODE: call each p5 instance's own .redraw() here instead.
+    if (!this.isPlaying) redraw();
   }
 
   render(ctx, width, height) {
