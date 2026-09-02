@@ -18,27 +18,66 @@ const resultsLine = document.querySelector('#results-line');
 
 const escapeHtml = (value) => String(value).replace(/[&<>'"]/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[char]));
 
+const CARD_DIAGRAM = Object.freeze({ width: 120, height: 74 });
+let diagramSequence = 0;
+
+// Landing-local SVG grammar. Topic diagrams compose these primitives; simulation
+// canvas helpers remain in shared/sim-utils.js.
+const DIAGRAM = Object.freeze({
+  path: (d, role = 'primary') => `<path class="diagram-shape diagram-${role}" d="${d}"/>`,
+  circle: (cx, cy, radius, role = 'primary') => `<circle class="diagram-shape diagram-${role}" cx="${cx}" cy="${cy}" r="${radius}"/>`,
+  line: (x1, y1, x2, y2, role = 'primary') => `<line class="diagram-shape diagram-${role}" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"/>`,
+  axis: (x1, y1, x2, y2, markers) => `<line class="diagram-shape diagram-axis" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" marker-end="url(#${markers.axis})"/>`,
+  arrow: (x1, y1, x2, y2, role, markers) => `<line class="diagram-shape diagram-${role}" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" marker-end="url(#${markers[role] || markers.primary})"/>`,
+  guide: (x1, y1, x2, y2) => `<line class="diagram-shape diagram-guide" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"/>`,
+  equilibrium: (x1, y1, x2, y2) => `<line class="diagram-shape diagram-equilibrium" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"/>`,
+  bracket: (x1, x2, y) => `<path class="diagram-shape diagram-bracket" d="M${x1} ${y - 3} V${y + 3} M${x1} ${y} H${x2} M${x2} ${y - 3} V${y + 3}"/>`,
+  particle: (cx, cy, radius = 3) => `<circle class="diagram-shape diagram-particle" cx="${cx}" cy="${cy}" r="${radius}"/>`,
+  body: (x, y, width, height) => `<rect class="diagram-shape diagram-body" x="${x}" y="${y}" width="${width}" height="${height}"/>`,
+  observer: (cx, cy, radius = 3.5) => `<path class="diagram-shape diagram-observer" d="M${cx} ${cy - radius} L${cx + radius} ${cy} L${cx} ${cy + radius} L${cx - radius} ${cy} Z"/>`,
+  node: (cx, cy, radius = 2.25) => `<circle class="diagram-shape diagram-node" cx="${cx}" cy="${cy}" r="${radius}"/>`,
+  antinode: (cx, cy, radius = 3) => `<path class="diagram-shape diagram-antinode" d="M${cx} ${cy - radius} L${cx + radius} ${cy} L${cx} ${cy + radius} L${cx - radius} ${cy} Z"/>`,
+  boundary: (x, y1, y2) => `<line class="diagram-shape diagram-boundary" x1="${x}" y1="${y1}" x2="${x}" y2="${y2}"/>`,
+  label: (text, x, y, anchor = 'middle') => `<text class="diagram-label" x="${x}" y="${y}" text-anchor="${anchor}">${text}</text>`
+});
+
+function markerDefinitions(markers) {
+  return `<defs>
+    <marker id="${markers.primary}" viewBox="0 0 5 5" markerWidth="5" markerHeight="5" refX="4.5" refY="2.5" orient="auto"><path class="diagram-arrowhead diagram-arrowhead-primary" d="M0 0 L5 2.5 L0 5 Z"/></marker>
+    <marker id="${markers.secondary}" viewBox="0 0 5 5" markerWidth="5" markerHeight="5" refX="4.5" refY="2.5" orient="auto"><path class="diagram-arrowhead diagram-arrowhead-secondary" d="M0 0 L5 2.5 L0 5 Z"/></marker>
+    <marker id="${markers.axis}" viewBox="0 0 5 5" markerWidth="5" markerHeight="5" refX="4.5" refY="2.5" orient="auto"><path class="diagram-arrowhead diagram-arrowhead-axis" d="M0 0 L5 2.5 L0 5 Z"/></marker>
+  </defs>`;
+}
+
 function visualSvg(type) {
-  const paths = {
-    trajectory: '<path d="M8 46 C30 8 62 8 92 46"/><circle cx="8" cy="46" r="3"/><path class="vector" d="M8 46 L28 27"/>',
-    orbit: '<circle cx="50" cy="37" r="27"/><circle class="dot" cx="70" cy="19" r="4"/><path class="vector" d="M70 19 L86 29"/>',
-    oscillation: '<path d="M6 37 C18 16 30 16 42 37 S66 58 78 37 S102 16 114 37"/><path class="vector" d="M60 37 L60 15"/>',
-    graph: '<path d="M7 37 C19 15 31 15 43 37 S67 59 79 37 S103 15 115 37"/><path class="graph-line" d="M7 49 C19 27 31 27 43 49 S67 71 79 49 S103 27 115 49"/>',
-    wave: '<path d="M5 37 C17 14 29 14 41 37 S65 60 77 37 S101 14 113 37"/><path class="guide" d="M5 37 H113"/>',
-    superposition: '<path d="M5 37 C20 9 31 9 46 37 S72 65 87 37 S98 9 113 37"/><path class="guide" d="M5 48 C20 20 31 20 46 48 S72 76 87 48 S98 20 113 48"/>',
-    standing: '<path d="M5 37 C20 9 32 9 47 37 S74 65 89 37 S100 9 115 37"/><path class="guide" d="M5 10 V64 M115 10 V64"/>',
-    doppler: '<circle cx="61" cy="37" r="6"/><path class="wave-ring" d="M61 37 m-19 0 a19 19 0 1 0 38 0 a19 19 0 1 0-38 0 M61 37 m-33 0 a33 33 0 1 0 66 0 a33 33 0 1 0-66 0"/>',
-    planned: '<path class="guide" d="M8 37 H112"/><path d="M22 37 L42 17 L62 37 L82 17 L102 37"/>'
+  const prefix = `card-diagram-${type}-${diagramSequence += 1}`;
+  const markers = {
+    primary: `${prefix}-arrow-primary`,
+    secondary: `${prefix}-arrow-secondary`,
+    axis: `${prefix}-arrow-axis`
   };
-  return `<svg viewBox="0 0 120 74" aria-hidden="true" focusable="false">${paths[type] || paths.planned}</svg>`;
+  const diagrams = {
+    trajectory: `${DIAGRAM.axis(15, 59, 112, 59, markers)}${DIAGRAM.axis(15, 61, 15, 7, markers)}${DIAGRAM.guide(15, 29, 35, 29)}${DIAGRAM.guide(35, 29, 35, 59)}${DIAGRAM.path('M15 59 C34 30 43 18 64 18 C84 18 96 35 108 59')}${DIAGRAM.arrow(15, 59, 35, 59, 'secondary', markers)}${DIAGRAM.arrow(15, 59, 15, 29, 'secondary', markers)}${DIAGRAM.arrow(15, 59, 35, 29, 'primary', markers)}${DIAGRAM.particle(15, 59, 2.75)}${DIAGRAM.label('x', 108, 55)}${DIAGRAM.label('y', 20, 11)}`,
+    orbit: `${DIAGRAM.circle(56, 39, 24, 'secondary')}${DIAGRAM.guide(56, 39, 73, 22)}${DIAGRAM.node(56, 39, 2)}${DIAGRAM.arrow(73, 22, 59, 8, 'secondary', markers)}${DIAGRAM.arrow(73, 22, 60, 35, 'primary', markers)}${DIAGRAM.particle(73, 22, 3.5)}${DIAGRAM.label('v', 55, 10)}${DIAGRAM.label('a', 61, 29)}`,
+    oscillation: `${DIAGRAM.boundary(12, 18, 56)}${DIAGRAM.equilibrium(61, 10, 61, 65)}${DIAGRAM.path('M12 37 H20 L24 29 L30 45 L36 29 L42 45 L48 29 L54 45 L60 29 L66 45 L72 37 H79', 'secondary')}${DIAGRAM.arrow(61, 61, 86, 61, 'primary', markers)}${DIAGRAM.arrow(86, 24, 64, 24, 'secondary', markers)}${DIAGRAM.body(79, 29, 14, 16)}${DIAGRAM.label('x', 74, 70)}${DIAGRAM.label('F', 75, 19)}`,
+    graph: `${DIAGRAM.equilibrium(17, 16, 114, 16)}${DIAGRAM.equilibrium(17, 37, 114, 37)}${DIAGRAM.equilibrium(17, 58, 114, 58)}${DIAGRAM.path('M20 16 C35 6 51 6 66 16 C81 26 97 26 112 16')}${DIAGRAM.path('M20 31 C43 31 43 43 66 43 C89 43 89 31 112 31', 'secondary')}${DIAGRAM.path('M20 58 C35 68 51 68 66 58 C81 48 97 48 112 58', 'tertiary')}${DIAGRAM.label('x', 9, 18)}${DIAGRAM.label('v', 9, 39)}${DIAGRAM.label('a', 9, 60)}`,
+    wave: `${DIAGRAM.equilibrium(8, 38, 112, 38)}${DIAGRAM.path('M8 38 C14 26 20 20 28 20 C36 20 42 26 48 38 C54 50 60 56 68 56 C76 56 82 50 88 38 C94 26 100 20 108 20')}${DIAGRAM.arrow(77, 10, 108, 10, 'primary', markers)}${DIAGRAM.arrow(48, 38, 48, 24, 'secondary', markers)}${DIAGRAM.particle(48, 38, 3)}${DIAGRAM.bracket(28, 108, 65)}${DIAGRAM.label('λ', 68, 72)}`,
+    superposition: `${DIAGRAM.label('A', 9, 19)}${DIAGRAM.label('B', 9, 41)}${DIAGRAM.label('R', 9, 67)}${DIAGRAM.path('M18 18 H26 C30 18 31 8 38 8 C45 8 46 18 50 18 H112')}${DIAGRAM.arrow(52, 12, 65, 12, 'primary', markers)}${DIAGRAM.path('M18 40 H72 C76 40 77 30 84 30 C91 30 92 40 96 40 H112', 'secondary')}${DIAGRAM.arrow(70, 34, 57, 34, 'secondary', markers)}${DIAGRAM.path('M18 66 H48 C52 66 53 46 60 46 C67 46 68 66 72 66 H112', 'resultant')}`,
+    standing: `${DIAGRAM.boundary(10, 10, 64)}${DIAGRAM.boundary(110, 10, 64)}${DIAGRAM.equilibrium(10, 37, 110, 37)}${DIAGRAM.path('M10 37 C18 54 27 56 35 56 C43 56 52 54 60 37 C68 20 77 18 85 18 C93 18 102 20 110 37', 'tertiary')}${DIAGRAM.path('M10 37 C18 20 27 18 35 18 C43 18 52 20 60 37 C68 54 77 56 85 56 C93 56 102 54 110 37')}${DIAGRAM.node(10, 37)}${DIAGRAM.node(60, 37)}${DIAGRAM.node(110, 37)}${DIAGRAM.antinode(35, 18)}${DIAGRAM.antinode(85, 56)}`,
+    doppler: `${DIAGRAM.guide(6, 37, 114, 37)}${DIAGRAM.circle(53, 37, 10, 'secondary')}${DIAGRAM.circle(48, 37, 20, 'secondary')}${DIAGRAM.circle(43, 37, 30, 'secondary')}${DIAGRAM.circle(38, 37, 40, 'secondary')}${DIAGRAM.arrow(58, 37, 78, 37, 'primary', markers)}${DIAGRAM.particle(58, 37, 3.5)}${DIAGRAM.observer(106, 37)}${DIAGRAM.label('S', 58, 25)}${DIAGRAM.label('O', 106, 28)}`,
+    planned: `${DIAGRAM.path('M25 18 H95 V56 H25 Z', 'guide')}${DIAGRAM.guide(60, 25, 60, 49)}${DIAGRAM.guide(48, 37, 72, 37)}${DIAGRAM.path('M25 28 V18 H35 M85 18 H95 V28 M95 46 V56 H85 M35 56 H25 V46', 'secondary')}`
+  };
+  return `<svg class="card-diagram" width="${CARD_DIAGRAM.width}" height="${CARD_DIAGRAM.height}" viewBox="0 0 ${CARD_DIAGRAM.width} ${CARD_DIAGRAM.height}" preserveAspectRatio="xMidYMid meet" aria-hidden="true" focusable="false">${markerDefinitions(markers)}${diagrams[type] || diagrams.planned}</svg>`;
 }
 
 function cardTemplate(sim) {
   const statusLabel = sim.status === 'completed' ? 'Completed' : 'Planned';
-  const action = sim.href ? `<a class="card-launch" href="${sim.href}">Launch lab <span aria-hidden="true">↗</span></a>` : '<span class="card-launch is-disabled">Coming next <span aria-hidden="true">→</span></span>';
-  return `<article class="sim-card sim-card--${sim.visual} ${sim.status === 'planned' ? 'is-planned' : ''}">
+  const action = sim.href ? `<a class="card-launch" href="${sim.href}" aria-label="Launch ${escapeHtml(sim.title)} simulation">Launch lab <span aria-hidden="true">↗</span></a>` : '<span class="card-launch is-disabled">Coming next <span aria-hidden="true">→</span></span>';
+  const hasStandaloneDiagram = ['trajectory', 'orbit', 'oscillation', 'graph', 'wave', 'superposition', 'standing', 'doppler', 'planned'].includes(sim.visual);
+  const visualType = hasStandaloneDiagram ? '' : `<span class="visual-type">${escapeHtml(sim.visual)}</span>`;
+  return `<article class="sim-card sim-card--${sim.visual} ${sim.href ? 'sim-card--linked' : ''} ${sim.status === 'planned' ? 'is-planned' : ''}">
     <div class="card-top"><span class="topic-number">${escapeHtml(sim.topic)}</span><span class="status status-${sim.status}"><span class="status-dot" aria-hidden="true"></span>${statusLabel}</span></div>
-    <div class="card-visual">${visualSvg(sim.visual)}<span class="visual-type">${escapeHtml(sim.visual)}</span></div>
+    <div class="card-visual">${visualSvg(sim.visual)}${visualType}</div>
     <div class="card-content"><h4>${escapeHtml(sim.title)}</h4><p>${escapeHtml(sim.description)}</p><div class="card-outcome"><span>Learning outcome</span><b>${escapeHtml(sim.outcome)}</b></div></div>
     <div class="card-footer">${action}<span class="card-chapter">Chapter ${escapeHtml(sim.chapter === 'next' ? '—' : sim.chapter)}</span></div>
   </article>`;
