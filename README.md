@@ -13,6 +13,9 @@ SP015/
   animations/            <- simulations, grouped by chapter (see docs/architecture.md for the current per-topic list)
   docs/
     architecture.md      <- repository structure and simulation architecture
+    audits/               <- evidence-based repository and landing-page reviews
+    plan/active/          <- plans currently being worked on
+    plan/completed/       <- finished plans and their evidence
   instructions/
     system.md             <- project goals and AI development guidance
     coding.md             <- coding and UI conventions
@@ -26,6 +29,8 @@ SP015/
 
 Each simulation is **self-contained inside its topic folder**. It owns its HTML, CSS, and JavaScript files. Shared code lives in `shared/`; simulation-specific code should not be placed there.
 
+The [`landing/`](landing/) page is the static, metadata-driven index for the simulations. It is a product entry point rather than a simulation: its card metadata, search/filter behavior, topic SVG thumbnails, and responsive visual system live together in that folder.
+
 The exact file split depends on the simulation. Small simulations may combine related code into fewer files; more involved simulations may use separate physics, UI, controller, renderer, and sketch files. See [`docs/architecture.md`](docs/architecture.md) for the current patterns.
 
 ---
@@ -33,6 +38,14 @@ The exact file split depends on the simulation. Small simulations may combine re
 ## Running a simulation
 
 These are static pages — no build step and no bundler. Open a simulation's HTML file directly in a browser, or serve the repository root with any static file server (for example, VS Code's Live Server extension) if you want relative asset paths to resolve identically to production.
+
+To run the landing page locally from the repository root:
+
+```bash
+python3 -m http.server 8000
+```
+
+Then open <http://localhost:8000/landing/>. Serving the root preserves the landing page's relative paths to `animations/`, `shared/`, and the curriculum PDF.
 
 ---
 
@@ -67,6 +80,8 @@ Curriculum spec: [`Curriculum Specifications (CS) Physics SP015.pdf`](<Curriculu
 - [`instructions/coding.md`](instructions/coding.md) — naming, JavaScript, file, and UI conventions.
 - [`instructions/physics.md`](instructions/physics.md) — units, coordinate conventions, vector conventions, and physics assumptions.
 - [`instructions/checklist.md`](instructions/checklist.md) — QA checklist before calling a simulation done.
+- [`landing/README.md`](landing/README.md) — landing-page behavior, local serving, and file responsibilities.
+- [`docs/plan/completed/`](docs/plan/completed/) — completed implementation plans and evidence; keep unfinished work in [`docs/plan/active/`](docs/plan/active/).
 
 The files in `instructions/` provide supporting day-to-day conventions and QA guidance underneath `docs/architecture.md` (see the callout at the top of this file). If an instruction ever conflicts with the actual architecture, update the relevant documentation rather than maintaining two competing descriptions.
 

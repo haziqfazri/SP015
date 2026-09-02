@@ -23,6 +23,10 @@ See `docs/architecture.md` §2 for the current folder tree. The naming rules:
   what they model (`SpringOscillator`, `WaveState`, `SHMOscillator`, `Particle`,
   `Orbit`, `PulseWave`, `ProgressiveWave`) rather than generic names such as
   `Physics` or `Model`.
+- **Landing page:** Keep `landing/index.html`, `landing/style.css`, and
+  `landing/app.js` self-contained. `app.js` owns the simulation metadata and
+  landing-only SVG templates; do not move topic physics or simulation
+  rendering into the landing page.
 
 ### File responsibilities
 
@@ -137,6 +141,9 @@ There is no hard line-count threshold and no requirement to use every role in
 **Fonts, colors, spacing**
 - Fonts: `DM Sans` (display/labels), `Space Mono` (mono/readouts/formulas)
   — loaded via Google Fonts, declared as `--display`/`--mono` CSS vars.
+- The landing page follows the same palette and typography while using a
+  distinct index composition. Completed card hover/focus feedback must match
+  its whole-card launch target; planned cards must remain visibly inert.
 
 **Math notation — KaTeX (repo-wide convention)**
 - Every sim links KaTeX 0.18.2 in its `<head>` (CSS + JS) — copy the

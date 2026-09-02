@@ -12,7 +12,7 @@ The `ui-ux-pro-max` skill informed the accessibility, interaction, typography, a
 
 ### Post-audit verification — 2026-09-02
 
-The original findings below are retained as the audit snapshot. The targeted landing SVG remediation was subsequently completed and verified in [Phase 7 final QA](../plan/active/landing_svg_phase_7_final_qa.md). The following findings are now resolved:
+The original findings below are retained as the audit snapshot. The targeted landing SVG remediation was subsequently completed and verified in [Phase 7 final QA](../plan/completed/landing_svg_phase_7_final_qa.md). The following findings are now resolved:
 
 | Finding | Status | Verification |
 | --- | --- | --- |

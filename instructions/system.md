@@ -10,6 +10,10 @@ maintained solo, with heavy use of AI coding assistants.
 classroom or self-study visual aid alongside the official curriculum spec
 (`Curriculum Specifications (CS) Physics SP015.pdf` for SP015).
 
+The [`landing/`](../landing/) page is the discovery layer for that library. It
+should help a student recognize a topic, understand its learning signal, and
+reach the correct simulation without pretending to be a simulation itself.
+
 ## 2. Educational objectives
 
 Every simulation should:
@@ -27,6 +31,10 @@ Every simulation should:
 - Be honest about simplifications (e.g. "exact sine term, not small-angle,"
   "λ is derived, never a slider") via a code comment or on-screen note,
   rather than silently faking a relationship.
+
+The landing index should preserve those same standards at the discovery step:
+topic diagrams are recognition aids, card copy names the learning outcome, and
+visual affordances must match the actual launch target.
 
 ## 3. Maintainability & animation philosophy
 
@@ -74,3 +82,6 @@ When an AI assistant (or future you) works in this repo:
 8. **Fold genuine repeated helpers into `shared/`** when a second simulation
    needs them and the abstraction is clear. Avoid creating shared abstractions
    merely for hypothetical future reuse.
+9. **Archive completed plans.** Keep active plans limited to unfinished work;
+   move a completed plan and its phase records/evidence together to
+   `docs/plan/completed/` and repair links if the move changes relative paths.

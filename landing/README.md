@@ -21,3 +21,15 @@ Serving from the repository root is required so the relative links to `animation
 - `index.html` — semantic page structure and inline SVG lab visual.
 - `style.css` — responsive SP015 visual system and accessibility states.
 - `app.js` — single simulation metadata array, card rendering, search, and filters.
+
+## Interaction and visual contract
+
+Card metadata, filtering, and launch destinations are driven from the single
+`SIMULATIONS` array in `app.js`. Completed cards use one semantic launch anchor
+stretched across the card, so the whole-card hover and keyboard focus states
+describe a real action. Planned entries are intentionally unlinked and static.
+
+The inline SVGs are compact recognition diagrams. They use the repository
+palette and must be checked against the linked simulation's theory and first
+frame before changing their geometry. Final evidence and the archived phased
+plan are in [`../docs/plan/completed/`](../docs/plan/completed/).

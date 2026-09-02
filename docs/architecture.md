@@ -45,7 +45,11 @@ SP015/
 │       ├── 7.6-application-of-standing-waves/
 │       └── 7.7-doppler-effect/
 ├── docs/
-│   └── architecture.md
+│   ├── architecture.md
+│   ├── audits/                    <- repository and page audits
+│   └── plan/
+│       ├── active/                <- in-progress plans only
+│       └── completed/             <- finished plans and evidence
 ├── instructions/
 │   ├── checklist.md
 │   ├── coding.md
@@ -72,7 +76,21 @@ SP015/
 - **`templates/`** — optional starting files for new simulations; use only the
   parts appropriate to the simulation.
 - **`docs/`** — repository architecture and structural decisions.
+- **`docs/audits/`** — dated, evidence-based reviews; audit snapshots remain
+  historical, with later remediation status recorded when verified.
+- **`docs/plan/active/`** — plans that still have work or acceptance checks
+  outstanding.
+- **`docs/plan/completed/`** — plans whose deliverables and exit criteria are
+  complete; move the whole plan set together so relative links and evidence
+  remain intact.
 - **`instructions/`** — supporting coding, physics, project, and QA guidance.
+
+The `landing/` directory is the static simulation index. It owns the page
+structure, one metadata array for cards/search/filtering, landing-specific SVG
+recognition diagrams, and the landing responsive styles. It may link to any
+simulation, but simulation physics and shared drawing utilities stay under
+`animations/` and `shared/` respectively. Completed cards expose one semantic
+launch anchor stretched across the card; planned entries remain inert.
 
 Each simulation is self-contained inside its topic folder. It owns its HTML,
 CSS, and JavaScript files. Nothing simulation-specific belongs in `shared/`.

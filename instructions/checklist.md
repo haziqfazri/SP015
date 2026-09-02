@@ -75,3 +75,17 @@
       shared module, or file-split convention
 - [ ] Sim tested at both desktop width and the `800px`/`460px` responsive
       breakpoints
+
+## Landing page and documentation pass
+- [ ] `landing/app.js` card metadata, search, filters, and every completed
+      simulation destination remain valid
+- [ ] Landing SVGs are topic-accurate recognition aids and do not contradict
+      the linked simulation's theory or sign conventions
+- [ ] Landing page checked at 1440, 1024, 800, 480, 460, 375, and 320 px;
+      200% zoom/reflow remains readable without horizontal clipping
+- [ ] Completed cards have a real launch target with visible hover/focus
+      feedback; planned entries remain inert
+- [ ] `node --check landing/app.js`, link checks, and `git diff --check` pass
+- [ ] Related audit findings are marked resolved only after evidence exists
+- [ ] Completed plans and phase records are moved from `docs/plan/active/` to
+      `docs/plan/completed/`; unfinished work stays active

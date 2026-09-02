@@ -80,3 +80,13 @@
 
 New sims should add a row here (and cite the specific sub-LO, e.g.
 `7.1(c.iii)`, in code comments) as soon as their topic is decided.
+
+## 5. Landing-page diagram contract
+
+Landing SVGs are compact topic-recognition aids, not alternate physics
+renderers. Each completed card should show one defining relationship from the
+corresponding simulation (for example, inward centripetal acceleration,
+compressed Doppler fronts, or standing-wave nodes) without inventing a new
+model, unit system, or sign convention. The final contract and verified
+evidence live in [`docs/plan/completed/`](../docs/plan/completed/) alongside
+the completed landing SVG plan.
