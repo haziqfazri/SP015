@@ -1,10 +1,9 @@
 /* =========================================================================
    WAVE-SUPERPOSITION.CSS — topic-specific overrides for Topic 7.5
-   (Superposition of Waves), Mode 1: Pulse Superposition. Load AFTER
+   (Superposition of Waves). Load AFTER
    ../shared/sim-style.css. Only rules unique to this sim's layout live
    here — buttons, readouts, controls, topbar, theory-strip all come from
-   shared/. Add Mode 2/3-specific rules here only once those modes exist;
-   don't speculatively style markup that isn't in index.html yet.
+   shared/.
    ========================================================================= */
 
 /* -------------------------------------------------------------------------
@@ -23,6 +22,20 @@
 
 .system-option:disabled:hover {
   transform: none;
+}
+
+.control-group-label {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.direction-relationship-switch {
+  width: 100%;
+}
+
+.direction-relationship-switch .system-option {
+  min-height: 44px;
+  white-space: normal;
 }
 
 /* -------------------------------------------------------------------------
@@ -96,5 +109,11 @@
   .interference-panel {
     height: 120px;
     margin-bottom: 10px;
+  }
+}
+
+@media (max-width: 460px) {
+  .theory-card .formula .katex {
+    font-size: 0.9em;
   }
 }

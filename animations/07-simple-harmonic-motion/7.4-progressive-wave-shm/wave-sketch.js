@@ -16,6 +16,7 @@ let ytBuffer; // p5.Graphics for the second (y-t) panel
 let lastFrameMs;
 
 function setup() {
+  if (!SP015Runtime.requireDependencies(['p5', 'katex'])) return;
   const yxHolder = document.getElementById('canvas-holder-yx');
   const ytHolder = document.getElementById('canvas-holder-yt');
 

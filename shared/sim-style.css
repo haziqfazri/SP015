@@ -38,6 +38,24 @@ button:focus-visible, input:focus-visible {
   outline-offset: 3px;
 }
 
+.dependency-error {
+  max-width: 720px;
+  margin: 24px auto;
+  padding: 20px 24px;
+  border: 2px solid var(--orange);
+  background: var(--panel);
+  color: var(--ink);
+  font-family: var(--display);
+}
+
+.dependency-error h2,
+.dependency-error p {
+  margin: 0;
+}
+
+.dependency-error h2 { margin-bottom: 8px; }
+.dependency-error p + p { margin-top: 8px; }
+
 /* =========================================================================
    Shell / frame
    ========================================================================= */
@@ -529,10 +547,10 @@ input[type="range"] {
    KaTeX respects currentColor for ordinary symbols, so `.formula` above
    already colors the equations via --orange — only sizing is nudged here.
 
-   Canonical <head> tags (version + SRI hashes are the single source of
-   truth — copy these verbatim into a new sim's HTML, never retype):
-   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.18.2/dist/katex.min.css" integrity="sha384-qArEAQvOPs1o7K1iAybhs66g8nYTXVt4VLOQ3abu+OMLJyPNfaH4Wpko0X2epHJ+" crossorigin="anonymous">
-   <script src="https://cdn.jsdelivr.net/npm/katex@0.18.2/dist/katex.min.js" integrity="sha384-IHT6Yddb0KLCzZaxQ/so1j3xkJ8R6hOkCR06ma9NDHGn0Z4ClKcGtQ6qqsflRPxR" crossorigin="anonymous"></script>
+   Canonical local <head> tags (copy the relative path appropriate to the
+   page depth):
+   <link rel="stylesheet" href="../../../vendor/katex/katex.min.css">
+   <script src="../../../vendor/katex/katex.min.js"></script>
 
    Two contexts, two treatments:
    - .formula (theory-strip equations) renders in displayMode — centered,

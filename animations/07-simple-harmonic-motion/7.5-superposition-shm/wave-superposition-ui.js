@@ -59,6 +59,16 @@ class UIManager {
       interferenceTheoryContent: document.getElementById('interferenceTheoryContent'),
       interferenceTheoryContent2: document.getElementById('interferenceTheoryContent2'),
 
+      interferenceDirectionButtons: Array.from(document.querySelectorAll('#interference-direction-switch .system-option')),
+      interferenceDirectionNote: document.getElementById('interference-direction-note'),
+      waveADirectionLabel: document.getElementById('wave-a-direction-label'),
+      waveBDirectionLabel: document.getElementById('wave-b-direction-label'),
+      interferencePhaseNote: document.getElementById('interference-phase-note'),
+      interferenceEquationWaveA: document.getElementById('interference-equation-wave-a'),
+      interferenceEquationWaveB: document.getElementById('interference-equation-wave-b'),
+      interferenceEquationResultant: document.getElementById('interference-equation-resultant'),
+      interferenceDirectionExplanation: document.getElementById('interference-direction-explanation'),
+
       interferenceAmpSlider: document.getElementById('interference-amp-slider'),
       interferenceAmpLive: document.getElementById('interference-amp-live'),
       wavelengthSlider: document.getElementById('wavelength-slider'),
@@ -122,6 +132,12 @@ class UIManager {
 
     this.el.modeButtons.pulse.addEventListener('click', () => this.callbacks.onModeChange('pulse'));
     this.el.modeButtons.interference.addEventListener('click', () => this.callbacks.onModeChange('interference'));
+
+    this.el.interferenceDirectionButtons.forEach((button) => {
+      button.addEventListener('click', () => {
+        this.callbacks.onInterferenceDirectionChange(button.dataset.relationship);
+      });
+    });
 
     this.el.interferenceAmpSlider.addEventListener('input', (e) => {
       const v = parseFloat(e.target.value);
@@ -219,6 +235,50 @@ class UIManager {
 
   setInterferencePlayButtonLabel(isPlaying) {
     this.el.btnPlayInterference.textContent = isPlaying ? 'Pause' : 'Play';
+  }
+
+  updateInterferenceDirection(presentation) {
+    this.el.interferenceDirectionButtons.forEach((button) => {
+      const isActive = button.dataset.relationship === presentation.relationship;
+      button.classList.toggle('is-active', isActive);
+      button.setAttribute('aria-pressed', String(isActive));
+    });
+
+    this.el.waveADirectionLabel.textContent = presentation.waveALabel;
+    this.el.waveBDirectionLabel.textContent = presentation.waveBLabel;
+    this.el.interferenceDirectionNote.textContent = presentation.directionNote;
+    this.el.interferenceDirectionExplanation.textContent = presentation.explanation;
+
+    this._updateMathElement(
+      this.el.interferenceEquationWaveA,
+      presentation.waveATex,
+      presentation.waveAAria,
+      false
+    );
+    this._updateMathElement(
+      this.el.interferenceEquationWaveB,
+      presentation.waveBTex,
+      presentation.waveBAria,
+      false
+    );
+    this._updateMathElement(
+      this.el.interferenceEquationResultant,
+      presentation.resultantTex,
+      presentation.resultantAria,
+      true
+    );
+    this._updateMathElement(
+      this.el.interferencePhaseNote,
+      presentation.phaseNoteTex,
+      presentation.phaseNoteAria,
+      false
+    );
+  }
+
+  _updateMathElement(el, latex, accessibleLabel, displayMode) {
+    el.dataset.latex = latex;
+    el.setAttribute('aria-label', accessibleLabel);
+    renderMath(el, latex, displayMode);
   }
 
   // Namespaced keys (ifT, ifAmp, ...) avoid collision with Pulse mode's

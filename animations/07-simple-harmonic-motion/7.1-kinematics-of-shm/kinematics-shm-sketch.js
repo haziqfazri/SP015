@@ -12,6 +12,7 @@ let simulation;
 // p5.js lifecycle
 // =========================================================================
 function setup() {
+  if (!SP015Runtime.requireDependencies(['p5', 'katex'])) return;
   const holder = document.getElementById('canvas-holder');
   const cnv = createCanvas(holder.clientWidth, holder.clientHeight);
   cnv.parent('canvas-holder');

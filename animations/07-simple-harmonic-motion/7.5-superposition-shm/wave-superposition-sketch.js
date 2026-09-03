@@ -7,6 +7,7 @@
 let simulation;
 
 document.addEventListener('DOMContentLoaded', () => {
+  if (!SP015Runtime.requireDependencies(['p5', 'katex'])) return;
   simulation = new SimulationController();
   simulation.init();
 });

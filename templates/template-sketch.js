@@ -54,6 +54,7 @@ function windowResized() {
 // -------------------------------------------------------------------------
 
 // document.addEventListener('DOMContentLoaded', () => {
+//   if (!SP015Runtime.requireDependencies(['p5', 'katex'])) return;
 //   const simulation = new SimulationController();
 //
 //   const instance = new p5((p) => {

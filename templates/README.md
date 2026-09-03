@@ -49,11 +49,16 @@ and the decision rule for choosing between them.
 
 ## Reminders
 
+Runtime libraries and fonts are local: use `../vendor/p5/p5.min.js`,
+`../vendor/katex/`, and `../shared/fonts.css` in generated pages. Keep the
+`SP015Runtime.requireDependencies(['p5', 'katex'])` guard in the sketch
+bootstrap so a missing asset produces a readable error rather than a blank
+simulation.
+
 - Only sim-specific CSS goes in the topic `.css` file — everything generic
   is already in `shared/sim-style.css`.
-- Math notation uses KaTeX, not HTML entities: copy the canonical KaTeX
-  `<link>`/`<script>` head tags (version + SRI hashes) from
-  `shared/sim-style.css`'s KaTeX comment block, author notation as
+- Math notation uses KaTeX, not HTML entities: use the local KaTeX
+  `<link>`/`<script>` head tags from `../vendor/katex/`, author notation as
   `data-latex` attributes, and let the template's `_renderStaticMath()`
   render them via the shared `renderMath()` helper. Theory-strip equations
   use `.formula` (displayMode); inline label symbols use `.katex-inline`.

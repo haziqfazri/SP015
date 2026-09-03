@@ -4,6 +4,7 @@ let simulation;
 let lastFrameMs;
 
 function setup() {
+  if (!SP015Runtime.requireDependencies(['p5', 'katex'])) return;
   const holder = document.getElementById('canvas-holder');
   const canvas = createCanvas(holder.clientWidth, holder.clientHeight);
   canvas.parent(holder);

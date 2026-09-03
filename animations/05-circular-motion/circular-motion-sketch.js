@@ -243,6 +243,7 @@ class SimulationController {
 // p5.js lifecycle
 // =========================================================================
 function setup() {
+  if (!SP015Runtime.requireDependencies(['p5', 'katex'])) return;
   // One-time KaTeX pass over static [data-latex] elements (theory-strip
   // formulas, readout/control label notation). Runs before init so the
   // page's math is rendered on first paint.

@@ -132,6 +132,16 @@ const INTERFERENCE_LIMITS = {
   phaseDiffMin: 0, phaseDiffMax: 2 * Math.PI, phaseDiffDefault: 0, // rad
 };
 
+const WAVE_DIRECTION = Object.freeze({
+  POSITIVE_X: +1,
+  NEGATIVE_X: -1,
+});
+
+const INTERFERENCE_RELATIONSHIP = Object.freeze({
+  SAME: 'same',
+  OPPOSITE: 'opposite',
+});
+
 /**
  * ProgressiveWave — a single continuous travelling wave, reusing SP015
  * Topic 7.4 notation directly: y = A sin(ωt ± kx + phase), k = 2π/λ.
@@ -145,7 +155,8 @@ class ProgressiveWave {
     this.omega = omega;
     this.wavelength = wavelength;
     this.phase = phase;         // rad — Wave B's Δφ; Wave A stays at 0
-    this.direction = direction; // +1 travels +x, -1 travels -x (SP015 7.4's y = A sin(ωt ± kx))
+    this.direction = WAVE_DIRECTION.POSITIVE_X;
+    this.setDirection(direction);
   }
 
   // k = 2π/λ (SP015 7.4) — derived, never stored independently, so it
@@ -158,6 +169,13 @@ class ProgressiveWave {
   setOmega(v) { this.omega = v; }
   setWavelength(v) { this.wavelength = v; }
   setPhase(v) { this.phase = v; }
+
+  setDirection(direction) {
+    if (direction !== WAVE_DIRECTION.POSITIVE_X && direction !== WAVE_DIRECTION.NEGATIVE_X) {
+      throw new Error('ProgressiveWave direction must be +1 or -1.');
+    }
+    this.direction = direction;
+  }
 
   valueAt(x, t) {
     return this.amplitude * Math.sin(this.omega * t - this.direction * this.k * x + this.phase);

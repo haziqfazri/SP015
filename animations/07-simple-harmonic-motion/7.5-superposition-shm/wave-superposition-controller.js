@@ -20,12 +20,21 @@ class SimulationController {
     this.instance = null; // assigned by init()
 
     const interferenceWaveA = new ProgressiveWave(
-      INTERFERENCE_LIMITS.ampDefault, INTERFERENCE_LIMITS.omegaDefault, INTERFERENCE_LIMITS.wavelengthDefault, 0, +1
+      INTERFERENCE_LIMITS.ampDefault,
+      INTERFERENCE_LIMITS.omegaDefault,
+      INTERFERENCE_LIMITS.wavelengthDefault,
+      0,
+      WAVE_DIRECTION.POSITIVE_X
     );
     const interferenceWaveB = new ProgressiveWave(
-      INTERFERENCE_LIMITS.ampDefault, INTERFERENCE_LIMITS.omegaDefault, INTERFERENCE_LIMITS.wavelengthDefault, INTERFERENCE_LIMITS.phaseDiffDefault, +1
+      INTERFERENCE_LIMITS.ampDefault,
+      INTERFERENCE_LIMITS.omegaDefault,
+      INTERFERENCE_LIMITS.wavelengthDefault,
+      INTERFERENCE_LIMITS.phaseDiffDefault,
+      WAVE_DIRECTION.POSITIVE_X
     );
     this.interference = new InterferenceSystem(interferenceWaveA, interferenceWaveB);
+    this.interferenceRelationship = INTERFERENCE_RELATIONSHIP.SAME;
 
     this.mode = 'pulse'; // 'pulse' | 'interference'
     this.interferenceT = 0;
@@ -42,6 +51,7 @@ class SimulationController {
 
       onModeChange: (mode) => this._onModeChange(mode),
       onInterferenceAmpChange: (v) => this._onInterferenceAmpChange(v),
+      onInterferenceDirectionChange: (relationship) => this._onInterferenceDirectionChange(relationship),
       onWavelengthChange: (v) => this._onInterferenceWavelengthChange(v),
       onOmegaChangeInterference: (v) => this._onInterferenceOmegaChange(v),
       onPhaseDiffChange: (v) => this._onPhaseDiffChange(v),
@@ -49,6 +59,8 @@ class SimulationController {
       onInterferenceReset: () => this._onInterferenceReset(),
       onInterferenceStep: () => this._onInterferenceStep(),
     });
+
+    this._refreshInterferenceDirectionPresentation();
   }
 
   init() {
@@ -230,6 +242,58 @@ class SimulationController {
   // ----- Interference callbacks -----
   // Amplitude/wavelength/omega apply to both waves; only phase is
   // asymmetric (Wave A fixed at 0; Wave B's phase is the Δφ slider).
+
+  _onInterferenceDirectionChange(relationship) {
+    if (!Object.values(INTERFERENCE_RELATIONSHIP).includes(relationship)) {
+      throw new Error(`Unknown interference direction relationship: ${relationship}`);
+    }
+
+    this.interferenceRelationship = relationship;
+    this.interference.waveA.setDirection(WAVE_DIRECTION.POSITIVE_X);
+    this.interference.waveB.setDirection(
+      relationship === INTERFERENCE_RELATIONSHIP.OPPOSITE
+        ? WAVE_DIRECTION.NEGATIVE_X
+        : WAVE_DIRECTION.POSITIVE_X
+    );
+    this._refreshInterferenceDirectionPresentation();
+    this._renderInterferenceAll();
+  }
+
+  _refreshInterferenceDirectionPresentation() {
+    const isOpposite = this.interferenceRelationship === INTERFERENCE_RELATIONSHIP.OPPOSITE;
+
+    this.ui.updateInterferenceDirection({
+      relationship: this.interferenceRelationship,
+      waveALabel: 'WAVE A · +x',
+      waveBLabel: isOpposite ? 'WAVE B · −x' : 'WAVE B · +x',
+      directionNote: isOpposite
+        ? 'Wave A travels in +x and Wave B in −x; their overlap forms a standing pattern.'
+        : 'Both waves travel in +x; phase controls their amplitude relationship.',
+      explanation: isOpposite
+        ? 'With equal waves travelling in opposite directions, the resultant is a standing wave. Changing Δφ shifts the nodes and antinodes instead of producing uniform cancellation.'
+        : 'With both waves travelling in +x, the resultant remains a travelling wave. Δφ = 0 doubles the amplitude and Δφ = π cancels it everywhere.',
+      waveATex: 'y_A = A\\sin(\\omega t - kx)',
+      waveAAria: 'Wave A travels in positive x: y sub A equals A sine of omega t minus k x.',
+      waveBTex: isOpposite
+        ? 'y_B = A\\sin(\\omega t + kx + \\Delta\\phi)'
+        : 'y_B = A\\sin(\\omega t - kx + \\Delta\\phi)',
+      waveBAria: isOpposite
+        ? 'Wave B travels in negative x: y sub B equals A sine of omega t plus k x plus delta phi.'
+        : 'Wave B travels in positive x: y sub B equals A sine of omega t minus k x plus delta phi.',
+      resultantTex: isOpposite
+        ? '\\begin{aligned} y_R &= 2A\\sin\\left(\\omega t + \\frac{\\Delta\\phi}{2}\\right) \\\\ &\\quad {}\\times\\cos\\left(kx + \\frac{\\Delta\\phi}{2}\\right) \\end{aligned}'
+        : '\\begin{aligned} y_R &= 2A\\cos\\left(\\frac{\\Delta\\phi}{2}\\right) \\\\ &\\quad {}\\times\\sin\\left(\\omega t-kx+\\frac{\\Delta\\phi}{2}\\right) \\end{aligned}',
+      resultantAria: isOpposite
+        ? 'Opposite-direction resultant: a standing wave whose nodes and antinodes depend on delta phi.'
+        : 'Same-direction resultant: a travelling wave whose amplitude depends on delta phi.',
+      phaseNoteTex: isOpposite
+        ? '\\Delta\\phi\\colon \\text{shifts node and antinode positions}'
+        : '\\Delta\\phi = 0\\colon \\text{fully constructive} \\quad \\Delta\\phi = \\pi\\colon \\text{fully destructive}',
+      phaseNoteAria: isOpposite
+        ? 'Phase difference shifts node and antinode positions.'
+        : 'Delta phi equals zero is fully constructive; delta phi equals pi is fully destructive.',
+    });
+  }
 
   _onInterferenceAmpChange(v) {
     this.interference.waveA.setAmplitude(v);

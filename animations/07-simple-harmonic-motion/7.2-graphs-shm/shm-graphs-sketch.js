@@ -5,5 +5,6 @@
    ========================================================================= */
 
 document.addEventListener('DOMContentLoaded', () => {
+  if (!SP015Runtime.requireDependencies(['p5', 'katex'])) return;
   new SimulationController();
 });

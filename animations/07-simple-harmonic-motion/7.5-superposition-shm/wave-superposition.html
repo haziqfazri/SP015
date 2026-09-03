@@ -6,15 +6,14 @@
 <title>Superposition of Waves — Topic 7.5 | SP015</title>
 
 <!-- Fonts: DM Sans for display/labels, Space Mono for instrument readouts -->
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../../shared/fonts.css">
 
 <!-- p5.js latest -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.4/p5.min.js"></script>
+<script src="../../../vendor/p5/p5.min.js"></script>
 
 <!-- KaTeX for math notation (theory-strip formulas, label symbols) -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.18.2/dist/katex.min.css" integrity="sha384-qArEAQvOPs1o7K1iAybhs66g8nYTXVt4VLOQ3abu+OMLJyPNfaH4Wpko0X2epHJ+" crossorigin="anonymous">
-<script src="https://cdn.jsdelivr.net/npm/katex@0.18.2/dist/katex.min.js" integrity="sha384-IHT6Yddb0KLCzZaxQ/so1j3xkJ8R6hOkCR06ma9NDHGn0Z4ClKcGtQ6qqsflRPxR" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="../../../vendor/katex/katex.min.css">
+<script src="../../../vendor/katex/katex.min.js"></script>
 
 <!-- Shared styles first so topic CSS can override -->
 <link rel="stylesheet" href="../../../shared/sim-style.css">
@@ -34,10 +33,7 @@
   </header>
 
   <!-- ================= Mode toggle ================= -->
-  <!-- Pulse Superposition is fully functional. Interference's markup now
-       exists (this message) but stays `disabled` until its JS stage wires
-       up mode-switching — matches the incremental HTML -> physics ->
-       renderer -> controller order. Standing Waves remains a placeholder. -->
+  <!-- Both modes are fully functional and share one controller. -->
   <nav class="system-bar" aria-label="Superposition mode selection">
    <span class="system-label">Mode</span>
    <div class="system-switch">
@@ -144,10 +140,8 @@
    </aside>
 
    <!-- ---------- Interference: Stage ---------- -->
-   <!-- Hidden until the mode-toggle JS is wired (next stage). Three
-        separate canvas holders per Fazri's choice, matching shm-graphs'
-        multi-canvas instance-mode pattern rather than one shared canvas
-        split into regions. -->
+   <!-- Three separate canvas holders use the shared-clock instance-mode
+        pattern so the individual and resultant waves stay in lockstep. -->
    <section class="stage hidden" id="interferenceStage" aria-labelledby="interference-simulation-heading">
     <div class="stage-top">
      <h2 id="interference-simulation-heading">Two Waves, One Medium</h2>
@@ -155,12 +149,12 @@
     </div>
 
     <div class="canvas-shell interference-panel" id="waveAShell">
-     <span class="canvas-label">WAVE A</span>
+     <span class="canvas-label" id="wave-a-direction-label">WAVE A · +x</span>
      <div class="graph-holder" id="canvas-holder-wave-a"></div>
     </div>
 
     <div class="canvas-shell interference-panel" id="waveBShell">
-     <span class="canvas-label">WAVE B</span>
+     <span class="canvas-label" id="wave-b-direction-label">WAVE B · +x</span>
      <div class="graph-holder" id="canvas-holder-wave-b"></div>
     </div>
 
@@ -201,9 +195,20 @@
    <aside class="controls hidden" id="interferenceControls" aria-labelledby="interference-controls-heading">
     <h2 class="control-title" id="interference-controls-heading">Parameters</h2>
     <p class="control-intro">
-     Adjust the phase difference between two identical waves and watch the
-     resultant swing between fully constructive and fully destructive.
+     Choose how two identical waves travel, then adjust their phase
+     difference and observe the resultant pattern.
     </p>
+
+    <div class="control-row">
+     <div class="control-meta">
+      <span class="control-group-label" id="interference-direction-label">Direction Relationship</span>
+     </div>
+     <div class="system-switch compact direction-relationship-switch" id="interference-direction-switch" role="group" aria-labelledby="interference-direction-label">
+      <button type="button" class="system-option is-active" data-relationship="same" aria-pressed="true">Same: +x / +x</button>
+      <button type="button" class="system-option" data-relationship="opposite" aria-pressed="false">Opposite: +x / −x</button>
+     </div>
+     <p class="control-note" id="interference-direction-note">Both waves travel in +x; phase controls their amplitude relationship.</p>
+    </div>
 
     <div class="control-row">
      <div class="control-meta">
@@ -235,7 +240,7 @@
       <output id="phase-diff-live" class="control-value">0</output>
      </div>
      <input id="phase-diff-slider" type="range" min="0" max="6.283185307" step="0.0174533" value="0">
-     <p class="control-note"><span class="katex-inline" data-latex="0 = \text{fully constructive} \quad \pi = \text{fully destructive}">0 = fully constructive · π = fully destructive</span></p>
+     <p class="control-note"><span id="interference-phase-note" class="katex-inline" data-latex="\Delta\phi = 0\colon \text{fully constructive} \quad \Delta\phi = \pi\colon \text{fully destructive}">Δφ = 0: fully constructive · Δφ = π: fully destructive</span></p>
     </div>
 
     <div class="button-grid">
@@ -266,10 +271,10 @@
     <div id="interferenceTheoryContent" style="display:none">
      <h2>Learning Outcomes — 7.5(a), 7.5(c)</h2>
      <p>
-      Two identical progressive waves, offset by a phase difference,
-      combine by the same superposition rule as the pulse mode — but
-      because these waves never end, the interference pattern is
-      continuous rather than a single momentary overlap.
+      Two identical progressive waves combine by the same superposition
+      rule as the pulse mode. Their direction relationship and phase
+      difference determine whether the continuous result travels or forms
+      a standing pattern.
      </p>
       <span class="formula" data-latex="y_\text{resultant} = y_A + y_B" aria-label="Superposition: y resultant equals y sub A plus y sub B">y_resultant = y_A + y_B</span>
     </div>
@@ -286,10 +291,15 @@
     <div id="interferenceTheoryContent2" style="display:none">
      <h2>Key Equations</h2>
      <p>
-      <span class="katex-inline" data-latex="y = A\sin(\omega t - kx)" aria-label="y equals A sine of omega t minus k x">y = A sin(ωt − kx)</span> &nbsp;|&nbsp;
+      <span id="interference-equation-wave-a" class="katex-inline" data-latex="y_A = A\sin(\omega t - kx)" aria-label="Wave A: y sub A equals A sine of omega t minus k x">y_A = A sin(ωt − kx)</span><br>
+      <span id="interference-equation-wave-b" class="katex-inline" data-latex="y_B = A\sin(\omega t - kx + \Delta\phi)" aria-label="Wave B: y sub B equals A sine of omega t minus k x plus delta phi">y_B = A sin(ωt − kx + Δφ)</span> &nbsp;|&nbsp;
       <span class="katex-inline" data-latex="k = \frac{2\pi}{\lambda}" aria-label="k equals two pi over lambda">k = 2π/λ</span>
-      <span class="formula" data-latex="\Delta\phi = 0 \Rightarrow 2A \quad \Delta\phi = \pi \Rightarrow 0" aria-label="Constructive interference: delta phi equals 0 gives amplitude 2A; Destructive interference: delta phi equals pi gives amplitude 0">Δφ = 0 → 2A &nbsp;&nbsp; Δφ = π → 0</span>
      </p>
+     <p id="interference-direction-explanation">
+      With both waves travelling in +x, the resultant remains a travelling
+      wave. Δφ = 0 doubles the amplitude and Δφ = π cancels it everywhere.
+     </p>
+     <span id="interference-equation-resultant" class="formula" data-latex="\begin{aligned} y_R &amp;= 2A\cos\left(\frac{\Delta\phi}{2}\right) \\ &amp;\quad {}\times\sin\left(\omega t-kx+\frac{\Delta\phi}{2}\right) \end{aligned}" aria-label="Resultant for waves travelling in the same direction">y_R = 2A cos(Δφ/2) × sin(ωt − kx + Δφ/2)</span>
     </div>
    </section>
   </footer>
@@ -298,6 +308,7 @@
 </div>
 
 <script src="../../../shared/sim-utils.js"></script>
+<script src="../../../shared/offline-runtime.js"></script>
 <script src="wave-superposition-physics.js"></script>
 <script src="wave-superposition-renderer.js"></script>
 <script src="wave-superposition-controller.js"></script>

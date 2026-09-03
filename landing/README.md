@@ -16,6 +16,9 @@ Then open:
 
 Serving from the repository root is required so the relative links to `animations/`, `shared/`, and the curriculum PDF resolve correctly. Do not open the page directly with `file://`.
 
+The page loads its typography from `shared/fonts.css`, so the landing page does
+not need an internet connection after the repository has been cloned.
+
 ## Files
 
 - `index.html` — semantic page structure and inline SVG lab visual.

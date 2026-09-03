@@ -57,7 +57,10 @@ SP015/
 │   └── system.md
 ├── shared/
 │   ├── sim-style.css
-│   └── sim-utils.js
+│   ├── sim-utils.js
+│   ├── fonts.css
+│   └── offline-runtime.js
+├── vendor/                    <- pinned local browser runtime/font assets
 └── templates/
     ├── README.md
     ├── index.html
@@ -73,6 +76,9 @@ SP015/
 
 - **`animations/`** — all simulation projects, grouped by chapter/topic.
 - **`shared/`** — code genuinely reused by multiple simulations.
+- **`vendor/`** — pinned third-party browser assets required at runtime. These
+  are local so simulations remain usable without network access; do not add a
+  CDN URL as a runtime dependency.
 - **`templates/`** — optional starting files for new simulations; use only the
   parts appropriate to the simulation.
 - **`docs/`** — repository architecture and structural decisions.

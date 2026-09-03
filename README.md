@@ -24,6 +24,9 @@ SP015/
   shared/
     sim-style.css         <- shared visual language
     sim-utils.js          <- shared p5 drawing/formatting helpers
+    fonts.css             <- local DM Sans and Space Mono font faces
+    offline-runtime.js    <- dependency guard and readable startup errors
+  vendor/                 <- pinned local p5.js, KaTeX, and font assets
   templates/              <- starting point for new simulations
 ```
 
@@ -38,6 +41,11 @@ The exact file split depends on the simulation. Small simulations may combine re
 ## Running a simulation
 
 These are static pages — no build step and no bundler. Open a simulation's HTML file directly in a browser, or serve the repository root with any static file server (for example, VS Code's Live Server extension) if you want relative asset paths to resolve identically to production.
+
+Runtime libraries and project fonts are vendored under [`vendor/`](vendor/), so
+the landing page and simulations continue to work when the browser is offline.
+If a required local runtime file is missing, the page shows an accessible
+dependency error instead of failing silently with a blank canvas.
 
 To run the landing page locally from the repository root:
 
