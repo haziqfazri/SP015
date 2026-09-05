@@ -55,7 +55,10 @@ visual affordances must match the actual launch target.
 
 ## 4. AI development notes
 
-When an AI assistant (or future you) works in this repo:
+`AGENTS.md` contains the repository's active Codex execution contract. The
+rules below describe project intent; the architecture document remains the
+source of truth for implementation structure. When an AI assistant (or future
+you) works in this repo:
 
 1. **Read `docs/architecture.md` first**, every time, before touching
    anything. It is the source of truth for repository structure and simulation
@@ -85,3 +88,7 @@ When an AI assistant (or future you) works in this repo:
 9. **Archive completed plans.** Keep active plans limited to unfinished work;
    move a completed plan and its phase records/evidence together to
    `docs/plan/completed/` and repair links if the move changes relative paths.
+
+10. **Verify the result.** Use focused syntax checks and tests, `git diff --check`,
+    and browser/responsive checks for UI work. Report what was actually
+    verified and identify any untested environment-specific limitation.

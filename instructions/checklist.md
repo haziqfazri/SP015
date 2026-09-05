@@ -75,6 +75,8 @@
       shared module, or file-split convention
 - [ ] Sim tested at both desktop width and the `800px`/`460px` responsive
       breakpoints
+- [ ] Verification evidence is recorded: focused syntax/tests,
+      `git diff --check`, and browser checks for UI changes
 
 ## Landing page and documentation pass
 - [ ] `landing/app.js` card metadata, search, filters, and every completed

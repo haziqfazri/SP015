@@ -1,7 +1,7 @@
 /* =========================================================================
    TEMPLATE.CSS — topic-specific overrides for <Topic Name>.
 
-   Load AFTER ../shared/sim-style.css. Only rules truly unique to this
+   Load AFTER ../../../shared/sim-style.css. Only rules truly unique to this
    sim's layout belong here (extra canvases, non-standard grids, disabled
    states, etc) — everything generic (topbar, system-bar, controls,
    readouts, buttons, theory strip, responsive breakpoints) already comes

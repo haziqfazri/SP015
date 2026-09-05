@@ -55,6 +55,15 @@ python3 -m http.server 8000
 
 Then open <http://localhost:8000/landing/>. Serving the root preserves the landing page's relative paths to `animations/`, `shared/`, and the curriculum PDF.
 
+### Codex development loop
+
+Before a change, inspect `git status`, read `AGENTS.md` and
+`docs/architecture.md`, and identify the smallest affected file set. Keep
+unrelated user changes intact. After implementation, run the focused syntax
+checks and tests, `git diff --check`, and browser/responsive QA for any visual
+or interaction change. Report assumptions, changed files, verification, and
+any remaining limitations in the handoff.
+
 ---
 
 ## Adding a new simulation
@@ -91,7 +100,7 @@ Curriculum spec: [`Curriculum Specifications (CS) Physics SP015.pdf`](<Curriculu
 - [`landing/README.md`](landing/README.md) — landing-page behavior, local serving, and file responsibilities.
 - [`docs/plan/completed/`](docs/plan/completed/) — completed implementation plans and evidence; keep unfinished work in [`docs/plan/active/`](docs/plan/active/).
 
-The files in `instructions/` provide supporting day-to-day conventions and QA guidance underneath `docs/architecture.md` (see the callout at the top of this file). If an instruction ever conflicts with the actual architecture, update the relevant documentation rather than maintaining two competing descriptions.
+The files in `instructions/` provide supporting day-to-day conventions and QA guidance underneath `docs/architecture.md` (see the callout at the top of this file). `AGENTS.md` contains the repository's Codex execution contract. If an instruction ever conflicts with the actual architecture, update the relevant documentation rather than maintaining two competing descriptions. Dated audits and plans record historical or in-progress status; they do not replace the current architecture.
 
 ---
 

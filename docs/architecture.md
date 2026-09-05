@@ -4,6 +4,10 @@ Reference doc for `haziqfazri/SP015`. Read this before adding or
 modifying a simulation — it describes the patterns actually in use across the
 repo, not an aspirational spec.
 
+AGENTS.md contains the active Codex execution contract; this document remains
+authoritative for architecture and data flow. Dated audits and active plans
+record status and evidence, but do not override the current architecture.
+
 ## 1. Project philosophy
 
 This repo is a growing library of interactive p5.js simulations for teaching

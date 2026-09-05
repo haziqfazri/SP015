@@ -5,8 +5,9 @@ the full rationale — this is just the condensed checklist.
 
 ## Setup
 
-1. Copy the files you need into the appropriate topic folder under
-   `animations/`. Keep the simulation self-contained inside that topic folder.
+1. Copy the files you need into a topic folder at
+   `animations/<chapter>/<topic>/`. Keep the simulation self-contained inside
+   that topic folder. The starter HTML assumes this three-level layout.
 2. Find-and-replace `Template` → `YourSimName` (classes) and `template-` →
    `your-sim-name-` (filenames) across all files.
 3. Rename the files themselves to match.
@@ -49,8 +50,8 @@ and the decision rule for choosing between them.
 
 ## Reminders
 
-Runtime libraries and fonts are local: use `../vendor/p5/p5.min.js`,
-`../vendor/katex/`, and `../shared/fonts.css` in generated pages. Keep the
+Runtime libraries and fonts are local: use `../../../vendor/p5/p5.min.js`,
+`../../../vendor/katex/`, and `../../../shared/fonts.css` in generated pages. Keep the
 `SP015Runtime.requireDependencies(['p5', 'katex'])` guard in the sketch
 bootstrap so a missing asset produces a readable error rather than a blank
 simulation.
@@ -58,7 +59,7 @@ simulation.
 - Only sim-specific CSS goes in the topic `.css` file — everything generic
   is already in `shared/sim-style.css`.
 - Math notation uses KaTeX, not HTML entities: use the local KaTeX
-  `<link>`/`<script>` head tags from `../vendor/katex/`, author notation as
+  `<link>`/`<script>` head tags from `../../../vendor/katex/`, author notation as
   `data-latex` attributes, and let the template's `_renderStaticMath()`
   render them via the shared `renderMath()` helper. Theory-strip equations
   use `.formula` (displayMode); inline label symbols use `.katex-inline`.

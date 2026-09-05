@@ -12,7 +12,7 @@ The source of truth for architecture and data flow is `docs/architecture.md`. Re
 
 ## Running a simulation
 
-Static pages — no build step, no bundler. Open a sim's HTML file directly in a browser, or serve the repo root with any static file server. p5.js is loaded from CDN.
+Static pages — no build step, no bundler. Open a sim's HTML file directly in a browser, or serve the repo root with any static file server. Runtime libraries and fonts are loaded from the pinned local assets in `vendor/` and `shared/`, so simulations remain usable offline.
 
 ---
 
@@ -23,7 +23,7 @@ SP015/
   animations/                   <- sims, grouped by chapter
     02-kinematics-of-linear-motion/
       2.3-projectile-motion/    <- Level 3 (full split)
-    05-circular-motion/         <- Level 2 (sim + sketch)
+    05-circular-motion/         <- Level 1 (compact sim + sketch)
     07-simple-harmonic-motion/
       7.1-kinematics-of-shm/    <- Level 3 (full split)
       7.2-graphs-shm/           <- Level 3 (full split), instance mode, 5 canvases
@@ -31,6 +31,8 @@ SP015/
       7.5-superposition-shm/    <- Level 3, instance mode, 3+ canvases
       7.6-application-of-standing-waves/  <- Level 3
       7.7-doppler-effect/       <- Level 3, uses KaTeX (all sims now do)
+    08-physics-of-matters/
+      8.1-8.2-materials-testing/ <- Level 3, global mode
   docs/
     architecture.md             <- authoritative architecture/patterns
   instructions/
@@ -41,6 +43,10 @@ SP015/
   shared/
     sim-style.css               <- shared visual language
     sim-utils.js                 <- shared helpers (see below)
+    fonts.css                   <- local project font declarations
+    offline-runtime.js          <- dependency guard and startup errors
+  vendor/                       <- pinned local browser runtime/font assets
+  landing/                      <- static simulation index
   templates/                     <- starting point for new sims
 ```
 
@@ -237,11 +243,29 @@ When calling a sim done, verify:
 
 ## AI editing rules
 
-1. **Read `docs/architecture.md` first.** It is the source of truth.
-2. **Modify only affected files.** Don't touch HTML when only physics changed.
-3. **Preserve existing public APIs** (`integrate()`, `energy()`, `period()`, `reset()`, UIManager `callbacks` shape).
-4. **Reuse shared components** — no local re-implementation of arrows, dashed guides, trail dots, or readout diffing.
-5. **Smallest diff that works.** Don't restyle, rename, or restructure code that wasn't asked about.
-6. **Avoid over-explaining comments.** Explain physics and assumptions, not obvious code.
-7. **Follow the lifecycle** above. Use the simplest file structure.
-8. **Fold repeated helpers into `shared/`** when a second sim needs them and the abstraction is clear.
+The user's explicit request takes precedence over repository guidance and
+loaded skills. If instructions conflict, state the conflict and follow the
+user's request within the allowed scope.
+
+1. **Inspect first.** Read `docs/architecture.md`, applicable instructions,
+   the target files, and `git status` before changing anything.
+2. **Preserve user work.** Treat existing uncommitted changes as belonging to
+   the user; do not overwrite, reset, or clean up unrelated work.
+3. **Modify only affected files.** Don't touch HTML when only physics changed.
+4. **Preserve existing public APIs** (`integrate()`, `energy()`, `period()`,
+   `reset()`, UIManager `callbacks` shape).
+5. **Reuse shared components** — no local re-implementation of arrows, dashed
+   guides, trail dots, or readout diffing.
+6. **Use the smallest diff that works.** Don't restyle, rename, or restructure
+   code that wasn't asked about.
+7. **Infer reasonable intent and continue through verification.** Ask for
+   clarification only when missing information would materially change the
+   result; record important assumptions in the final handoff.
+8. **Verify proportionally.** Run focused syntax/tests and `git diff --check`;
+   for UI changes, also perform browser and responsive checks. Do not claim
+   checks that were not actually run.
+9. **Avoid over-explaining comments.** Explain physics and assumptions, not
+   obvious code.
+10. **Follow the lifecycle** above and use the simplest file structure.
+11. **Fold repeated helpers into `shared/`** when a second sim needs them and
+    the abstraction is clear.
