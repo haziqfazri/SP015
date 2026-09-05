@@ -56,9 +56,12 @@ class UIManager {
 
       btnPlay: document.getElementById('btn-play'),
       btnReset: document.getElementById('btn-reset'),
+      btnStep: document.getElementById('btn-step'),
 
       timeLabel: document.getElementById('time-label'),
+      simulationStatus: document.getElementById('simulation-status'),
       valApparentFreq: document.getElementById('val-apparent-freq'),
+      valFrequencyShift: document.getElementById('val-frequency-shift'),
       valSourceFreq: document.getElementById('val-source-freq'),
       valSpeed: document.getElementById('val-speed'),
       valSeparation: document.getElementById('val-separation'),
@@ -104,10 +107,8 @@ class UIManager {
     this.el.chkPlaySound.addEventListener('change', (e) => this.callbacks.onAudioToggle(e.target.checked));
 
     this.el.btnPlay.addEventListener('click', () => this.playbackState.toggle());
-    this.el.btnReset.addEventListener('click', () => {
-      this.playbackState.pause();
-      this.callbacks.onReset();
-    });
+    this.el.btnReset.addEventListener('click', () => this.callbacks.onReset());
+    this.el.btnStep.addEventListener('click', () => this.callbacks.onStep());
   }
 
   getSpeedValue() {
@@ -116,10 +117,17 @@ class UIManager {
 
   setPlayButtonLabel(isPlaying) {
     this.el.btnPlay.textContent = isPlaying ? '⏸ Pause' : '▶ Play';
+    this.el.btnPlay.setAttribute('aria-pressed', String(isPlaying));
   }
 
   setTimeLabel(t) {
     this.el.timeLabel.textContent = `t = ${t.toFixed(2)} s`;
+  }
+
+  announce(message) {
+    if (this.el.simulationStatus.textContent !== message) {
+      this.el.simulationStatus.textContent = message;
+    }
   }
 
   // Swaps mode-button active state and relabels the speed slider so it
@@ -139,6 +147,7 @@ class UIManager {
   updateReadouts(values) {
     const store = this._lastReadout;
     updateReadout(store, 'apparentFreq', this.el.valApparentFreq, values.apparentFreqText);
+    updateReadout(store, 'frequencyShift', this.el.valFrequencyShift, values.frequencyShiftText);
     updateReadout(store, 'sourceFreq', this.el.valSourceFreq, values.sourceFreqText);
     updateReadout(store, 'speed', this.el.valSpeed, values.speedText);
     updateReadout(store, 'separation', this.el.valSeparation, values.separationText);

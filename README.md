@@ -77,14 +77,16 @@ Start from [`templates/`](templates/README.md), which has the full build order a
 | Topic | Simulation | Status |
 |---|---|---|
 | 2.3 | Projectile Motion | ✅ Done |
+| 5 | Uniform Circular Motion | ✅ Done |
 | 7.1 | Kinematics of Simple Harmonic Motion | ✅ Done |
 | 7.2 | SHM Graphs Analysis | ✅ Done |
 | 7.4 | Progressive Waves | ✅ Done |
 | 7.5 | Superposition of Waves | ✅ Done — pulse superposition + interference |
 | 7.6 | Application of Standing Waves | ✅ Done |
 | 7.7 | Doppler Effect | ✅ Done |
-| 5 | Uniform Circular Motion | ✅ Done |
-| — | *(next SP015 topic)* | ⬜ Planned |
+| 8.1, 8.2 | Materials Testing Laboratory | ✅ Done |
+| 8.3 | Heat Conduction Laboratory | ⬜ Planned |
+| 8.4 | Thermal Expansion Laboratory | ⬜ Planned |
 
 Curriculum spec: [`Curriculum Specifications (CS) Physics SP015.pdf`](<Curriculum Specifications (CS) Physics SP015.pdf>). *(The SP025 spec is available as a PDF; it is not yet converted to markdown.)*
 

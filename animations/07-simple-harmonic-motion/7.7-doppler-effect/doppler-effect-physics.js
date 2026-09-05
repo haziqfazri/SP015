@@ -23,14 +23,14 @@
 // domain in a fraction of a second — too fast to ever see more than one
 // ring on screen. wavefrontVisualSpeed is a slower, stylized expansion
 // rate used ONLY for drawing the rings; it never enters the Doppler
-// equation. It's kept comfortably above LIMITS.moverSpeedMax so the ring
-// geometry never looks supersonic.
+// equation. The visual rate is intentionally independent of the physical
+// sound speed and is disclosed beneath the canvas.
 // -------------------------------------------------------------------------
 const PHYSICS = {
   waveSpeed: 343,             // m/s — real speed of sound at 20°C; drives f' and all readouts
-  wavefrontVisualSpeed: 150,  // m/s — stylized ring-expansion rate, display only (> moverSpeedMax)
+  wavefrontVisualSpeed: 40,  // m/s — stylized ring-expansion rate, display only (> moverSpeedMax)
   wavefrontPulseRate: 20,     // Hz — visual ring-emission rate, decoupled from sourceFrequency
-  wavefrontLookbackTime: 0.4, // s — how far back in time wavefronts() considers emissions;
+  wavefrontLookbackTime: 1, // s — how far back in time wavefronts() considers emissions;
                                // comfortably covers a ring's lifetime within the visible domain
                                // (domain half-width / wavefrontVisualSpeed ≈ 0.27s) with margin,
                                // keeping the per-call loop small without needing held/pruned state
@@ -43,15 +43,15 @@ const PHYSICS = {
 const LIMITS = {
   sourceFreqMin: 200, sourceFreqMax: 1000, sourceFreqDefault: 500, // Hz — source's emitted frequency, f
   moverSpeedMin: 0, moverSpeedMax: 100, moverSpeedDefault: 20,      // m/s — whichever body is moving
-  timeMin: 0, timeMax: 8,                                            // s
-  timeStep: 0.02,                                                    // s
+  timeMin: 0,                                                        // s
+  timeStep: 0.02,                                                    // s — fixed manual Step increment
 };
 
 // Shared x-domain every position/wavefront is computed and plotted
 // against. The stationary body always sits at x = 0 (domain centre); the
-// moving body starts at xMin and travels in +x, so a full
-// approach -> cross -> recede plays out within LIMITS.timeMax at the
-// default speed (80 m domain / 20 m/s = 4 s, well inside the 8 s window).
+// moving body starts at xMin and travels in +x. At the default speed it
+// crosses the stationary body after 2 s and reaches xMax after 4 s, when
+// the controller starts a new visual cycle.
 const DOMAIN = {
   xMin: -40, // m
   xMax: 40,  // m
@@ -109,11 +109,15 @@ class DopplerSystem {
   }
 
   // Applies the slider speed to whichever body is the mover in the
-  // current mode; the other body's velocity is left at 0.
-  setMoverSpeed(v) {
+  // current mode while preserving its position at the change instant.
+  // Without this offset correction, the closed-form x(t) would be
+  // recomputed from the original start position and visibly jump.
+  setMoverSpeed(v, t = 0) {
     if (this.mode === 'movingSource') {
+      this.sourceBody.startX = this.sourceBody.positionAt(t) - v * t;
       this.sourceBody.velocity = v;
     } else {
+      this.observerBody.startX = this.observerBody.positionAt(t) - v * t;
       this.observerBody.velocity = v;
     }
   }
@@ -178,12 +182,9 @@ class DopplerSystem {
     return Math.abs(this.separationAt(t + dt)) < Math.abs(this.separationAt(t));
   }
 
-  // Wavefronts always emanate from the SOURCE's actual position — true
-  // whether the source is the mover (Mode 1) or stationary (Mode 2,
-  // sourceBody.velocity is always 0 there), so no mode branch is needed
-  // here. Pure function of t: nothing is accumulated or pruned as held
-  // state, so there's no incremental buffer to get out of sync on reset
-  // or on a mode switch.
+  // Pure snapshot helper retained for callers that need the fronts implied
+  // by one constant-velocity trajectory. The controller records live
+  // emission positions so interactive speed changes cannot move old fronts.
   wavefronts(t) {
     const period = 1 / PHYSICS.wavefrontPulseRate;
     const earliestRelevant = Math.max(0, t - PHYSICS.wavefrontLookbackTime);

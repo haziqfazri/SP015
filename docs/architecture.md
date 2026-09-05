@@ -41,13 +41,15 @@ SP015/
 │   │   ├── circular-motion-sketch.js
 │   │   ├── circular-motion.css
 │   │   └── circular-motion.html
-│   └── 07-simple-harmonic-motion/
-│       ├── 7.1-kinematics-of-shm/
-│       ├── 7.2-graphs-shm/
-│       ├── 7.4-progressive-wave-shm/
-│       ├── 7.5-superposition-shm/
-│       ├── 7.6-application-of-standing-waves/
-│       └── 7.7-doppler-effect/
+│   ├── 07-simple-harmonic-motion/
+│   │   ├── 7.1-kinematics-of-shm/
+│   │   ├── 7.2-graphs-shm/
+│   │   ├── 7.4-progressive-wave-shm/
+│   │   ├── 7.5-superposition-shm/
+│   │   ├── 7.6-application-of-standing-waves/
+│   │   └── 7.7-doppler-effect/
+│   └── 08-physics-of-matters/
+│       └── 8.1-8.2-materials-testing/
 ├── docs/
 │   ├── architecture.md
 │   ├── audits/                    <- repository and page audits
@@ -362,7 +364,7 @@ choices.
  
 Currently in `shared/`:
 - `sim-style.css` — topbar, system-bar/mode-switch, `.sim-grid`,
-  `.canvas-shell`, `.readouts`/`.readouts--dense`, `.controls`,
+  `.canvas-shell`, `.visual-note`, `.readouts`/`.readouts--dense`, `.controls`,
   `.control-row`, buttons, `.theory-strip`, responsive breakpoints.
   Topic CSS loads after this and only adds sim-specific layout (e.g.
   `shm-graphs.css`'s 2×2 `.graph-quad`, `wave-properties.css`'s stacked

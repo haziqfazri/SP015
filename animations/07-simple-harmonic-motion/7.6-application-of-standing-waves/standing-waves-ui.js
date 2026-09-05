@@ -69,6 +69,7 @@ class UIManager {
 
       // Playback
       btnPlay: document.getElementById('btn-play'),
+      btnReset: document.getElementById('btn-reset'),
 
       // Readouts (shared across all 3 modes — content swapped, not the elements)
       valHarmonicLabel: document.getElementById('val-harmonic-label'),
@@ -172,6 +173,7 @@ class UIManager {
     this._bindHarmonicGroup(this.el.closedHarmonicGroup, (n) => this.callbacks.onClosedHarmonicChange(n));
 
     this.el.btnPlay.addEventListener('click', () => this.playbackState.toggle());
+    this.el.btnReset.addEventListener('click', () => this.callbacks.onReset());
   }
 
   _bindHarmonicGroup(groupEl, onChange) {

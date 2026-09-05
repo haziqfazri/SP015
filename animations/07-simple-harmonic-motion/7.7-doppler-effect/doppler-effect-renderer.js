@@ -31,7 +31,7 @@ function drawMotionLine(p, plotX, plotW, centerY) {
 // cutoff so the compression pattern reads clearly without a hard pop.
 function drawWavefronts(p, controller, plotX, plotW, centerY) {
   const scale = pxPerMetre(plotW);
-  const fronts = controller.doppler.wavefronts(controller.t);
+  const fronts = controller.wavefrontHistory;
 
   p.push();
   p.noFill();

@@ -252,6 +252,15 @@ button:focus-visible, input:focus-visible {
   z-index: 2;
 }
 
+/* Small disclosure beneath a canvas for genuine model/visual limitations.
+   Shared by Projectile Motion, Doppler Effect, and Materials Testing. */
+.visual-note {
+  margin: 10px 0 0;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.4;
+}
+
 /* =========================================================================
    Readouts
    Default is a single row of up to 4 values. If your sim needs a denser

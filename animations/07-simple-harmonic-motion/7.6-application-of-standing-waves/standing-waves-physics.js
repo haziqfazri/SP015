@@ -141,7 +141,7 @@ class StretchedString {
   }
 
   get harmonicLabel() {
-    return this.harmonic === 1 ? 'Fundamental (1st Harmonic)' : `${ordinal(this.harmonic)} Harmonic`;
+    return this.harmonic === 1 ? '1st Harmonic (Fundamental)' : `${ordinal(this.harmonic)} Harmonic`;
   }
 
   get overtoneLabel() {
@@ -216,7 +216,7 @@ class AirColumn {
   }
 
   get harmonicLabel() {
-    return this.harmonic === 1 ? 'Fundamental (1st Harmonic)' : `${ordinal(this.harmonic)} Harmonic`;
+    return this.harmonic === 1 ? '1st Harmonic (Fundamental)' : `${ordinal(this.harmonic)} Harmonic`;
   }
 
   // Open: overtone index = n - 1 (every n allowed).

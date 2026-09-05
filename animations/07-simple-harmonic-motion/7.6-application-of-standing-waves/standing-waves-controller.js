@@ -23,6 +23,7 @@ class SimulationController {
     this.ui = new UIManager({
       onModeChange: (mode) => this._onModeChange(mode),
       onPlayToggle: (isPlaying) => this._onPlayToggle(isPlaying),
+      onReset: () => this._onReset(),
 
       onTensionChange: (v) => this._mutate(() => this.string.setTension(v)),
       onLinearDensityChange: (v) => this._mutate(() => this.string.setLinearDensity(v)),
@@ -71,6 +72,15 @@ class SimulationController {
       noLoop();
       redraw(); // one final frame so extrema markers disappear immediately on pause
     }
+  }
+
+  _onReset() {
+    this.ui.playbackState.pause();
+    this.isPlaying = false;
+    this.ui.setPlayButtonLabel(false);
+    this.t = 0;
+    noLoop();
+    redraw();
   }
 
   // dt is clamped by the caller (sketch.js) before reaching here —

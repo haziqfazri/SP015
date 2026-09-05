@@ -77,6 +77,9 @@
 | Superposition of Waves | 7.5 | Superposition principle, constructive/destructive interference, pulse vs. continuous-wave interference |
 | Application of Standing Waves | 7.6 | Standing waves on stretched strings and in open/closed air columns, allowed harmonics, node/antinode positions |
 | Doppler Effect | 7.7 | Apparent frequency for a stationary observer + moving source, or vice versa (SP015 7.7(b) scope — never both moving at once) |
+| Materials Testing Lab | 8.1, 8.2 | Stress, strain, Hooke's law, Young's modulus, strain energy and density, ductile vs brittle curves |
+| Heat Conduction Lab | 8.3 | Steady-state 1D heat conduction, rate of heat transfer, 1 or 2 rods in series, insulated vs non-insulated temperature profiles |
+| Thermal Expansion Lab | 8.4 | Linear, area, and volume expansion coefficients (β=2α, γ=3α), liquid in container apparent expansion and overflow |
 
 New sims should add a row here (and cite the specific sub-LO, e.g.
 `7.1(c.iii)`, in code comments) as soon as their topic is decided.

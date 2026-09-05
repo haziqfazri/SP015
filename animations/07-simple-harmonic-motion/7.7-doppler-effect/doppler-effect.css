@@ -2,28 +2,72 @@
    DOPPLER-EFFECT.CSS — topic-specific overrides for Topic 7.7 (Doppler
    Effect). Load AFTER ../shared/sim-style.css.
 
-   Deliberately near-empty: this sim's layout (one .system-switch mode
-   toggle, one .canvas-shell, a plain 4-item .readouts row, standard
-   .control-row sliders, a .check for the audio toggle, a 2-button
-   .button-grid) is fully covered by shared/sim-style.css as-is — no
-   sim-specific canvas heights, extra panels, or disabled states are
-   needed here, unlike 7.5/7.6's topic CSS.
+   Shared styles provide the shell and controls. This file only adds the
+   compact stage status and the five-value responsive readout layout.
    ========================================================================= */
-
-/* -------------------------------------------------------------------------
-   Visual-speed disclosure note
-   Sits under the canvas, small and muted so it reads as a caveat rather
-   than a headline — the on-screen counterpart to PHYSICS.wavefrontVisualSpeed's
-   code comment (see doppler-effect-physics.js).
-   ------------------------------------------------------------------------- */
-
-.visual-note {
-  margin: 10px 0 0;
-  font-size: 11px;
-  color: var(--muted);
-  line-height: 1.4;
-}
 
 /* KaTeX rendering rules (.formula / .katex-inline) now live in
    shared/sim-style.css — promoted after the second sim adopted the
    pattern (see that file's KaTeX section). */
+
+.stage-meta {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.simulation-status {
+  font: 700 11px var(--mono);
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+
+.doppler-readouts {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+@media (max-width: 800px) {
+  .doppler-readouts {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .doppler-readouts .readout {
+    border-right: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .doppler-readouts .readout:nth-child(2n) {
+    border-right: 0;
+  }
+
+  .doppler-readouts .readout:last-child {
+    grid-column: 1 / -1;
+    border-right: 0;
+    border-bottom: 0;
+  }
+}
+
+@media (max-width: 460px) {
+  .stage-meta {
+    justify-content: flex-start;
+  }
+
+  .doppler-readouts {
+    grid-template-columns: 1fr;
+  }
+
+  .doppler-readouts .readout,
+  .doppler-readouts .readout:nth-child(2n) {
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .doppler-readouts .readout:last-child {
+    grid-column: auto;
+    border-bottom: 0;
+  }
+}

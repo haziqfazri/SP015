@@ -30,6 +30,7 @@ class SimulationController {
     this.t = LIMITS.timeMin;
     this.isPlaying = false;
     this.statusText = '—';
+    this._resetWavefrontHistory();
 
     this.audioTone = new AudioTone();
     this.audioEnabled = false;
@@ -39,6 +40,7 @@ class SimulationController {
       onFrequencyChange: (v) => this._onFrequencyChange(v),
       onSpeedChange: (v) => this._onSpeedChange(v),
       onPlayToggle: (isPlaying) => this._onPlayToggle(isPlaying),
+      onStep: () => this._onStep(),
       onReset: () => this._onReset(),
       onAudioToggle: (enabled) => this._onAudioToggle(enabled),
     });
@@ -57,10 +59,12 @@ class SimulationController {
     this._configureBodiesForMode(mode);
 
     this.t = LIMITS.timeMin;
+    this._resetWavefrontHistory();
     this.ui.setTimeLabel(this.t);
     this.ui.setMode(mode);
 
     this._refreshReadouts();
+    this.ui.announce(mode === 'movingSource' ? 'Moving source mode selected.' : 'Moving observer mode selected.');
     this._requestRedrawIfPaused();
   }
 
@@ -92,7 +96,7 @@ class SimulationController {
   }
 
   _onSpeedChange(v) {
-    this.doppler.setMoverSpeed(v);
+    this.doppler.setMoverSpeed(v, this.t);
     this._refreshReadouts();
     this._requestRedrawIfPaused();
   }
@@ -104,18 +108,18 @@ class SimulationController {
   // template-controller.js leaves this as a stub comment for exactly this
   // reason; it's filled in here rather than left out.
   _onPlayToggle(isPlaying = !this.isPlaying) {
-    if (this.t >= LIMITS.timeMax && isPlaying) this.t = LIMITS.timeMin; // restart from 0 at end of timeline
-
     this.isPlaying = isPlaying;
     this.ui.setPlayButtonLabel(this.isPlaying);
 
     if (this.isPlaying) {
       loop();
       if (this.audioEnabled) this._startAudio();
+      this.ui.announce('Simulation playing.');
     } else {
       noLoop();
       redraw();
       this._stopAudio();
+      this.ui.announce('Simulation paused.');
     }
   }
 
@@ -131,9 +135,19 @@ class SimulationController {
 
   _onReset() {
     this._forcePause();
+    this._configureBodiesForMode(this.mode);
     this.t = LIMITS.timeMin;
+    this._resetWavefrontHistory();
     this.ui.setTimeLabel(this.t);
     this._refreshReadouts();
+    this.ui.announce('Simulation reset to the initial position.');
+    this._requestRedrawIfPaused();
+  }
+
+  _onStep() {
+    this._forcePause();
+    const didLoop = this._advance(LIMITS.timeStep);
+    this.ui.announce(didLoop ? 'Step completed. A new cycle started.' : `Stepped forward ${LIMITS.timeStep.toFixed(2)} seconds.`);
     this._requestRedrawIfPaused();
   }
 
@@ -163,18 +177,64 @@ class SimulationController {
   update(dt) {
     if (!this.isPlaying) return;
 
-    this.t += dt * UI.playbackRate;
+    const didLoop = this._advance(dt * UI.playbackRate);
+    if (didLoop) this.ui.announce('Moving body reached the boundary. A new cycle started.');
 
-    if (this.t >= LIMITS.timeMax) {
-      this.t = LIMITS.timeMax;
-      this._forcePause();
+    if (this.audioEnabled && this.isPlaying) {
+      this.audioTone.updateFrequency(this.doppler.apparentFrequency(this.t));
+    }
+  }
+
+  _advance(dt) {
+    this.t += dt;
+
+    const shouldLoop = this.doppler.moverSpeed() > 0
+      && this.doppler.moverPositionAt(this.t) >= DOMAIN.xMax;
+
+    if (shouldLoop) {
+      this._configureBodiesForMode(this.mode);
+      this.t = LIMITS.timeMin;
+      this._resetWavefrontHistory();
+    } else {
+      this._recordWavefrontsThrough(this.t);
+      this._pruneWavefrontHistory();
     }
 
     this.ui.setTimeLabel(this.t);
     this._refreshReadouts();
+    return shouldLoop;
+  }
 
-    if (this.audioEnabled && this.isPlaying) {
-      this.audioTone.updateFrequency(this.doppler.apparentFrequency(this.t));
+  // Each emitted ring keeps the source position from its emission instant.
+  // This history belongs in the controller so a later speed change cannot
+  // retroactively move wavefronts that are already travelling through the
+  // medium. The buffer is trimmed to the renderer's visible lookback window.
+  _resetWavefrontHistory() {
+    this.wavefrontHistory = [{
+      emitTime: LIMITS.timeMin,
+      emitX: this.doppler.sourcePositionAt(LIMITS.timeMin),
+    }];
+    this.nextWavefrontIndex = 1;
+  }
+
+  _recordWavefrontsThrough(targetTime) {
+    const period = 1 / PHYSICS.wavefrontPulseRate;
+    const epsilon = 1e-12;
+
+    while (this.nextWavefrontIndex * period <= targetTime + epsilon) {
+      const emitTime = this.nextWavefrontIndex * period;
+      this.wavefrontHistory.push({
+        emitTime,
+        emitX: this.doppler.sourcePositionAt(emitTime),
+      });
+      this.nextWavefrontIndex += 1;
+    }
+  }
+
+  _pruneWavefrontHistory() {
+    const earliestRelevant = Math.max(LIMITS.timeMin, this.t - PHYSICS.wavefrontLookbackTime);
+    while (this.wavefrontHistory.length > 0 && this.wavefrontHistory[0].emitTime < earliestRelevant) {
+      this.wavefrontHistory.shift();
     }
   }
 
@@ -195,6 +255,7 @@ class SimulationController {
 
     this.ui.updateReadouts({
       apparentFreqText: `${fPrime.toFixed(1)} Hz`,
+      frequencyShiftText: this._frequencyShiftText(fPrime),
       sourceFreqText: `${this.doppler.sourceFrequency.toFixed(0)} Hz`,
       speedText: `${this.doppler.moverSpeed().toFixed(0)} m/s`,
       separationText: `${Math.abs(this.doppler.separationAt(t)).toFixed(1)} m`,
@@ -205,5 +266,11 @@ class SimulationController {
     if (this.doppler.moverSpeed() === 0) return '—';
     if (Math.abs(this.doppler.separationAt(t)) < 0.5) return 'Passing';
     return this.doppler.isApproaching(t) ? 'Approaching' : 'Receding';
+  }
+
+  _frequencyShiftText(apparentFrequency) {
+    const difference = apparentFrequency - this.doppler.sourceFrequency;
+    if (Math.abs(difference) < 1e-9) return '= No shift';
+    return difference > 0 ? '↑ Higher' : '↓ Lower';
   }
 }

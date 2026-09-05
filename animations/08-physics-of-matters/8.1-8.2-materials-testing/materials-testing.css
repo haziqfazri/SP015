@@ -1,0 +1,92 @@
+/* Topic-specific Materials Testing Laboratory additions. Shared shell,
+   controls, readouts, and responsive dimensions remain in sim-style.css. */
+
+.stage-status {
+  color: var(--muted);
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.control-note {
+  margin: 9px 0 0;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+.progress-control {
+  padding-top: 20px;
+  border-top: 1px solid var(--line);
+}
+
+.characteristic-points {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-rows: none;
+}
+
+.readouts.characteristic-points .characteristic-point {
+  min-width: 0;
+  border-right: 1px solid var(--line);
+  border-bottom: 0;
+  transition: background-color 160ms ease, box-shadow 160ms ease;
+}
+
+.readouts.characteristic-points .characteristic-point:last-child {
+  border-right: 0;
+}
+
+.characteristic-point .readout-value {
+  display: block;
+  color: var(--orange);
+  overflow-wrap: anywhere;
+}
+
+.characteristic-point .readout-label {
+  margin: 7px 0 0;
+  line-height: 1.35;
+}
+
+.characteristic-point.is-active {
+  background: var(--acid);
+  box-shadow: inset 0 3px 0 var(--ink);
+}
+
+.theory-card .formula + .formula {
+  margin-top: 5px;
+}
+
+@media (max-width: 460px) {
+  .canvas-label { display: none; }
+
+  .system-bar .system-switch,
+  .system-bar .system-option {
+    width: 100%;
+  }
+
+  .stage-top {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 5px;
+  }
+}
+
+@media (max-width: 600px) {
+  .characteristic-points {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .readouts.characteristic-points .characteristic-point {
+    border-right: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .readouts.characteristic-points .characteristic-point:nth-child(2n) {
+    border-right: 0;
+  }
+
+  .readouts.characteristic-points .characteristic-point:last-child {
+    grid-column: 1 / -1;
+    border-right: 0;
+    border-bottom: 0;
+  }
+}
