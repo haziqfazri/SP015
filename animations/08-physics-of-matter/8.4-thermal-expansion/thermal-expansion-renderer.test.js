@@ -42,6 +42,18 @@ assert.ok(renderer.normalizedDimension(physics.LIMITS.linearLength.min, physics.
 assert.ok(renderer.normalizedDimension(physics.LIMITS.area.min, physics.LIMITS.area) < renderer.normalizedDimension(physics.LIMITS.area.max, physics.LIMITS.area), 'initial area maps to drawing scale');
 assert.ok(renderer.normalizedDimension(physics.LIMITS.volume.min, physics.LIMITS.volume) < renderer.normalizedDimension(physics.LIMITS.volume.max, physics.LIMITS.volume), 'initial volume maps to drawing scale');
 
+const overflowCalls = [];
+const overflowCtx = new Proxy({ CLOSE: 'close' }, {
+  get(target, property) {
+    if (property in target) return target[property];
+    return (...args) => overflowCalls.push({ property, args });
+  },
+});
+renderer.drawOverflowSpill(overflowCtx, { left: 100, top: 30, width: 80, height: 160, baseY: 190, compact: false });
+assert.ok(overflowCalls.some(({ property }) => property === 'bezierVertex'), 'overflow uses smooth Bézier geometry');
+assert.ok(overflowCalls.some(({ property }) => property === 'circle'), 'overflow includes rounded droplets');
+assert.ok(overflowCalls.some(({ property }) => property === 'fill'), 'overflow is rendered as a filled liquid ribbon');
+
 const base = {
   progress: 1,
   targetDeltaT: 50,

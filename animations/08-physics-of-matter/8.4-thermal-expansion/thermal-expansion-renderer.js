@@ -95,17 +95,17 @@ function drawLiquidMode(ctx, snapshot, box, compact) {
   const leftCx = box.x + box.width * 0.28;
   const rightCx = box.x + box.width * 0.72;
   const baseY = box.y + box.height * 0.78;
-  drawVessel(ctx, leftCx, baseY, vesselWidth, vesselHeight, snapshot.fillFraction, false, false);
+  drawVessel(ctx, leftCx, baseY, vesselWidth, vesselHeight, snapshot.fillFraction, false, false, compact);
   const containerRatio = Math.cbrt(snapshot.finalContainerCapacityM3 / snapshot.containerCapacityM3);
   const finalScale = clampDisplayScale(containerRatio);
   const displayedFill = Math.min(1, snapshot.finalLiquidVolumeM3 / snapshot.finalContainerCapacityM3);
-  drawVessel(ctx, rightCx, baseY, vesselWidth * finalScale, vesselHeight * finalScale, displayedFill, true, snapshot.overflowM3 > 0);
+  drawVessel(ctx, rightCx, baseY, vesselWidth * finalScale, vesselHeight * finalScale, displayedFill, true, snapshot.overflowM3 > 0, compact);
   drawLabel(ctx, 'INITIAL', leftCx, baseY + 27, { fill: PALETTE.mutedRGB, size: 9 });
   drawLabel(ctx, snapshot.deltaT === 0 ? 'REFERENCE' : 'APPLIED', rightCx, baseY + 27, { fill: PALETTE.mutedRGB, size: 9 });
   drawArrowCtx(ctx, leftCx + vesselWidth * 0.72, baseY - vesselHeight * 0.52, rightCx - vesselWidth * 0.72, baseY - vesselHeight * 0.52, snapshot.deltaT < 0 ? PALETTE.teal : PALETTE.orange, 2, 7);
 }
 
-function drawVessel(ctx, cx, baseY, width, height, fillFraction, applied, overflowing) {
+function drawVessel(ctx, cx, baseY, width, height, fillFraction, applied, overflowing, compact = false) {
   const left = cx - width / 2;
   const top = baseY - height;
   const wallColor = applied ? PALETTE.orange : PALETTE.ink;
@@ -127,18 +127,45 @@ function drawVessel(ctx, cx, baseY, width, height, fillFraction, applied, overfl
   ctx.pop();
   drawLabel(ctx, 'capacity', left + width + 7, top, { fill: PALETTE.mutedRGB, size: 8, align: ['LEFT', 'CENTER'] });
   if (overflowing) {
-    ctx.push();
-    ctx.noFill();
-    ctx.stroke(PALETTE.teal);
-    ctx.strokeWeight(4);
-    ctx.beginShape();
-    ctx.vertex(left + width - 3, top + 2);
-    ctx.vertex(left + width + 12, top + 10);
-    ctx.vertex(left + width + 15, top + 26);
-    ctx.endShape();
-    ctx.pop();
-    drawLabel(ctx, 'overflow', left + width + 18, top + 32, { fill: PALETTE.inkRGB, size: 8, align: ['LEFT', 'CENTER'] });
+    drawOverflowSpill(ctx, { left, top, width, height, baseY, compact });
   }
+}
+
+function drawOverflowSpill(ctx, { left, top, width, height, baseY, compact = false }) {
+  const rimX = left + width * 0.72;
+  const streamWidth = Math.min(7, Math.max(4, width * 0.075));
+  const outsideX = left + width + Math.min(18, width * 0.18);
+  const streamBottomY = top + Math.min(height * 0.42, 76);
+  const streamStartY = top + 2;
+
+  // A filled ribbon reads as liquid spilling over the rim, unlike the former bent stroke.
+  ctx.push();
+  ctx.noStroke();
+  ctx.fill(PALETTE.teal);
+  ctx.beginShape();
+  ctx.vertex(rimX - streamWidth / 2, streamStartY);
+  ctx.bezierVertex(rimX + 4, streamStartY + 1, outsideX - 2, top + 7, outsideX, top + 16);
+  ctx.bezierVertex(outsideX + 2, top + 30, outsideX - 2, streamBottomY - 10, outsideX - streamWidth * 0.35, streamBottomY);
+  ctx.vertex(outsideX - streamWidth * 1.15, streamBottomY);
+  ctx.bezierVertex(outsideX - streamWidth * 0.4, streamBottomY - 11, outsideX - streamWidth * 0.8, top + 31, outsideX - streamWidth * 1.05, top + 18);
+  ctx.bezierVertex(outsideX - streamWidth * 1.25, top + 10, rimX - streamWidth / 2, streamStartY + 6, rimX - streamWidth / 2, streamStartY);
+  ctx.endShape(ctx.CLOSE);
+  ctx.circle(outsideX - streamWidth * 0.75, streamBottomY + 9, streamWidth * 0.85);
+  ctx.circle(outsideX - streamWidth * 0.15, streamBottomY + 22, streamWidth * 0.58);
+  ctx.pop();
+
+  const calloutX = compact ? left + width * 0.5 : outsideX + 25;
+  const calloutY = compact ? Math.min(baseY + 40, top + height - 8) : top + 47;
+  ctx.push();
+  ctx.stroke(PALETTE.path);
+  ctx.strokeWeight(1);
+  ctx.line(outsideX, top + 22, calloutX, calloutY - 7);
+  ctx.pop();
+  drawLabel(ctx, 'overflow', calloutX, calloutY, {
+    fill: PALETTE.inkRGB,
+    size: 8,
+    align: compact ? ['CENTER', 'CENTER'] : ['LEFT', 'CENTER'],
+  });
 }
 
 function drawMagnifier(ctx, snapshot, box, compact) {
@@ -219,5 +246,5 @@ function drawIsometricBox(ctx, cx, cy, width, height, colorValue, dashed) {
 }
 
 if (typeof module !== 'undefined' && module.exports) {
-  module.exports = { clampDisplayScale, normalizedDimension, formatSnapshotChange, drawThermalExpansionScene };
+  module.exports = { clampDisplayScale, normalizedDimension, formatSnapshotChange, drawOverflowSpill, drawThermalExpansionScene };
 }
