@@ -1,0 +1,64 @@
+/* Topic-specific Thermal Expansion Laboratory additions. */
+
+.stage-status {
+  color: var(--muted);
+  font-size: 12px;
+  text-align: right;
+}
+
+.expansion-mode-switch .system-option {
+  min-height: 44px;
+}
+
+.control-section {
+  padding-top: 17px;
+  border-top: 1px dashed var(--line);
+}
+
+.control-section + .control-section {
+  margin-top: 4px;
+}
+
+.control-section-label {
+  margin: 0 0 15px;
+  color: var(--muted);
+  font: 700 11px var(--mono);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.readout-value {
+  overflow-wrap: anywhere;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pulse { animation: none; }
+}
+
+@media (max-width: 800px) {
+  .expansion-mode-switch {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    width: 100%;
+  }
+
+  .expansion-mode-switch .system-option {
+    min-width: 0;
+  }
+}
+
+@media (max-width: 460px) {
+  .canvas-label { display: none; }
+
+  .stage-top {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .stage-status { text-align: left; }
+
+  .expansion-mode-switch {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,6 +1,6 @@
 # Chapter 8 Physics of Matter — Simulation Implementation Plan
 
-**Status:** Active
+**Status:** Completed
 
 **Created:** 2026-09-02
 
@@ -381,6 +381,13 @@ Compact canvas (<560 px)
 - Mode switches preserve common temperature and coefficient state where meaningful and redraw immediately while paused.
 - Mark its landing card completed only after functionality, responsive, and accessibility QA passes.
 
+#### Phase 3 implementation record — completed 2026-09-06
+
+- Added the Level 3 global-mode Thermal Expansion Laboratory with Linear, Area, Volume, and Liquid + container modes, a controller-owned temperature sweep, a stable eight-cell readout grid, and exaggerated measurement geometry paired with exact numerical results.
+- Verified the first-order SP015 relationships, heating/contraction signs, proportional scaling, derived coefficients, partial-fill liquid state, apparent expansion, overflow thresholds, invalid-input rejection, bounded playback, replay, Step, Reset, and parameter persistence in deterministic tests.
+- Exercised every mode, keyboard activation, target-temperature changes, heating/cooling, overflow, Play/Pause/Step/Reset, and synchronized `aria-pressed` state in the browser. The 1440, 800, 460, and 320 px layouts had no horizontal overflow; console warning/error checks were empty.
+- Promoted the 8.4 landing card and curriculum coverage rows only after its functionality and responsive checks passed. No new shared helper or architecture pattern was required.
+
 ### Phase 4 — Repository integration and documentation
 
 **Goal:** Make Chapter 8 discoverable and document only patterns that became real during implementation.
@@ -433,6 +440,12 @@ Compact canvas (<560 px)
 - Save QA evidence under `docs/plan/completed/evidence/chapter-08-physics-of-matter/` grouped by simulation and viewport.
 - Record final checks and any accepted limitations in this document.
 - Move this plan to `docs/plan/completed/` only when all three simulations, landing integration, documentation, and QA exit criteria pass.
+
+#### Chapter 8 completion record — completed 2026-09-06
+
+- Re-ran every Chapter 8 deterministic test and JavaScript syntax check, then checked DOM IDs, local runtime paths, script order, raw canvas colors, raw math entities, and whitespace integrity across the completed simulations.
+- Confirmed the landing metadata exposes exactly one launch link for each completed Chapter 8 lab and that README/landing curriculum status matches the implemented files.
+- Accepted limitation: the in-app browser provided exact responsive viewport checks but no persistent screenshot export; the reproducible QA observations and command results are recorded under the completed-plan evidence directory.
 
 ## 4. Interfaces and callback contracts
 

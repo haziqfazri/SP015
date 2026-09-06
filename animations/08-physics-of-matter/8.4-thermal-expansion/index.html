@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="An interactive SP015 laboratory for linear, area, volume, and liquid-in-container thermal expansion.">
+  <title>Thermal Expansion Laboratory — Topic 8.4 | SP015</title>
+
+  <link rel="stylesheet" href="../../../shared/fonts.css">
+  <script src="../../../vendor/p5/p5.min.js"></script>
+  <link rel="stylesheet" href="../../../vendor/katex/katex.min.css">
+  <script src="../../../vendor/katex/katex.min.js"></script>
+  <link rel="stylesheet" href="../../../shared/sim-style.css">
+  <link rel="stylesheet" href="thermal-expansion.css">
+</head>
+<body>
+  <div class="app-shell">
+    <div class="lab-frame">
+      <header class="topbar">
+        <div>
+          <p class="kicker">SP015 · Topic 8.4</p>
+          <h1>Thermal Expansion Laboratory</h1>
+        </div>
+        <div class="live-chip"><span class="pulse" aria-hidden="true"></span><span>Live Simulation</span></div>
+      </header>
+
+      <nav class="system-bar" aria-label="Thermal expansion mode">
+        <span class="system-label">Measure</span>
+        <div class="system-switch expansion-mode-switch">
+          <button class="system-option is-active" data-expansion-mode="linear" type="button" aria-pressed="true">Linear</button>
+          <button class="system-option" data-expansion-mode="area" type="button" aria-pressed="false">Area</button>
+          <button class="system-option" data-expansion-mode="volume" type="button" aria-pressed="false">Volume</button>
+          <button class="system-option" data-expansion-mode="liquid-container" type="button" aria-pressed="false">Liquid + container</button>
+        </div>
+      </nav>
+
+      <main class="sim-grid">
+        <section class="stage" aria-labelledby="stage-heading">
+          <div class="stage-top">
+            <h2 id="stage-heading">Expansion measurement bench</h2>
+            <span id="stage-status" class="mono stage-status">Linear · Reference state · 0%</span>
+          </div>
+
+          <div class="canvas-shell">
+            <span class="canvas-label">MEASUREMENT PLATE · DISPLAY CHANGE MAGNIFIED</span>
+            <div id="canvas-holder" role="img" aria-label="Original and thermally expanded measurements"></div>
+          </div>
+          <p id="canvas-summary" class="visual-note" aria-live="polite">Geometry is exaggerated; numerical readouts use the first-order expansion model.</p>
+
+          <section class="readouts readouts--dense" aria-label="Thermal expansion results" aria-live="polite">
+            <div class="readout"><span class="readout-label" data-readout-label>Initial length</span><output id="readout-initial" class="readout-value">1.000 m</output></div>
+            <div class="readout"><span class="readout-label" data-readout-label>Final length</span><output id="readout-final" class="readout-value">1.000000 m</output></div>
+            <div class="readout"><span class="readout-label" data-readout-label>Length change</span><output id="readout-change" class="readout-value">+0.000 mm</output></div>
+            <div class="readout"><span class="readout-label" data-readout-label>Applied ΔT</span><output id="readout-delta-t" class="readout-value">+0.0 K</output></div>
+            <div class="readout"><span class="readout-label" data-readout-label>Linear α</span><output id="readout-alpha" class="readout-value">12 × 10⁻⁶ K⁻¹</output></div>
+            <div class="readout"><span class="readout-label" data-readout-label>Area β = 2α</span><output id="readout-derived-coefficient" class="readout-value">24 × 10⁻⁶ K⁻¹</output></div>
+            <div class="readout"><span class="readout-label" data-readout-label>Apparent change</span><output id="readout-apparent" class="readout-value">Not applicable</output></div>
+            <div class="readout"><span class="readout-label" data-readout-label>Overflow</span><output id="readout-overflow" class="readout-value">Not applicable</output></div>
+          </section>
+        </section>
+
+        <aside class="controls" aria-labelledby="controls-heading">
+          <h2 id="controls-heading" class="control-title">Expansion controls</h2>
+          <p class="control-intro">Choose an initial size and coefficient, then sweep toward the selected temperature change.</p>
+
+          <section class="control-section" aria-labelledby="initial-size-heading">
+            <h3 id="initial-size-heading" class="control-section-label">Initial size</h3>
+            <div id="linear-controls" class="control-row">
+              <div class="control-meta"><label for="linear-length">Length, <span class="katex-inline" data-latex="L_0">L zero</span></label><output id="linear-length-value" class="control-value">1.00 m</output></div>
+              <input id="linear-length" type="range" min="0.5" max="5" step="0.05" value="1">
+            </div>
+            <div id="area-controls" class="control-row hidden">
+              <div class="control-meta"><label for="initial-area">Area, <span class="katex-inline" data-latex="A_0">A zero</span></label><output id="initial-area-value" class="control-value">1.00 m²</output></div>
+              <input id="initial-area" type="range" min="0.25" max="4" step="0.05" value="1">
+            </div>
+            <div id="volume-controls" class="control-row hidden">
+              <div class="control-meta"><label for="initial-volume">Volume, <span class="katex-inline" data-latex="V_0">V zero</span></label><output id="initial-volume-value" class="control-value">1.00 m³</output></div>
+              <input id="initial-volume" type="range" min="0.1" max="2" step="0.05" value="1">
+            </div>
+            <div id="liquid-size-controls" class="hidden">
+              <div class="control-row">
+                <div class="control-meta"><label for="container-capacity">Container capacity</label><output id="container-capacity-value" class="control-value">1.00 L</output></div>
+                <input id="container-capacity" type="range" min="0.5" max="2" step="0.05" value="1">
+              </div>
+              <div class="control-row">
+                <div class="control-meta"><label for="fill-percent">Initial fill</label><output id="fill-percent-value" class="control-value">100%</output></div>
+                <input id="fill-percent" type="range" min="50" max="100" step="1" value="100">
+              </div>
+            </div>
+          </section>
+
+          <section class="control-section" aria-labelledby="material-heading">
+            <h3 id="material-heading" class="control-section-label">Material coefficient</h3>
+            <div class="control-row">
+              <div class="control-meta"><label for="alpha">Linear coefficient, <span class="katex-inline" data-latex="\alpha">alpha</span></label><output id="alpha-value" class="control-value">12 × 10⁻⁶ K⁻¹</output></div>
+              <input id="alpha" type="range" min="5" max="30" step="1" value="12">
+            </div>
+          </section>
+
+          <section id="liquid-controls" class="control-section hidden" aria-labelledby="liquid-heading">
+            <h3 id="liquid-heading" class="control-section-label">Liquid</h3>
+            <div class="control-row">
+              <div class="control-meta"><label for="liquid-gamma">Volume coefficient, <span class="katex-inline" data-latex="\gamma_\ell">gamma liquid</span></label><output id="liquid-gamma-value" class="control-value">0.80 × 10⁻³ K⁻¹</output></div>
+              <input id="liquid-gamma" type="range" min="0.2" max="1.2" step="0.05" value="0.8">
+            </div>
+          </section>
+
+          <section class="control-section" aria-labelledby="temperature-heading">
+            <h3 id="temperature-heading" class="control-section-label">Temperature change</h3>
+            <div class="control-row">
+              <div class="control-meta"><label for="target-delta-t">Target <span class="katex-inline" data-latex="\Delta T">delta T</span></label><output id="target-delta-t-value" class="control-value">+50 K</output></div>
+              <input id="target-delta-t" type="range" min="-50" max="150" step="1" value="50">
+              <p class="control-note">A negative value cools and contracts the system. Temperature differences have the same numerical value in K and °C.</p>
+            </div>
+          </section>
+
+          <div class="button-grid">
+            <button id="play-button" class="action primary" type="button">▶ Play</button>
+            <button id="reset-button" class="action" type="button">Reset</button>
+            <button id="step-button" class="action col-span-2" type="button">Step temperature sweep</button>
+          </div>
+        </aside>
+      </main>
+
+      <footer class="theory-strip">
+        <section class="theory-card">
+          <h2>Learning outcomes — 8.4(a–b)</h2>
+          <p>Define the coefficients of linear, area, and volume expansion, then solve thermal-expansion problems including a liquid in a container.</p>
+          <span class="formula" data-latex="\Delta L=\alpha L_0\Delta T,\quad \Delta A=\beta A_0\Delta T,\quad \Delta V=\gamma V_0\Delta T">Thermal expansion equations</span>
+        </section>
+        <section class="theory-card">
+          <div id="linear-theory">
+            <h2>Linear expansion</h2>
+            <p>A fixed origin makes the signed length change easy to see. Heating gives positive expansion; cooling gives contraction.</p>
+          </div>
+          <div id="area-theory" class="hidden">
+            <h2>Area coefficient</h2>
+            <p>For an isotropic solid in the first-order model, both in-plane dimensions change and <span class="katex-inline" data-latex="\beta=2\alpha">beta equals two alpha</span>.</p>
+          </div>
+          <div id="volume-theory" class="hidden">
+            <h2>Volume coefficient</h2>
+            <p>All three dimensions change, giving <span class="katex-inline" data-latex="\gamma=3\alpha">gamma equals three alpha</span> in the first-order model.</p>
+          </div>
+          <div id="liquid-theory" class="hidden">
+            <h2>Liquid in a container</h2>
+            <p>The liquid and container both expand. Apparent expansion depends on <span class="katex-inline" data-latex="\gamma_\mathrm{liquid}-\gamma_\mathrm{container}">the difference between their gamma values</span>; overflow occurs only above the expanded capacity.</p>
+          </div>
+        </section>
+      </footer>
+    </div>
+  </div>
+
+  <script src="../../../shared/sim-utils.js"></script>
+  <script src="../../../shared/offline-runtime.js"></script>
+  <script src="thermal-expansion-physics.js"></script>
+  <script src="thermal-expansion-renderer.js"></script>
+  <script src="thermal-expansion-ui.js"></script>
+  <script src="thermal-expansion-controller.js"></script>
+  <script src="thermal-expansion-sketch.js"></script>
+</body>
+</html>
