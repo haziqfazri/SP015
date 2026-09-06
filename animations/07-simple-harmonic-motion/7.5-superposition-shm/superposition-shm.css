@@ -45,7 +45,7 @@
    .canvas-shell height (350px) is sized for a single full-stage canvas —
    three of those stacked would blow well past the viewport, so each
    panel here gets a much shorter height, similar in spirit to
-   shm-graphs.css's .graph-cell override for the same reason (multiple
+   graphs-shm.css's .graph-cell override for the same reason (multiple
    small-multiple canvases sharing one stage).
    ------------------------------------------------------------------------- */
 

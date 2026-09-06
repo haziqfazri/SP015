@@ -7,7 +7,7 @@
 const PX_PER_METER = 100; // 100px = 1m
 
 // Physical bounds derived from the pixel-backed radius control range in
-// circular-motion.html. The UI exposes metres; the renderer stores pixels.
+// index.html. The UI exposes metres; the renderer stores pixels.
 // Used to normalize v, a, F onto a shared 0–1 range so their arrows
 // grow/shrink in sync regardless of how differently each quantity scales.
 const OMEGA_MIN = (Math.PI * 2) / 5;   // period slider max = 5s

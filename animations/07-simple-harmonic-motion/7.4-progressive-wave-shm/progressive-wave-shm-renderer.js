@@ -34,7 +34,7 @@ const COLORS = {
 // Axis layout — reserved margins so tick marks/labels have room outside
 // the plotting area itself. Style (short ticks, mono labels, quantity
 // label top-left / unit label bottom-right) follows the same convention
-// already used by shm-graphs-sim.js's drawTimeSeriesGraph(), for
+// already used by graphs-shm-sim.js's drawTimeSeriesGraph(), for
 // consistency across the whole project's sims.
 // -------------------------------------------------------------------------
 const AXIS = {
@@ -119,7 +119,7 @@ function drawAxes(ctx, plotX, plotY, plotW, plotH, xTicks, yTicks, xAxisTitle, y
   ctx.pop();
 
   // Axis titles — quantity label top-left (above plot), unit label
-  // bottom-right (below ticks), matching shm-graphs-sim.js's convention.
+  // bottom-right (below ticks), matching graphs-shm-sim.js's convention.
   ctx.push();
   ctx.noStroke();
   ctx.fill(COLORS.waveLine);

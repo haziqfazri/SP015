@@ -9,8 +9,8 @@
 
 // -------------------------------------------------------------------------
 // VARIANT A — GLOBAL MODE (single shared canvas; matches
-// simple-harmonic-motion/kinematics-shm-sketch.js and
-// circular-motion/circular-motion-sketch.js). Use this unless the sim
+// 7.1-kinematics-of-shm/kinematics-of-shm-sketch.js and
+// 5-uniform-circular-motion/uniform-circular-motion-sketch.js). Use this unless the sim
 // needs more than one canvas.
 // -------------------------------------------------------------------------
 
@@ -48,8 +48,8 @@ function windowResized() {
 
 // -------------------------------------------------------------------------
 // VARIANT B — INSTANCE MODE (multiple independent/synced canvases; matches
-// shm-graphs-analysis/shm-graphs-sim.js and
-// shm-superposition/wave-superposition-sketch.js). Use this if the sim
+// 7.2-graphs-shm/graphs-shm-sketch.js and
+// shm-superposition/superposition-shm-sketch.js). Use this if the sim
 // needs 2+ canvases that must stay in lockstep.
 // -------------------------------------------------------------------------
 

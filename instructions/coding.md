@@ -5,19 +5,19 @@
 See `docs/architecture.md` §2 for the current folder tree. The naming rules:
 
 - **Folder = chapter, nested by topic.** Sims live under
-  `animations/<chapter-number>-<chapter-name>/`. A single-sim chapter (e.g.
-  `05-circular-motion`) keeps its files directly in that folder. A
-  multi-topic chapter (e.g. `07-simple-harmonic-motion`) splits further
-  into one subfolder per topic, named `<topic-number>-<short-name>` (e.g.
-  `7.1-kinematics-of-shm`, `7.4-progressive-wave-shm`). The specific LO is
-  still cited in a comment/kicker.
+  `animations/<chapter-number>-<chapter-name>/<topic-number>-<short-name>/`,
+  including single-topic chapters such as
+  `05-circular-motion/5-uniform-circular-motion/`. The specific LO is still
+  cited in a comment/kicker.
 - **One folder, self-contained.** Own HTML, own CSS, own JS. Nothing
   sim-specific lives in `shared/`; nothing shared lives inside a sim's
   folder — a helper needed by two sims moves to `shared/`.
-- **File naming pattern:** `<topic-prefix>-<role>.js`, e.g.
-  `wave-physics.js`, `wave-ui-manager.js` / `wave-superposition-ui.js`,
-  `wave-controller.js`, `wave-renderer.js`, `wave-sketch.js`. HTML is
-  `index.html` or `<topic>.html`; CSS is `<topic>.css`.
+- **File naming pattern:** `<topic-slug>-<role>.js`, where the topic slug is
+  the folder name without its numeric prefix, e.g.
+  `progressive-wave-shm-physics.js`, `progressive-wave-shm-ui.js`,
+  `progressive-wave-shm-controller.js`, `progressive-wave-shm-renderer.js`,
+  and `progressive-wave-shm-sketch.js`. Every simulation entry point is
+  `index.html`; topic CSS is `<topic-slug>.css`.
 - **Class naming:** When these roles exist, use clear names such as
   `UIManager` and `SimulationController`. Physics classes should be named for
   what they model (`SpringOscillator`, `WaveState`, `SHMOscillator`, `Particle`,

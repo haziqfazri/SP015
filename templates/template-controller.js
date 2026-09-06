@@ -11,7 +11,7 @@
        tied to this.ui.isPlaying, driven by the sketch's draw().
      - INSTANCE MODE (multiple synced canvases): drive every canvas from
        one requestAnimationFrame ticker so they never fall out of lockstep
-       (see wave-superposition-controller.js's _interferenceLoop()).
+       (see superposition-shm-controller.js's _interferenceLoop()).
    Delete whichever comment block below doesn't apply once you know which
    mode this sim needs.
    ========================================================================= */

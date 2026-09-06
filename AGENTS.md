@@ -23,7 +23,8 @@ SP015/
   animations/                   <- sims, grouped by chapter
     02-kinematics-of-linear-motion/
       2.3-projectile-motion/    <- Level 3 (full split)
-    05-circular-motion/         <- Level 1 (compact sim + sketch)
+    05-circular-motion/
+      5-uniform-circular-motion/ <- Level 1 (compact sim + sketch)
     07-simple-harmonic-motion/
       7.1-kinematics-of-shm/    <- Level 3 (full split)
       7.2-graphs-shm/           <- Level 3 (full split), instance mode, 5 canvases
@@ -31,7 +32,7 @@ SP015/
       7.5-superposition-shm/    <- Level 3, instance mode, 3+ canvases
       7.6-application-of-standing-waves/  <- Level 3
       7.7-doppler-effect/       <- Level 3, uses KaTeX (all sims now do)
-    08-physics-of-matters/
+    08-physics-of-matter/
       8.1-8.2-materials-testing/ <- Level 3, global mode
   docs/
     architecture.md             <- authoritative architecture/patterns
@@ -139,8 +140,8 @@ Call `ui.updateReadouts(...)` from the callback that actually changes the values
 ### Naming
 
 - Folders: `animations/<chapter-number>-<chapter-name>/<topic-number>-<short-name>/`
-- Files: `<topic-prefix>-<role>.js` (e.g. `wave-physics.js`, `wave-ui-manager.js`, `wave-controller.js`, `wave-renderer.js`, `wave-sketch.js`)
-- HTML: `index.html` or `<topic>.html`
+- Files: `<topic-slug>-<role>.js` (e.g. `progressive-wave-shm-physics.js`, `progressive-wave-shm-ui.js`, `progressive-wave-shm-controller.js`, `progressive-wave-shm-renderer.js`, `progressive-wave-shm-sketch.js`)
+- HTML: `index.html` for every simulation entry point
 - CSS: `<topic>.css`
 - Classes: `UIManager`, `SimulationController`. Physics classes named for what they model (`SpringOscillator`, `Projectile`, `WaveState`, `PulseWave`, `ProgressiveWave`, `AirColumn`, etc.)
 

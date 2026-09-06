@@ -30,7 +30,11 @@ SP015/
   templates/              <- starting point for new simulations
 ```
 
-Each simulation is **self-contained inside its topic folder**. It owns its HTML, CSS, and JavaScript files. Shared code lives in `shared/`; simulation-specific code should not be placed there.
+Each simulation is **self-contained inside its numbered topic folder**. Every
+simulation launches from `index.html`, and topic-specific CSS/JavaScript files
+use the topic slug as their prefix. Shared code lives in `shared/`; simulation-
+specific code should not be placed there. A few former HTML entry paths remain
+as redirect stubs for bookmarked URLs.
 
 The [`landing/`](landing/) page is the static, metadata-driven index for the simulations. It is a product entry point rather than a simulation: its card metadata, search/filter behavior, topic SVG thumbnails, and responsive visual system live together in that folder.
 

@@ -30,7 +30,7 @@ function setup() {
   mainCanvas.parent(yxHolder);
 
   // Second panel is a Graphics buffer with its own <canvas> element,
-  // manually placed into the y-t holder — see wave-renderer.js header for
+  // manually placed into the y-t holder — see progressive-wave-shm-renderer.js header for
   // why this sim uses two canvases instead of one.
   ytBuffer = createGraphics(ytPanelWidth, ytPanelHeight);
   ytBuffer.canvas.style.display = 'block';
