@@ -85,7 +85,7 @@ Start from [`templates/`](templates/README.md), which has the full build order a
 | 7.6 | Application of Standing Waves | ✅ Done |
 | 7.7 | Doppler Effect | ✅ Done |
 | 8.1, 8.2 | Materials Testing Laboratory | ✅ Done |
-| 8.3 | Heat Conduction Laboratory | ⬜ Planned |
+| 8.3 | Heat Conduction Laboratory | ✅ Done |
 | 8.4 | Thermal Expansion Laboratory | ⬜ Planned |
 
 Curriculum spec: [`Curriculum Specifications (CS) Physics SP015.pdf`](<Curriculum Specifications (CS) Physics SP015.pdf>). *(The SP025 spec is available as a PDF; it is not yet converted to markdown.)*

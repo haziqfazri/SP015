@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="An interactive SP015 heat conduction laboratory for steady heat flow through one or two insulated rods and qualitative side loss.">
+  <title>Heat Conduction Laboratory — Topic 8.3 | SP015</title>
+
+  <link rel="stylesheet" href="../../../shared/fonts.css">
+  <script src="../../../vendor/p5/p5.min.js"></script>
+  <link rel="stylesheet" href="../../../vendor/katex/katex.min.css">
+  <script src="../../../vendor/katex/katex.min.js"></script>
+  <link rel="stylesheet" href="../../../shared/sim-style.css">
+  <link rel="stylesheet" href="heat-conduction.css">
+</head>
+<body>
+  <div class="app-shell">
+    <div class="lab-frame">
+      <header class="topbar">
+        <div>
+          <p class="kicker">SP015 · Topic 8.3</p>
+          <h1>Heat Conduction Laboratory</h1>
+        </div>
+        <div class="live-chip"><span class="pulse" aria-hidden="true"></span><span>Live Simulation</span></div>
+      </header>
+
+      <nav class="system-bar" aria-label="Heat conduction model">
+        <span class="system-label">Model</span>
+        <div class="system-switch">
+          <button id="insulated-mode" class="system-option is-active" type="button" aria-pressed="true">Insulated</button>
+          <button id="non-insulated-mode" class="system-option" type="button" aria-pressed="false">Non-insulated</button>
+        </div>
+      </nav>
+
+      <main class="sim-grid">
+        <section class="stage" aria-labelledby="stage-heading">
+          <div class="stage-top">
+            <h2 id="stage-heading">Steady-state conduction bench</h2>
+            <span id="stage-status" class="mono stage-status">Insulated · one rod</span>
+          </div>
+
+          <div class="canvas-shell">
+            <span class="canvas-label">ROD SYSTEM + TEMPERATURE–DISTANCE PROFILE</span>
+            <div id="canvas-holder" role="img" aria-label="Rod apparatus aligned with a temperature against distance graph"></div>
+          </div>
+          <p id="canvas-summary" class="visual-note" aria-live="polite">Heat flows from the 100 °C reservoir to the 20 °C reservoir through one insulated rod.</p>
+
+          <section class="readouts readouts--dense" aria-label="Heat conduction results" aria-live="polite">
+            <div class="readout"><span class="readout-label">Heat rate</span><output id="readout-heat-rate" class="readout-value">12.80 W</output></div>
+            <div class="readout"><span class="readout-label">Interface temperature</span><output id="readout-interface" class="readout-value">Not applicable</output></div>
+            <div class="readout"><span class="readout-label">Total resistance</span><output id="readout-total-resistance" class="readout-value">6.250 K W⁻¹</output></div>
+            <div class="readout"><span class="readout-label">Boundary ΔT</span><output id="readout-temperature-difference" class="readout-value">80 K</output></div>
+            <div class="readout"><span class="readout-label">Rod A resistance</span><output id="readout-resistance-a" class="readout-value">6.250 K W⁻¹</output></div>
+            <div class="readout"><span class="readout-label">Rod B resistance</span><output id="readout-resistance-b" class="readout-value">Not applicable</output></div>
+            <div class="readout"><span class="readout-label">Arrangement</span><output id="readout-arrangement" class="readout-value">One rod</output></div>
+            <div class="readout"><span class="readout-label">Model basis</span><output id="readout-model" class="readout-value">Steady 1D</output></div>
+          </section>
+        </section>
+
+        <aside class="controls" aria-labelledby="controls-heading">
+          <h2 id="controls-heading" class="control-title">Conduction controls</h2>
+          <p id="controls-intro" class="control-intro">Set the boundary temperatures and the properties of one or two insulated rods.</p>
+
+          <div id="arrangement-control" class="control-row">
+            <div class="control-meta"><label>Arrangement</label></div>
+            <div class="system-switch compact" role="group" aria-label="Number of rods">
+              <button id="one-rod" class="system-option is-active" type="button" aria-pressed="true">One rod</button>
+              <button id="two-rods" class="system-option" type="button" aria-pressed="false">Two rods</button>
+            </div>
+          </div>
+
+          <div id="exposure-control" class="control-row hidden">
+            <div class="control-meta"><label>Exposure pattern</label></div>
+            <div class="system-switch compact exposure-switch" role="group" aria-label="Two-rod exposure pattern">
+              <button id="both-exposed" class="system-option is-active" type="button" aria-pressed="true">Both exposed</button>
+              <button id="a-insulated" class="system-option" type="button" aria-pressed="false">A insulated</button>
+              <button id="b-insulated" class="system-option" type="button" aria-pressed="false">B insulated</button>
+            </div>
+          </div>
+
+          <section class="control-section" aria-labelledby="boundary-heading">
+            <h3 id="boundary-heading" class="control-section-label">Boundary temperatures</h3>
+            <div class="control-row">
+              <div class="control-meta"><label for="hot-temperature">Hot reservoir, <span class="katex-inline" data-latex="T_\mathrm{hot}">T hot</span></label><output id="hot-temperature-value" class="control-value">100 °C</output></div>
+              <input id="hot-temperature" type="range" min="20" max="150" step="1" value="100">
+            </div>
+            <div class="control-row">
+              <div class="control-meta"><label for="cold-temperature">Cold reservoir, <span class="katex-inline" data-latex="T_\mathrm{cold}">T cold</span></label><output id="cold-temperature-value" class="control-value">20 °C</output></div>
+              <input id="cold-temperature" type="range" min="0" max="100" step="1" value="20">
+            </div>
+            <p id="temperature-error" class="validation-message" role="alert" aria-live="assertive"></p>
+          </section>
+
+          <section id="rod-controls" class="control-section" aria-labelledby="rod-parameters-heading">
+            <h3 id="rod-parameters-heading" class="control-section-label">Rod parameters</h3>
+            <div id="rod-selection" class="system-switch compact" role="group" aria-label="Rod parameters">
+              <button id="select-rod-a" class="system-option is-active" type="button" aria-pressed="true">Rod A</button>
+              <button id="select-rod-b" class="system-option" type="button" aria-pressed="false">Rod B</button>
+            </div>
+            <p id="active-rod-status" class="rod-status">Rod A · insulated</p>
+            <div class="control-row">
+              <div class="control-meta"><label for="active-length">Length, <span id="active-length-symbol" class="katex-inline" data-latex="L_A">L A</span></label><output id="active-length-value" class="control-value">0.50 m</output></div>
+              <input id="active-length" type="range" min="0.2" max="1" step="0.05" value="0.5">
+            </div>
+            <div class="control-row area-only quantitative-only">
+              <div class="control-meta"><label for="active-area">Area, <span id="active-area-symbol" class="katex-inline" data-latex="A_A">A A</span></label><output id="active-area-value" class="control-value">4.0 cm²</output></div>
+              <input id="active-area" type="range" min="1" max="10" step="0.5" value="4">
+            </div>
+            <div class="control-row">
+              <div class="control-meta"><label for="active-conductivity">Conductivity, <span id="active-conductivity-symbol" class="katex-inline" data-latex="k_A">k A</span></label><output id="active-conductivity-value" class="control-value">200 W m⁻¹ K⁻¹</output></div>
+              <input id="active-conductivity" type="range" min="10" max="400" step="10" value="200">
+            </div>
+            <div id="rod-summary" class="rod-summary" aria-live="polite">
+              <span id="rod-a-summary">Rod A · L 0.50 m · k 200 W m⁻¹ K⁻¹ · A 4.0 cm² · insulated</span>
+              <span id="rod-b-summary" class="hidden">Rod B · L 0.50 m · k 50 W m⁻¹ K⁻¹ · A 4.0 cm² · insulated</span>
+            </div>
+          </section>
+
+          <p id="schematic-note" class="control-note hidden">Any exposed-rod curve is qualitative. In two-rod cases, length places the interface; conductivity changes the schematic steepness only, while area is retained but not used.</p>
+
+          <div class="button-grid">
+            <button id="play-button" class="action primary" type="button">▶ Play</button>
+            <button id="reset-button" class="action" type="button">Reset</button>
+            <button id="step-button" class="action col-span-2" type="button">Step heat tracers</button>
+          </div>
+        </aside>
+      </main>
+
+      <footer class="theory-strip">
+        <section class="theory-card">
+          <h2>Learning outcomes — 8.3(a–c)</h2>
+          <p>Heat conduction transfers energy through a temperature gradient. For insulated rods in steady one-dimensional conduction, thermal resistances add in series.</p>
+          <span class="formula" data-latex="\dot{Q}=-kA\frac{\Delta T}{\Delta x},\qquad R=\frac{L}{kA},\qquad \dot{Q}=\frac{T_\mathrm{hot}-T_\mathrm{cold}}{\sum R}">Heat-rate equations</span>
+        </section>
+        <section class="theory-card">
+          <div id="insulated-notice">
+            <h2>What to notice</h2>
+            <p>The heat rate is the same through rods in series. The larger thermal resistance produces the larger temperature drop. With +x from hot to cold, the temperature gradient is negative while heat flow is positive.</p>
+          </div>
+          <div id="non-insulated-notice" class="hidden">
+            <h2>Schematic side loss</h2>
+            <p>Heat flow varies along exposed sections, so their temperature–distance graph is curved. An insulated section remains linear. Conductivity changes this qualitative steepness only; without ambient and surface-loss data, interface temperatures and heat rates are not calculated.</p>
+          </div>
+        </section>
+      </footer>
+    </div>
+  </div>
+
+  <script src="../../../shared/sim-utils.js"></script>
+  <script src="../../../shared/offline-runtime.js"></script>
+  <script src="heat-conduction-physics.js"></script>
+  <script src="heat-conduction-renderer.js"></script>
+  <script src="heat-conduction-ui.js"></script>
+  <script src="heat-conduction-controller.js"></script>
+  <script src="heat-conduction-sketch.js"></script>
+</body>
+</html>

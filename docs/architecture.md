@@ -37,10 +37,7 @@ SP015/
 │   ├── 02-kinematics-of-linear-motion/
 │   │   └── 2.3-projectile-motion/
 │   ├── 05-circular-motion/
-│   │   ├── circular-motion-sim.js
-│   │   ├── circular-motion-sketch.js
-│   │   ├── circular-motion.css
-│   │   └── circular-motion.html
+│   │   └── 5-uniform-circular-motion/
 │   ├── 07-simple-harmonic-motion/
 │   │   ├── 7.1-kinematics-of-shm/
 │   │   ├── 7.2-graphs-shm/
@@ -48,8 +45,9 @@ SP015/
 │   │   ├── 7.5-superposition-shm/
 │   │   ├── 7.6-application-of-standing-waves/
 │   │   └── 7.7-doppler-effect/
-│   └── 08-physics-of-matters/
-│       └── 8.1-8.2-materials-testing/
+│   └── 08-physics-of-matter/
+│       ├── 8.1-8.2-materials-testing/
+│       └── 8.3-heat-conduction/
 ├── docs/
 │   ├── architecture.md
 │   ├── audits/                    <- repository and page audits
@@ -77,6 +75,11 @@ SP015/
     ├── template-ui-manager.js
     └── template.css
 ```
+
+The canonical entry point for every simulation is `index.html`. A small set of
+legacy HTML paths remains as relative redirect stubs after the organization
+migration; completed audits and plans may still mention those former paths as
+historical evidence.
 
 ### Folder responsibilities
 
@@ -367,7 +370,7 @@ Currently in `shared/`:
   `.canvas-shell`, `.visual-note`, `.readouts`/`.readouts--dense`, `.controls`,
   `.control-row`, buttons, `.theory-strip`, responsive breakpoints.
   Topic CSS loads after this and only adds sim-specific layout (e.g.
-  `shm-graphs.css`'s 2×2 `.graph-quad`, `wave-properties.css`'s stacked
+  `graphs-shm.css`'s 2×2 `.graph-quad`, `progressive-wave-shm.css`'s stacked
   dual-canvas panels). For the specific palette, fonts, spacing rhythm, and button/slider placement
 rules, see `instructions/coding.md` for the day-to-day UI conventions.
 - `sim-utils.js` — `PALETTE`, `drawArrowCtx`, `normalizedArrowLength`,

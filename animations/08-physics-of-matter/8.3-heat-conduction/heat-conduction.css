@@ -1,0 +1,107 @@
+/* Topic-specific Heat Conduction Laboratory additions. Shared shell,
+   controls, readouts, and responsive dimensions remain in sim-style.css. */
+
+.stage-status {
+  color: var(--muted);
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.system-option {
+  min-height: 44px;
+}
+
+.exposure-switch {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.exposure-switch .system-option {
+  min-width: 0;
+  padding-inline: 6px;
+}
+
+.control-section {
+  padding-top: 17px;
+  border-top: 1px dashed var(--line);
+}
+
+.control-section + .control-section {
+  margin-top: 4px;
+}
+
+.control-section-label {
+  margin: 0 0 15px;
+  color: var(--muted);
+  font: 700 11px var(--mono);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.rod-selection {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin-bottom: 10px;
+}
+
+.rod-status {
+  margin: 0 0 14px;
+  color: var(--muted);
+  font: 700 11px var(--mono);
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+
+.rod-summary {
+  display: grid;
+  gap: 5px;
+  margin-top: 12px;
+  padding: 9px 10px;
+  color: var(--muted);
+  background: var(--paper);
+  font: 400 10px/1.4 var(--mono);
+}
+
+.rod-summary span:first-child {
+  color: var(--ink);
+}
+
+.validation-message {
+  min-height: 17px;
+  margin: -8px 0 15px;
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.control-note {
+  margin: 8px 0 18px;
+  padding: 11px 12px;
+  border-left: 3px solid var(--orange);
+  background: var(--paper);
+  line-height: 1.45;
+}
+
+.readout-value {
+  overflow-wrap: anywhere;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pulse { animation: none; }
+}
+
+@media (max-width: 460px) {
+  .canvas-label { display: none; }
+
+  .system-bar .system-switch,
+  .system-bar .system-option {
+    width: 100%;
+  }
+
+  .stage-top {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 5px;
+  }
+}

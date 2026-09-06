@@ -1,16 +1,16 @@
-# Chapter 8 Physics of Matters — Simulation Implementation Plan
+# Chapter 8 Physics of Matter — Simulation Implementation Plan
 
 **Status:** Active
 
 **Created:** 2026-09-02
 
-**Last reviewed:** 2026-09-03
+**Last reviewed:** 2026-09-06
 
 **Curriculum source:** `Curriculum Specifications (CS) Physics SP015.pdf`, Topic 8 (effective from the 2022/2023 session)
 
 ## 1. Summary
 
-Implement three standalone simulations under `animations/08-physics-of-matters/`:
+Implement three standalone simulations under `animations/08-physics-of-matter/`:
 
 1. **Materials Testing Lab** — SP015 8.1 and 8.2
 2. **Heat Conduction Lab** — SP015 8.3
@@ -128,13 +128,13 @@ readouts become one column, and canvas labels use symbols/short phrases.
 
 **Tasks:**
 
-- Create `animations/08-physics-of-matters/` and the three topic folders listed above.
+- Create `animations/08-physics-of-matter/` and the three topic folders listed above.
 - Record the Topic 8 LO text and equations from the local curriculum PDF in each simulation's implementation notes; do not rely on older SP015 sources where rotation was Topic 8.
 - Define a common Chapter 8 graph presentation: labelled axes with units, a visible current-state marker, solid active curves, dashed/dotted comparison or continuation curves, explicit `Schematic` labels where applicable, and no meaning carried by color alone.
 - Establish responsive stage geometry for 1440, 800, 460, and 320 px widths. Apparatus and graph may sit side by side on wide canvases and stack within the same canvas at narrow widths.
 - Establish accessibility wording for every canvas through adjacent headings, readouts, and dynamic summaries; canvas graphics remain supplementary rather than the only source of a result.
 - Resolve the existing duplicated `.visual-note` rule into `shared/sim-style.css` if any Chapter 8 design uses that pattern; verify Projectile Motion and Doppler Effect remain visually unchanged after removing their local copies.
-- Add or verify exactly one landing metadata entry for each Chapter 8 lab after its title, folder name, and outcomes are fixed. Use the curriculum title `Physics of Matters` exactly. Keep `href: null` and `status: 'planned'` until the corresponding implementation phase passes QA; never create a second entry if planned metadata already exists.
+- Add or verify exactly one landing metadata entry for each Chapter 8 lab after its title, folder name, and outcomes are fixed. Use the curriculum title `Physics of Matter` exactly. Keep `href: null` and `status: 'planned'` until the corresponding implementation phase passes QA; never create a second entry if planned metadata already exists.
 
 **Exit criteria:**
 
@@ -215,7 +215,7 @@ Compact canvas (<560 px)
 
 #### Phase 1 implementation record — completed 2026-09-03
 
-- Added the Level 3 global-mode Materials Testing Laboratory under `animations/08-physics-of-matters/8.1-8.2-materials-testing/`, including deterministic Node assertions for the quantitative model and normalized material curves.
+- Added the Level 3 global-mode Materials Testing Laboratory under `animations/08-physics-of-matter/8.1-8.2-materials-testing/`, including deterministic Node assertions for the quantitative model and normalized material curves.
 - Verified zero/default/compression results, modulus/area/length scaling, curve bounds and semantic states, invalid-input rejection, JavaScript syntax, required DOM IDs, local assets, script order, and `git diff --check`.
 - Exercised Play/Pause, replay from completion, Step, Reset, mode/preset changes, progress persistence, and synchronized `aria-pressed` state with a Firefox interaction harness.
 - Inspected Firefox renders at 1440, 800, 460, and 320 px, including the comparison and brittle-fracture states. The initial paused frame, compact composition, specimen gap, normalized labelling, and solid/dashed curve identities remained visible.
@@ -283,6 +283,24 @@ Canvas at all widths
 - Heat-flow arrows always point hot to cold and the sign convention is explained once in the theory strip.
 - No third rod can be added; non-insulated mode never displays a falsely precise heat-rate calculation.
 - Mark its landing card completed only after functionality, responsive, and accessibility QA passes.
+
+#### Phase 2 implementation record — completed 2026-09-06
+
+- Added the Level 3 global-mode Heat Conduction Laboratory under `animations/08-physics-of-matter/8.3-heat-conduction/`, with pure one/two-rod conduction models, a separate qualitative side-loss profile, and deterministic physics/controller tests.
+- Verified thermal resistance, heat-rate scaling, equal and unequal series interfaces, continuous boundary profiles, signed gradients, validation failures, bounded tracer playback, and parameter-preserving Reset behavior.
+- Exercised the insulated/non-insulated modes, one/two-rod switch, invalid-temperature recovery, Play/Pause, Step, Reset, and keyboard activation in the in-app browser; toggle state and accessible status text stayed synchronized.
+- Inspected 1440, 800, 460, and 320 px layouts. The apparatus-to-graph interface alignment, schematic labelling, non-calculated qualitative readouts, 44 px interactive targets, and horizontal overflow checks passed with no browser console warnings or errors.
+- Published the existing Topic 8.3 landing card with its canonical singular-folder link. Thermal Expansion remains planned, so the Chapter 8 plan stays active for Phases 3–5.
+
+#### Phase 2 composite heat-loss extension — completed 2026-09-06
+
+- Extended the qualitative mode to support two exposed rods and both mixed orientations: Rod A insulated/Rod B exposed and Rod A exposed/Rod B insulated.
+- Added continuous, bounded composite profiles with segment identity, locally curved exposed sections, linear insulated sections, a shared schematic interface, and an aligned fully insulated reference.
+- Kept all exposed cases explicitly non-quantitative: heat rate, interface temperature, resistance, and gradient claims are suppressed while the boundary temperature difference remains available.
+- Verified all three exposure patterns, invalid-pattern rejection, profile endpoints/continuity/monotonicity, parameter persistence, interface movement with rod length, tracer-only Reset behavior, keyboard operation, and synchronized switch states in deterministic tests and the browser.
+- Rechecked the mixed and both-exposed cases at 1440, 800, 460, and 320 px. Segment jackets, loss arrows, line styles, 44 px switch targets, interface alignment, horizontal overflow, and browser console checks passed.
+- Added conductivity-responsive qualitative steepness, physical distance labels on the graph x-axis, a Rod A/Rod B parameter toggle with persistent independent values, and additional bounded side-loss tracers for exposed segments; the quantitative insulated model and non-insulated caveats remain unchanged.
+- Reverified the shared rod-parameter panel, active-rod summaries, conductivity controls, compact 320 px layout, and final tracer presentation after the completion polish.
 
 ### Phase 3 — Thermal Expansion Lab (SP015 8.4)
 
@@ -381,7 +399,7 @@ Compact canvas (<560 px)
 
 **Exit criteria:**
 
-- Landing search/filter finds Chapter 8, Physics of Matters, and each subtopic.
+- Landing search/filter finds Chapter 8, Physics of Matter, and each subtopic.
 - Card diagrams remain accurate at thumbnail scale and decorative meaning is duplicated in card text.
 - All relative links and local runtime assets resolve when served from the repository root.
 - Documentation describes the implementation that exists rather than planned abstractions.
@@ -412,7 +430,7 @@ Compact canvas (<560 px)
 
 **Completion:**
 
-- Save QA evidence under `docs/plan/completed/evidence/chapter-08-physics-of-matters/` grouped by simulation and viewport.
+- Save QA evidence under `docs/plan/completed/evidence/chapter-08-physics-of-matter/` grouped by simulation and viewport.
 - Record final checks and any accepted limitations in this document.
 - Move this plan to `docs/plan/completed/` only when all three simulations, landing integration, documentation, and QA exit criteria pass.
 
