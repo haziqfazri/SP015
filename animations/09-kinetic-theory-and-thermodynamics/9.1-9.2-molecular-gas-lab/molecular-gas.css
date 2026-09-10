@@ -1,0 +1,96 @@
+/* Topic-specific additions for the SP015 9.1–9.2 Molecular Gas Laboratory. */
+
+.gas-mode-switch {
+  min-width: 430px;
+}
+
+.category-switch {
+  width: 100%;
+  margin-top: 8px;
+}
+
+.category-switch .system-option {
+  min-height: 42px;
+}
+
+.focus-controls {
+  margin-top: 14px;
+}
+
+.focus-heading {
+  margin: 0 0 8px;
+  color: var(--muted);
+  font: 700 10px var(--mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.degree-focus-switch {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.degree-focus-switch .system-option {
+  min-width: 0;
+  min-height: 38px;
+  padding: 6px 5px;
+  line-height: 1.2;
+}
+
+.degree-focus-switch .system-option:disabled {
+  border-style: dashed;
+  color: var(--muted);
+  cursor: not-allowed;
+  opacity: 0.48;
+}
+
+.degree-focus-switch .system-option:disabled:hover {
+  transform: none;
+}
+
+.independence-note {
+  margin: 10px 0 0;
+  padding-left: 10px;
+  border-left: 2px solid var(--teal);
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+.molecular-gas-readouts .readout-value {
+  font-size: 13px;
+}
+
+.molecular-gas-readouts .readout-label {
+  text-transform: none;
+}
+
+@media (max-width: 800px) {
+  .gas-mode-switch {
+    min-width: 0;
+    width: 100%;
+  }
+}
+
+@media (max-width: 460px) {
+  .canvas-shell .canvas-label {
+    display: none;
+  }
+
+  .gas-mode-switch,
+  .category-switch,
+  .degree-focus-switch {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .gas-mode-switch .system-option,
+  .category-switch .system-option,
+  .degree-focus-switch .system-option {
+    width: 100%;
+  }
+
+  .molecular-gas-readouts .readout-value {
+    font-size: 12px;
+  }
+}

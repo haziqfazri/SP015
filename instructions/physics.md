@@ -80,6 +80,7 @@
 | Materials Testing Lab | 8.1, 8.2 | Stress, strain, Hooke's law, Young's modulus, strain energy and density, ductile vs brittle curves |
 | Heat Conduction Lab | 8.3 | Steady-state 1D heat conduction, rate of heat transfer, 1 or 2 rods in series, insulated vs non-insulated temperature profiles |
 | Thermal Expansion Lab | 8.4 | Linear, area, and volume expansion coefficients (β=2α, γ=3α), liquid in container apparent expansion and overflow |
+| Molecular Gas Laboratory | 9.1, 9.2 | Ideal-gas assumptions, rms molecular speed, kinetic-theory pressure, equipartition, degrees of freedom, and internal energy; animation is a representative 2D projection of an analytic 3D gas |
 
 New sims should add a row here (and cite the specific sub-LO, e.g.
 `7.1(c.iii)`, in code comments) as soon as their topic is decided.

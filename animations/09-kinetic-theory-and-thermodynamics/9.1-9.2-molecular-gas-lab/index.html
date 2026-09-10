@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="An interactive SP015 laboratory for kinetic theory, rms molecular speed, equipartition, and internal energy.">
+  <title>Molecular Gas Laboratory — Topics 9.1–9.2 | SP015</title>
+
+  <link rel="stylesheet" href="../../../shared/fonts.css">
+  <script src="../../../vendor/p5/p5.min.js"></script>
+  <link rel="stylesheet" href="../../../vendor/katex/katex.min.css">
+  <script src="../../../vendor/katex/katex.min.js"></script>
+  <link rel="stylesheet" href="../../../shared/sim-style.css">
+  <link rel="stylesheet" href="molecular-gas.css">
+</head>
+<body>
+  <div class="app-shell">
+    <div class="lab-frame">
+      <header class="topbar">
+        <div>
+          <p class="kicker">SP015 · Topics 9.1–9.2</p>
+          <h1>Molecular Gas Laboratory</h1>
+        </div>
+        <div class="live-chip"><span class="pulse" aria-hidden="true"></span><span>Live Simulation</span></div>
+      </header>
+
+      <nav class="system-bar" aria-label="Molecular gas teaching mode">
+        <span class="system-label">Investigate</span>
+        <div class="system-switch gas-mode-switch">
+          <button class="system-option is-active" data-gas-mode="motion" type="button" aria-pressed="true">Molecular motion</button>
+          <button class="system-option" data-gas-mode="energy" type="button" aria-pressed="false">Energy &amp; degrees of freedom</button>
+        </div>
+      </nav>
+
+      <main class="sim-grid">
+        <section class="stage" aria-labelledby="stage-heading">
+          <div class="stage-top">
+            <h2 id="stage-heading">Ideal-gas instrument bench</h2>
+            <span id="stage-status" class="mono stage-status">Molecular motion · Paused</span>
+          </div>
+
+          <div class="canvas-shell compare-tall">
+            <span class="canvas-label">MOLECULAR SAMPLE · ANALYTIC THERMODYNAMICS</span>
+            <div id="canvas-holder" role="img" aria-label="Projected ideal-gas molecules and a 2.5D degrees-of-freedom model"></div>
+          </div>
+          <p id="canvas-summary" class="visual-note" aria-live="polite">Representative 2D projection; numerical results use the three-dimensional ideal-gas model.</p>
+
+          <section class="readouts readouts--dense molecular-gas-readouts" aria-label="Molecular gas results" aria-live="polite">
+            <div class="readout"><span class="readout-label" data-readout-label>Temperature, T</span><output class="readout-value" data-readout-value>300 K</output></div>
+            <div class="readout"><span class="readout-label" data-readout-label>Molar mass, M</span><output class="readout-value" data-readout-value>28.0 g mol⁻¹</output></div>
+            <div class="readout"><span class="readout-label" data-readout-label>Molecule mass, m</span><output class="readout-value" data-readout-value>4.65 × 10⁻²⁶ kg</output></div>
+            <div class="readout"><span class="readout-label" data-readout-label>Molecules, N</span><output class="readout-value" data-readout-value>6.02 × 10²³</output></div>
+            <div class="readout"><span class="readout-label" data-readout-label>Density, ρ</span><output class="readout-value" data-readout-value>1.167 kg m⁻³</output></div>
+            <div class="readout"><span class="readout-label" data-readout-label>RMS speed</span><output class="readout-value" data-readout-value>517 m s⁻¹</output></div>
+            <div class="readout"><span class="readout-label" data-readout-label>P = nRT/V</span><output class="readout-value" data-readout-value>103.9 kPa</output></div>
+            <div class="readout"><span class="readout-label" data-readout-label>P = ⅓ρv²ᵣₘₛ</span><output class="readout-value" data-readout-value>103.9 kPa</output></div>
+          </section>
+        </section>
+
+        <aside class="controls" aria-labelledby="controls-heading">
+          <h2 id="controls-heading" class="control-title">Gas controls</h2>
+          <p class="control-intro">Change one property and compare the molecular and macroscopic consequences immediately.</p>
+
+          <section class="control-section" aria-labelledby="state-heading">
+            <h3 id="state-heading" class="control-section-label">Gas state</h3>
+            <div class="control-row">
+              <div class="control-meta"><label for="temperature">Temperature, <span class="katex-inline" data-latex="T">T</span></label><output id="temperature-value" class="control-value">300 K</output></div>
+              <input id="temperature" type="range" min="100" max="1000" step="10" value="300">
+            </div>
+            <div class="control-row">
+              <div class="control-meta"><label for="amount">Amount, <span class="katex-inline" data-latex="n">n</span></label><output id="amount-value" class="control-value">1.00 mol</output></div>
+              <input id="amount" type="range" min="0.25" max="2" step="0.05" value="1">
+            </div>
+            <div class="control-row">
+              <div class="control-meta"><label for="volume">Volume, <span class="katex-inline" data-latex="V">V</span></label><output id="volume-value" class="control-value">24 L</output></div>
+              <input id="volume" type="range" min="5" max="50" step="1" value="24">
+            </div>
+          </section>
+
+          <section class="control-section" aria-labelledby="molecule-heading">
+            <h3 id="molecule-heading" class="control-section-label">Molecular model</h3>
+            <div class="control-row">
+              <div class="control-meta"><label for="molar-mass">Molar mass, <span class="katex-inline" data-latex="M">M</span></label><output id="molar-mass-value" class="control-value">28 g mol⁻¹</output></div>
+              <input id="molar-mass" type="range" min="2" max="60" step="1" value="28">
+            </div>
+            <div class="category-controls">
+              <div class="system-switch compact category-switch" aria-label="Molecular category">
+                <button class="system-option" data-molecule-category="monatomic" type="button" aria-pressed="false">Monatomic · 3</button>
+                <button class="system-option is-active" data-molecule-category="diatomic" type="button" aria-pressed="true">Diatomic · 5</button>
+                <button class="system-option" data-molecule-category="polyatomic" type="button" aria-pressed="false">Polyatomic · 6</button>
+              </div>
+              <div class="focus-controls" aria-labelledby="focus-heading">
+                <h4 id="focus-heading" class="focus-heading">Motion focus</h4>
+                <div class="system-switch compact degree-focus-switch">
+                  <button class="system-option is-active" data-degree-focus="all" type="button" aria-pressed="true">All active</button>
+                  <button class="system-option" data-degree-focus="translate-x" type="button" aria-pressed="false"><span class="katex-inline" data-latex="x">x</span> translation</button>
+                  <button class="system-option" data-degree-focus="translate-y" type="button" aria-pressed="false"><span class="katex-inline" data-latex="y">y</span> translation</button>
+                  <button class="system-option" data-degree-focus="translate-z" type="button" aria-pressed="false"><span class="katex-inline" data-latex="z">z</span> translation</button>
+                  <button class="system-option" data-degree-focus="rotate-r1" type="button" aria-pressed="false"><span class="katex-inline" data-latex="R_1">R1</span> rotation</button>
+                  <button class="system-option" data-degree-focus="rotate-r2" type="button" aria-pressed="false"><span class="katex-inline" data-latex="R_2">R2</span> rotation</button>
+                  <button class="system-option" data-degree-focus="rotate-r3" type="button" aria-pressed="false"><span class="katex-inline" data-latex="R_3">R3</span> rotation</button>
+                </div>
+              </div>
+              <p class="independence-note">Molar mass and molecular category are independent controls, so you can isolate mass effects from energy-storage effects.</p>
+            </div>
+          </section>
+
+          <div class="button-grid">
+            <button id="play-button" class="action primary" type="button">▶ Play</button>
+            <button id="reset-button" class="action" type="button">Reset</button>
+            <button id="step-button" class="action col-span-2" type="button">Step animation</button>
+          </div>
+        </aside>
+      </main>
+
+      <footer class="theory-strip">
+        <section class="theory-card">
+          <h2>Learning outcomes — 9.1–9.2</h2>
+          <p>Relate molecular motion to rms speed and pressure, then connect equipartition to translational and internal energy.</p>
+          <span class="formula" data-latex="v_{\mathrm{rms}}=\sqrt{\frac{3kT}{m}}=\sqrt{\frac{3RT}{M}},\qquad P=\frac{1}{3}\rho v_{\mathrm{rms}}^2">RMS speed and kinetic pressure equations</span>
+          <span class="formula" data-latex="\overline{K}_{\mathrm{tr}}=\frac{3}{2}kT,\qquad U=\frac{f}{2}NkT">Translational kinetic and internal energy equations</span>
+        </section>
+        <section class="theory-card">
+          <div id="motion-theory">
+            <h2>Ideal-gas assumptions</h2>
+            <p>Molecules are numerous and negligibly small compared with their spacing. They move randomly, exert no force except during brief collisions, and collide elastically with one another and the walls.</p>
+            <p>The chamber is a time-scaled 2D projection. The equations and numerical readouts describe the full 3D ideal gas; collision counts do not calculate pressure.</p>
+          </div>
+          <div id="energy-theory" class="hidden">
+            <h2>Equipartition model</h2>
+            <p>Each active quadratic degree contributes <span class="katex-inline" data-latex="\frac{1}{2}kT">one half k T</span> per molecule. This model uses <span class="katex-inline" data-latex="f=3,5,6">f equals 3, 5, or 6</span> for monatomic, diatomic, and generic polyatomic gases.</p>
+            <p>Vibrational modes and their temperature dependence are outside the SP015 scope represented here.</p>
+          </div>
+        </section>
+      </footer>
+    </div>
+  </div>
+
+  <script src="../../../shared/sim-utils.js"></script>
+  <script src="../../../shared/offline-runtime.js"></script>
+  <script src="molecular-gas-physics.js"></script>
+  <script src="molecular-gas-renderer.js"></script>
+  <script src="molecular-gas-ui.js"></script>
+  <script src="molecular-gas-controller.js"></script>
+  <script src="molecular-gas-sketch.js"></script>
+</body>
+</html>
