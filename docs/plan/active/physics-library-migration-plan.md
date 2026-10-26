@@ -2,8 +2,9 @@
 
 **Status:** Controlled migration in progress; semester tabs remain unimplemented.
 Projectile Motion (`9470406`), Circular Motion (`304e72e`), and browser infrastructure
-(`f6c4cfb`) are committed. Chapter 07 is migrated in the working tree for review;
-do not commit or start another chapter without approval.
+(`f6c4cfb`) are committed. Chapter 07 is committed as `4c9071c`. The approved
+Chapter 08 batch is in the working tree for review; do not stage, commit, push,
+or start Chapter 09 without further authorization.
 **Baseline:** `5732a0f` on `main`; working tree clean at preparation start.
 **Superposition:** restored and committed; `index.html` blob is
 `b941d62415d825f8941a2da86dd3b578fc1f183b`.
@@ -27,15 +28,15 @@ do not commit or start another chapter without approval.
 
 At preparation time all 13 simulation implementations lived under `animations/`.
 There are still 12 published landing entries and five retained redirect files.
-The current mixed layout has Chapters 02, 05, and 07 (eight simulations) under
-`simulations/sp015/`; Chapters 08 and 09 (five simulations) remain under
+The current mixed layout has Chapters 02, 05, 07, and 08 (eleven simulations)
+under `simulations/sp015/`; Chapter 09 (two simulations) remains under
 `animations/`. No SP025 simulations exist. SP025 chapter names and LOs
 must be checked against an authoritative specification, currently missing.
 
 ```text
 # CURRENT
-animations/<chapter-08-or-09>/<combined-lo-folder>/
-simulations/sp015/<chapter-02-05-or-07>/<combined-lo-folder>/
+animations/09-kinetic-theory-and-thermodynamics/<combined-lo-folder>/
+simulations/sp015/<chapter-02-05-07-or-08>/<combined-lo-folder>/
 landing/                      # current SP015-only catalogue
 
 # APPROVED TARGET — pending implementation
@@ -88,8 +89,9 @@ The Workbench has a mapped canonical page but both catalogue href fields are
 
 Circular Motion's placement is approved and committed. The user approved all
 three Chapter 07 placements below on 2026-10-26; they move with their complete
-topic folders and retain sibling `index.html` targets. The materials alias
-placement remains proposed and requires approval before its later batch.
+topic folders and retain sibling `index.html` targets. The user also approved
+the materials alias placement on 2026-10-26, including retiring the misspelled
+old location and targeting sibling `index.html` from all three redirect links.
 
 | Current redirect file | Target redirect file | Future destination |
 |---|---|---|
@@ -106,8 +108,8 @@ The misspelled materials chapter alias moves into the canonical materials topic
 as `materials-testing.html`, also pointing to `index.html`. Update meta-refresh,
 canonical link, and fallback anchor together for these two aliases. The mapped
 placements preserve files rather than their former URLs. Circular Motion and
-Chapter 07 are approved as noted above; the materials relocation is still a
-proposal. No redirect changes were made during preparation.
+Chapters 07 and 08 are approved as noted above. No redirect changes were made
+during preparation.
 
 ### Chapter 07 review checkpoint
 
@@ -131,7 +133,51 @@ reproduces its restored blob above. Link checks at both prefixes report no
 failures and the same 15 historical source-line anchor warnings. The dt checks
 and migrated-root shared-usage check pass; the remaining `animations/` root
 still reports five historical hex-color findings in unchanged test fixtures.
-No migration validator was weakened. Chapter 07 remains uncommitted for review.
+No migration validator was weakened. Chapter 07 was subsequently committed as
+`4c9071c`.
+
+### Chapter 08 review checkpoint
+
+The approved batch moves the three complete canonical folders (29 files) to
+their mapped destinations, preserving the combined 8.1–8.2 implementation.
+The misspelled materials alias becomes `materials-testing.html` beside the
+canonical page; its meta-refresh, canonical link, and fallback anchor each
+target `index.html`. No duplicate redirect remains at the former location.
+Canonical HTML changes are limited to seven shared/vendor paths per page
+(21 total), and only the three Chapter 08 catalogue hrefs change. All simulation
+JavaScript, CSS, existing tests, and sibling filenames remain unchanged.
+
+New smoke coverage reuses the existing browser fixtures and hosting/viewport
+matrix: Materials Testing, Heat Conduction, and Thermal Expansion add 24 cases
+for 96 total. It covers the relocated alias, representative modes and controls,
+ductile auto-pause, qualitative conduction, reset parameter retention, heating,
+cooling, overflow, and viewport resize round trips. Static link scans run after
+Playwright exits. The JSON map retains its baseline source/destination fields;
+mixed-state validation and the future full-semester gate remain unchanged.
+
+Validation on 2026-10-26: the clean `4c9071c` baseline passed 22 migration/map
+tests, 15 simulation tests, link checks at both prefixes, and all 72 browser
+cases. After migration, the 22 migration/map tests, 15 simulation tests, and all
+96 Chromium cases passed (5.2 minutes for the full browser suite). Links/assets
+pass at both prefixes: 153 files, 441 references, 12 catalogue entries, zero
+failures, and the same 15 historical anchor warnings per scan. HTML-only scans
+pass at both prefixes with 20 files, 208 references, and no warnings.
+
+All 30 relocated files were compared against HEAD. The 26 JavaScript/CSS/test
+files are byte-identical; only the three canonical HTML pages' 21 asset paths
+and the alias's three redirect URLs differ. The landing diff is exactly the
+three mapped href replacements. Syntax passes for 32 affected browser/config,
+validator, landing, and Chapter 08 JavaScript files; timestep checks pass for
+both roots (4 files in `animations/`, 21 in `simulations/`). Shared-usage commands
+still exit 1 for the same five historical fixture findings: four remain in the
+Workbench test and one moved unchanged with the thermal-expansion renderer test.
+No new convention findings occur. Diff/whitespace checks pass, and nothing is
+staged. Browser artifacts remain ignored; no runtime behavior or validator was
+changed.
+
+Chapter 09 and semester tabs are outside this batch. Keep the Workbench
+unpublished, preserve ignored scratch files and historical reports, and stop
+for review without staging, committing, or pushing.
 
 ## Catalogue contract and acceptance criteria
 

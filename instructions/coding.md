@@ -4,12 +4,11 @@
 
 See `docs/architecture.md` §2 for the current folder tree. The naming rules:
 
-- **Current disk layout:** existing sims live under
-  `animations/<chapter-number>-<chapter-name>/<lo-group>-<short-name>/`,
-  including single-topic chapters such as
-  `05-circular-motion/5-uniform-circular-motion/`. The specific LO is still
-  cited in a comment/kicker.
-- **Approved target, migration pending:**
+- **Current disk layout:** Chapters 02, 05, 07, and 08 use
+  `simulations/sp015/<chapter-number>-<chapter-name>/<lo-group>-<short-name>/`.
+  Chapter 09 still uses `animations/<chapter>/<lo-group>-<short-name>/` pending
+  its separately approved batch. The specific LO is cited in a comment/kicker.
+- **Approved target, migration in progress:**
   `simulations/<sp015|sp025>/<chapter-number>-<chapter-name>/<lo-group>-<short-name>/`.
   Retain combined LO folders. Existing simulations stay in their current locations
   until their migration phase is approved. The prepared template targets four

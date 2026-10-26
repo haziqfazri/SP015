@@ -45,12 +45,11 @@ SP015/
 │   │   ├── 7.5-superposition-shm/
 │   │   ├── 7.6-application-of-standing-waves/
 │   │   └── 7.7-doppler-effect/
-├── animations/
-│   ├── 08-physics-of-matter/
+│   └── 08-physics-of-matter/
 │   │   ├── 8.1-8.2-materials-testing/
 │   │   ├── 8.3-heat-conduction/
 │   │   └── 8.4-thermal-expansion/
-│   ├── 08-physics-of-matters/     <- legacy redirect only
+├── animations/
 │   └── 09-kinetic-theory-and-thermodynamics/
 │       ├── 9.1-9.2-molecular-gas-lab/
 │       └── 9.3-9.5-thermodynamics-workbench/ <- unpublished
@@ -126,8 +125,8 @@ does not authorize migration or tab implementation.
 
 ### Folder responsibilities
 
-- **`simulations/sp015/`** — migrated Chapters 02, 05, and 07, grouped by chapter/topic.
-- **`animations/`** — remaining Chapters 08 and 09, pending separately approved batches.
+- **`simulations/sp015/`** — migrated Chapters 02, 05, 07, and 08, grouped by chapter/topic.
+- **`animations/`** — remaining Chapter 09, pending its separately approved batch.
 - **`shared/`** — code genuinely reused by multiple simulations.
 - **`vendor/`** — pinned third-party browser assets required at runtime. These
   are local so simulations remain usable without network access; do not add a
@@ -517,13 +516,15 @@ The browser setup uses `playwright.config.mjs` and `tests/browser/*.mjs`.
 
 The local Node server exposes the same checkout at `/` and `/SP015/` without
 copies, a bundler, or changes to production assets. Chromium smoke tests cover
-the landing page, Projectile Motion, Circular Motion, and all six Chapter 07
-simulations, using four viewport widths at each hosting prefix.
+the landing page, Projectile Motion, Circular Motion, all six Chapter 07
+simulations, and all three Chapter 08 simulations, using four viewport widths
+at each hosting prefix. Chapter 08 also exercises viewport resize round trips.
 They check critical responses, browser errors, actual canvas rendering,
 representative controls, generated IDs, and horizontal overflow. Failure
 screenshots/traces stay in ignored `test-results/`; they are not release
 sign-off for simulations outside this suite. Chapter 07 tests also navigate
-through its three retained aliases to their canonical pages.
+through its three retained aliases to their canonical pages; Chapter 08 checks
+the relocated Materials Testing alias beside its canonical page.
 
 See [browser-testing.md](browser-testing.md) for installation, commands, and
 limitations. Existing static validators, migration gates, and physics tests

@@ -10,13 +10,13 @@ The source of truth for architecture and data flow is `docs/architecture.md`. Re
 
 ---
 
-## Migration status: preparation only
+## Migration status: controlled batches in progress
 
 The approved destination is one SP015 + SP025 Physics Simulation Library:
 `simulations/<semester>/<chapter>/<combined-learning-outcome-folder>/`, where
-`<semester>` is `sp015` or `sp025`. Existing simulations currently remain in
-`animations/<chapter>/<combined-learning-outcome-folder>/`; no folders have
-moved and the semester tabs are not implemented. Preserve combined LO folders.
+`<semester>` is `sp015` or `sp025`. Chapters 02, 05, 07, and 08 now live under
+`simulations/sp015/`. Chapter 09 remains under `animations/` until its batch is
+approved. Semester tabs are not implemented. Preserve combined LO folders.
 
 The unified landing page will preserve its existing visual design, default to
 SP015, and keep search, chapter filter, and status filter state separately for
@@ -29,7 +29,7 @@ the migration map rather than deleting them.
 
 The active plan and complete source/destination map are in
 [the migration plan](docs/plan/active/physics-library-migration-plan.md).
-This preparation does not authorize moving simulations or implementing tabs.
+Each remaining batch and semester-tab implementation requires separate approval.
 
 ## Running a simulation
 
@@ -41,7 +41,7 @@ Static pages — no build step, no bundler. Open a sim's HTML file directly in a
 
 ```
 SP015/
-  animations/                   <- sims, grouped by chapter
+  simulations/sp015/            <- migrated sims, grouped by chapter
     02-kinematics-of-linear-motion/
       2.3-projectile-motion/    <- Level 3 (full split)
     05-circular-motion/
@@ -57,6 +57,7 @@ SP015/
       8.1-8.2-materials-testing/ <- Level 3, global mode
       8.3-heat-conduction/
       8.4-thermal-expansion/
+  animations/                   <- Chapter 09, pending approval
     09-kinetic-theory-and-thermodynamics/
       9.1-9.2-molecular-gas-lab/
       9.3-9.5-thermodynamics-workbench/ <- unpublished
@@ -165,7 +166,7 @@ Call `ui.updateReadouts(...)` from the callback that actually changes the values
 
 ### Naming
 
-- Current folders: `animations/<chapter-number>-<chapter-name>/<lo-group>-<short-name>/`.
+- Current folders: migrated Chapters 02, 05, 07, and 08 use `simulations/sp015/<chapter>/<lo-group>-<short-name>/`; Chapter 09 retains `animations/<chapter>/<lo-group>-<short-name>/`.
 - Approved target: `simulations/<sp015|sp025>/<chapter-number>-<chapter-name>/<lo-group>-<short-name>/`. Use the target convention for newly authorized work; preserve existing locations until its migration phase is approved.
 - Files: `<topic-slug>-<role>.js` (e.g. `progressive-wave-shm-physics.js`, `progressive-wave-shm-ui.js`, `progressive-wave-shm-controller.js`, `progressive-wave-shm-renderer.js`, `progressive-wave-shm-sketch.js`)
 - HTML: `index.html` for every simulation entry point

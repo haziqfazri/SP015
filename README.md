@@ -8,8 +8,8 @@ A growing library of interactive [p5.js](https://p5js.org/) simulations for teac
 
 ## Approved migration target — controlled batches in progress
 
-Chapters 02, 05, and 07 now use `simulations/sp015/`; Chapters 08 and 09 remain
-under `animations/`. Chapter 07 awaits review before commit. `landing/` is still
+Chapters 02, 05, 07, and 08 now use `simulations/sp015/`; Chapter 09 remains
+under `animations/` pending its separately approved batch. `landing/` is still
 the SP015 catalogue, without semester tabs. The approved final destination is:
 
 ```text
@@ -37,8 +37,8 @@ Each remaining migration batch requires separate approval.
 
 ```text
 SP015/
-  simulations/sp015/     <- migrated Chapters 02, 05, 07
-  animations/            <- remaining Chapters 08, 09 (see docs/architecture.md for the per-topic list)
+  simulations/sp015/     <- migrated Chapters 02, 05, 07, 08
+  animations/            <- remaining Chapter 09 (see docs/architecture.md for the per-topic list)
   docs/
     architecture.md      <- repository structure and simulation architecture
     audits/               <- evidence-based repository and landing-page reviews
@@ -85,7 +85,7 @@ To run the landing page locally from the repository root:
 python3 -m http.server 8000
 ```
 
-Then open <http://localhost:8000/landing/>. Serving the root preserves the landing page's relative paths to `animations/`, `shared/`, and the curriculum PDF.
+Then open <http://localhost:8000/landing/>. Serving the root preserves the landing page's relative paths to `simulations/`, `animations/`, `shared/`, and the curriculum PDF.
 
 ### Browser smoke tests (development only)
 
@@ -116,7 +116,7 @@ any remaining limitations in the handoff.
 
 ## Adding a new simulation
 
-Start from [`templates/`](templates/README.md), which has the full build order and setup steps. In short: copy only the structure you need into the approved destination described in the template guide (current simulations remain under `animations/` until migration), follow the lifecycle in [`docs/architecture.md`](docs/architecture.md), reuse `shared/` where it fits, and check `instructions/checklist.md` before calling it done.
+Start from [`templates/`](templates/README.md), which has the full build order and setup steps. Copy only the structure you need into the approved destination described in the template guide (Chapter 09 retains its current location until separately approved), follow the lifecycle in [`docs/architecture.md`](docs/architecture.md), reuse `shared/` where it fits, and check `instructions/checklist.md` before calling it done.
 
 ---
 

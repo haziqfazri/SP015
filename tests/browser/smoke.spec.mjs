@@ -3,6 +3,11 @@ import { test, openPage, expectCanvas, expectLayout } from './fixtures.mjs';
 
 const projectilePath = 'simulations/sp015/02-kinematics-of-linear-motion/2.3-projectile-motion/index.html';
 const circularPath = 'simulations/sp015/05-circular-motion/5-uniform-circular-motion/index.html';
+const matterPaths = [
+  ['Materials Testing', '8.1-8.2-materials-testing'],
+  ['Heat Conduction', '8.3-heat-conduction'],
+  ['Thermal Expansion', '8.4-thermal-expansion'],
+].map(([title, topic]) => [title, `simulations/sp015/08-physics-of-matter/${topic}/index.html`]);
 
 test('landing search, chapter filters, and migrated launch destinations', async ({ page, health, baseURL }) => {
   await openPage(page, health, 'landing/');
@@ -19,6 +24,11 @@ test('landing search, chapter filters, and migrated launch destinations', async 
   await expect(cards).toHaveCount(1);
   await expect(cards.first()).toContainText('Uniform Circular Motion');
   await expect(page.locator('[data-chapter="5"]')).toHaveAttribute('aria-pressed', 'true');
+  await page.locator('[data-chapter="8"]').click();
+  await expect(cards).toHaveCount(3);
+  for (const [title, path] of matterPaths) {
+    await expect(page.getByRole('link', { name: `Launch ${title} simulation`, exact: true })).toHaveAttribute('href', `../${path}`);
+  }
   await page.locator('[data-chapter="all"]').click();
   await search.fill('this-query-has-no-matches');
   await expect(page.locator('#empty-state')).toBeVisible();
@@ -26,6 +36,10 @@ test('landing search, chapter filters, and migrated launch destinations', async 
   await expectLayout(page);
   await page.getByRole('link', { name: 'Launch Projectile Motion simulation', exact: true }).click();
   await expect(page).toHaveURL(new URL(projectilePath, baseURL).href);
+  await expectCanvas(page);
+  await openPage(page, health, 'landing/');
+  await page.getByRole('link', { name: 'Launch Materials Testing simulation', exact: true }).click();
+  await expect(page).toHaveURL(new URL(matterPaths[0][1], baseURL).href);
   await expectCanvas(page);
 });
 

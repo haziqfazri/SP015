@@ -47,7 +47,7 @@ link checks unchanged and rerun them against the settled checkout.
 # List the matrix without opening a browser or starting a server.
 npm run test:browser:list
 
-# Run all 72 Chromium cases headlessly.
+# Run all 96 Chromium cases headlessly.
 npm run test:browser
 
 # Run just desktop checks for both hosting mounts.
@@ -86,8 +86,8 @@ cache, compression, or redirect rules. Production serving remains independent.
 
 ## Coverage and failure artifacts
 
-Nine smoke tests run at both hosting prefixes, each at 1440, 800, 460, and
-320 CSS pixels (eight projects, 72 cases):
+Twelve smoke tests run at both hosting prefixes, each at 1440, 800, 460, and
+320 CSS pixels (eight projects, 96 cases):
 
 - Landing: document/assets/fonts, initial content, search, chapter filtering,
   empty results, both migrated hrefs, and launch through the Projectile card.
@@ -109,6 +109,20 @@ Nine smoke tests run at both hosting prefixes, each at 1440, 800, 460, and
   open/closed columns, and an odd closed-column harmonic.
 - Doppler: relocated alias, observer mode, frequency, Step and playback/reset.
   Audio remains off; sound output is outside the headless smoke suite.
+- Materials Testing: relocated alias, loading progress/Step, tension/compression,
+  specimen length, modes/presets, playback/reset, and the ductile A-point auto-pause.
+- Heat Conduction: two-rod configuration, conductivity, invalid boundary recovery,
+  exposure patterns, qualitative readouts, tracer Step/Play/Pause/Reset, and
+  configuration retention. Reset compares the paused canvas within the same run;
+  no platform-specific golden image is stored.
+- Thermal Expansion: linear/area/volume/liquid modes, coefficient and temperature
+  inputs, heating/cooling, full/partial fill and overflow, playback/reset, and
+  selected-mode/parameter retention.
+
+Each Chapter 08 case resizes to another breakpoint and back, requiring the
+canvas width to follow both changes and retaining nonblank rendering, unique
+IDs, and no horizontal page overflow. Landing also checks all three Chapter 08
+hrefs, chapter filtering, and launch through the Materials Testing card.
 
 Every case checks uncaught page errors, console errors, failed requests and
 HTTP errors, loaded script/stylesheet MIME types, local font responses, unique
@@ -178,3 +192,8 @@ Chapter 07 migration added 48 cases: all 72 cases passed in 3.5 minutes with the
 same pinned runtime and approved local server/browser process access. This
 includes both hosting prefixes and all four viewport widths; no simulation
 JavaScript or CSS changes were needed.
+
+The Chapter 08 migration was validated on 2026-10-26: the unchanged 72-case
+baseline passed, followed by all 96 expanded cases in 5.2 minutes with the same
+pinned runtime. The new 24 cases cover both hosting prefixes, all four widths,
+and resize round trips. No simulation JavaScript or CSS changes were needed.

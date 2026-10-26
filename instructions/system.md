@@ -3,10 +3,11 @@
 ## 1. What this repo is
 
 A growing library of standalone, interactive p5.js simulations teaching
-**Physics 1 (SP015)** and **Physics 2 (SP025)** at pre-university level. Current
-simulation files remain under `animations/`; the approved target is
-`simulations/<sp015|sp025>/<chapter>/<combined-lo-folder>/`. The migration is in
-preparation, with no folder moves or semester tabs implemented yet. Built and
+**Physics 1 (SP015)** and **Physics 2 (SP025)** at pre-university level.
+Chapters 02, 05, 07, and 08 use `simulations/sp015/`; Chapter 09 remains under
+`animations/` until its migration is approved. The approved final target is
+`simulations/<sp015|sp025>/<chapter>/<combined-lo-folder>/`. Migration proceeds
+in controlled batches; semester tabs remain unimplemented. Built and
 maintained solo, with heavy use of AI coding assistants.
 
 **Audience:** SP015/SP025 students and their teachers, using each sim as a
