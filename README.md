@@ -1,12 +1,38 @@
-# Animation Projects
+# SP015 + SP025 Physics Simulation Library
 
-A growing library of interactive [p5.js](https://p5js.org/) simulations for teaching **Physics 1 (SP015)** at pre-university level, with **SP025** to follow later. Each simulation is a standalone teaching tool built against the official curriculum specification — sliders map to real physical quantities, readouts use correct units and notation, and theory text matches the cited learning outcomes (LOs).
+A growing library of interactive [p5.js](https://p5js.org/) simulations for teaching **Physics 1 (SP015)** and **Physics 2 (SP025)** at pre-university level. Current implemented simulations are SP015; SP025 content is pending its verified curriculum specification. Each simulation is a standalone teaching tool built against the official curriculum specification — sliders map to real physical quantities, readouts use correct units and notation, and theory text matches the cited learning outcomes (LOs).
 
 > New here? Read [`docs/architecture.md`](docs/architecture.md) before adding or modifying a simulation. It is the source of truth for the repository structure and simulation data flow.
 
 ---
 
-## Folder overview
+## Approved migration target — not yet implemented
+
+Existing pages remain under `animations/`, and `landing/` is still the SP015
+catalogue. The approved destination is:
+
+```text
+simulations/
+  sp015/<chapter>/<combined-learning-outcome-folder>/
+  sp025/<chapter>/<combined-learning-outcome-folder>/
+landing/       # one page, with SP015 and SP025 tabs; SP015 initially selected
+shared/        # common styles, helpers, fonts, and startup guard
+vendor/        # common pinned browser dependencies
+templates/     # starter prepared for the future four-level topic depth
+```
+
+Semester tabs will preserve the current visual design and remember each
+semester's search and chapter/status filters independently. Grouping keys and
+HTML IDs must include the semester. Thermodynamics Workbench remains absent
+from the published catalogue. The GitHub repository name is unchanged, and no
+old-URL compatibility tree is planned. Existing redirects will be preserved as
+files within the new simulation folders.
+
+See the [active migration plan](docs/plan/active/physics-library-migration-plan.md)
+and [complete migration map](docs/plan/active/physics-library-migration-map.json).
+Implementation requires a separate review after preparation.
+
+## Current on-disk folder overview
 
 ```text
 SP015/
@@ -72,7 +98,7 @@ any remaining limitations in the handoff.
 
 ## Adding a new simulation
 
-Start from [`templates/`](templates/README.md), which has the full build order and setup steps. In short: copy only the structure you need into the right topic folder under `animations/`, follow the lifecycle in [`docs/architecture.md`](docs/architecture.md), reuse `shared/` where it fits, and check `instructions/checklist.md` before calling it done.
+Start from [`templates/`](templates/README.md), which has the full build order and setup steps. In short: copy only the structure you need into the approved destination described in the template guide (current simulations remain under `animations/` until migration), follow the lifecycle in [`docs/architecture.md`](docs/architecture.md), reuse `shared/` where it fits, and check `instructions/checklist.md` before calling it done.
 
 ---
 
@@ -92,8 +118,9 @@ Start from [`templates/`](templates/README.md), which has the full build order a
 | 8.3 | Heat Conduction Laboratory | ✅ Done |
 | 8.4 | Thermal Expansion Laboratory | ✅ Done |
 | 9.1, 9.2 | Molecular Gas Laboratory | ✅ Done |
+| 9.3–9.5 | Thermodynamics Workbench | Unpublished; release criteria pending |
 
-Curriculum spec: [`Curriculum Specifications (CS) Physics SP015.pdf`](<Curriculum Specifications (CS) Physics SP015.pdf>). *(The SP025 spec is available as a PDF; it is not yet converted to markdown.)*
+Curriculum spec: [`Curriculum Specifications (CS) Physics SP015.pdf`](<Curriculum Specifications (CS) Physics SP015.pdf>). *(The SP025 specification is absent from the current checkout; verify its authoritative version before adding SP025 content.)*
 
 ---
 

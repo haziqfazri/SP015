@@ -5,8 +5,9 @@ description: Audit the repo's documentation for staleness and consistency with t
 
 # Documentation Auditor
 
-`docs/architecture.md` is the source of truth and must describe what is
-TRUE in the repo, not what was once planned. `instructions/` support it;
+`docs/architecture.md` is the source of truth. Distinguish its current on-disk
+layout from the explicitly approved target; a labelled future layout is not a
+claim that migration or tabs are already implemented. `instructions/` support it;
 `README.md` is the front door. This skill checks that all of them still
 match reality. Report findings in chat as an in-chat list with `file:line`
 and a concrete fix suggestion per item. Do not edit files unless asked.
@@ -14,7 +15,9 @@ and a concrete fix suggestion per item. Do not edit files unless asked.
 ## 1. Folder tree vs. reality
 
 - Compare the folder tree in `docs/architecture.md` §2 and README against
-  `ls animations/` (plus any topic subfolders).
+  `animations/` and any approved pilot directories under `simulations/`.
+  Compare both with `docs/plan/active/physics-library-migration-map.json`; during
+  a pilot, mixed locations are expected only for the mapped folders.
 - Every existing sim must appear; flag missing additions and stale entries.
 - New sims must be reflected in `instructions/physics.md` §4's LO table and
   README's curriculum-coverage table.
@@ -47,20 +50,20 @@ and a concrete fix suggestion per item. Do not edit files unless asked.
   that the `simulation-qa` skill still mirrors it.
 - `instructions/coding.md` §4's palette list must match the `:root` block in
   `shared/sim-style.css` and `PALETTE` in `shared/sim-utils.js`.
-- KaTeX convention: `instructions/coding.md` must point to the canonical
-  KaTeX `<link>`/`<script>` tags (version + SRI hashes) in
-  `shared/sim-style.css`'s KaTeX comment block as the single source of truth.
-  Verify the version/hashes are actually there and consistent across sims.
+- KaTeX convention: use the pinned local tags in `templates/index.html`,
+  adjusted for current/target depth. Verify versions in `vendor/README.md`,
+  checksums in `vendor/SHA256SUMS`, and local paths across simulations.
 
 ## 5. Broken references
 
-- Run `node .kilo/scripts/check-links.mjs` from the repo root and report
+- Run `node .kilo/scripts/check-links.mjs --skip-external` and repeat with
+  `--base-path=/SP015/` from the repo root; report
   every broken/missing target.
 - Grep `.md` files for links to files that don't exist
-  (`[label](path)`, relative references in README/AGENTS.md).
+  (relative Markdown references in README/AGENTS.md).
 - Check that the curriculum spec referenced by README and
   `docs/architecture.md` §1 exists at the repo root
-  (`SP015-curriculum-spec.md`).
+  (`Curriculum Specifications (CS) Physics SP015.pdf` for SP015). The SP025 source is currently missing.
 
 ## 6. Staleness rules
 

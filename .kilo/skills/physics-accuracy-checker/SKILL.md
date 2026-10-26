@@ -6,7 +6,7 @@ description: Verify the physics correctness of a simulation against the curricul
 # Physics Accuracy Checker
 
 Ground truth is the curriculum spec at the repo root
-(`SP015-curriculum-spec.md` for SP015; the SP025 spec is not yet converted)
+(`Curriculum Specifications (CS) Physics SP015.pdf` for SP015; the SP025 spec is currently absent and needs an authoritative source)
 plus `instructions/physics.md` (units, coordinates, vector/sign conventions,
 simplifications). Never trust memory of formulas — read the spec file or a
 citable reference. Report as an in-chat pass/fail checklist with `file:line`
@@ -78,5 +78,5 @@ style issue.
 ## Output
 
 Per item: PASS/FAIL + `file:line` + a one-line justification (the spec
-reference — `SP015-curriculum-spec.md` section — or equation check). Any FAIL
+reference — `Curriculum Specifications (CS) Physics SP015.pdf` section — or equation check). Any FAIL
 is a hard blocker — state it as NO-GO with the list.

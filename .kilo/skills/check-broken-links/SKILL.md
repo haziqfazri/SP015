@@ -1,51 +1,64 @@
 ---
 name: check-broken-links
-description: Find broken references across the repo — missing script/CSS targets, dead markdown links, dangling anchors, and unreachable external URLs. Use when asked to check links, references, or paths in HTML/markdown files.
+description: Validate local links, JavaScript catalogue destinations, HTML assets and redirects, CSS URLs, duplicate IDs, and optional external URLs without dependencies.
 ---
 
-# Check Broken Links
+# Check Broken Links and Assets
 
-Finds broken references across the repo (HTML asset refs, markdown links,
-anchors, external URLs). Run the script from the repo root:
+Run from the repository root. A positional path narrows scanning; references
+still resolve against the repository and each owning page/stylesheet.
 
 ```sh
-node .kilo/scripts/check-links.mjs            # html + markdown, external too
-node .kilo/scripts/check-links.mjs --html-only
 node .kilo/scripts/check-links.mjs --skip-external
-node .kilo/scripts/check-links.mjs <path>     # scope to a subdirectory
+node .kilo/scripts/check-links.mjs --skip-external --base-path=/SP015/
+node .kilo/scripts/check-links.mjs --html-only --skip-external
+node .kilo/scripts/check-links.mjs animations --skip-external
+node --test .kilo/scripts/check-links.test.mjs
 ```
 
-## What the script reports
+## Coverage and resolution
 
-- `broken:` — external URL failed (404/5xx after redirects).
-- `missing:` — local `href`/`src`/`srcset` or markdown link target does not
-  resolve to an existing file. Directory targets fall back to `index.html`.
-  `..` walks are clamped at the repo root (browser URL normalization for a
-  site served from the root — the canonical way these sims run).
-- `warn:` — anchor (`#id`) on a local file with no matching `id`/`name`.
-  Never a hard failure (p5/CDN targets may legitimately have no id).
-- `external:` — external URL unverified (timeout, network down, or
-  WAF-blocked 403/429). Not a failure.
+- Parse actual literal `SIMULATIONS` arrays without executing the application.
+  Strings/objects/arrays, comments, escapes, and trailing commas are supported;
+  computed metadata fails explicitly. Do not inspect `${sim.href}` as a file.
+- Check HTML href/src/srcset/poster, inline styles, style blocks, base URLs,
+  meta-refresh targets, CSS url()/quoted imports, and Markdown links.
+- Resolve assets from their owner, decode URL entities/escapes, ignore query
+  strings when checking files, and require exact-case filenames.
+- Check directory index pages for HTML navigation; Markdown may link directly
+  to existing directories. Do not silently clamp excessive `../` traversal.
+- `--base-path=/SP015/` models repository-prefixed hosting and catches paths
+  escaping that prefix. Relative references remain portable. Templates are
+  validated at `simulations/sp015/__chapter__/__topic__/`, their prepared
+  destination depth, with sibling template assets mapped back to templates/.
+- Static duplicate HTML IDs are hard failures. Fragment warnings remain advisory
+  because dynamically generated IDs and GitHub source-line anchors need review.
+- `.git`, node_modules, ignored scratch work, local generic .codex skill data,
+  and test modules are excluded. Historical Markdown is retained and checked.
 
-## What to check manually after the script
+## Semester catalogue gate
 
-1. Markdown links the regex can't parse (angle-bracket or bare URLs).
-   Grep for `](` near `http`, and bare `https://` URLs in prose.
-2. Case-sensitivity: the script matches case-sensitively (macOS default FS
-   is case-insensitive but Linux/CI is not). Verify flagged refs aren't
-   case-only mismatches that would break a case-sensitive deploy.
-3. Script `src` and `link` `href` refs in each sim's HTML: confirm they
-   resolve both relative to the HTML file AND from the repo root (some
-   sims overshoot with `../../../shared/` by design — clamped correctly).
-4. README/AGENTS.md relative links to docs, instructions, templates,
-   the curriculum spec (`SP015-curriculum-spec.md`).
+After metadata conversion, add `--require-semesters`. It requires explicit
+`semester: 'sp015' | 'sp025'`, destinations under the matching semester,
+consistent names within semester+chapter groups, unique qualified explicit IDs,
+and unique launch destinations. Only completed records expose launch links.
+The current SP015-only catalogue is valid without this future gate.
 
-## Report format
+The validator cannot prove runtime grouping, unique generated DOM/SVG IDs,
+keyboard tab behavior, or per-semester state retention. Follow the active
+migration plan's browser acceptance scenarios. Thermodynamics Workbench must
+remain unpublished until its existing release criteria pass.
 
-```
-missing:  <file>:<line> -> <target> (resolved path)
-broken:   <file>:<line> -> <external-url>
-warn:     <file>:<line> -> <target> (anchor not found)
-```
-Plus summary counts and a verdict. Exit code 1 from the script means hard
-failures exist; 0 means the mechanical checks are clean.
+## Results
+
+- `missing`, `invalid`, `broken`: hard failures, exit 1.
+- `warn`: fragment needs review; does not fail.
+- `external`: network/permission outcome unverified; does not fail.
+- Exit 2: invalid invocation or checker error. Missing scan scopes fail loudly.
+
+Without `--skip-external`, HTTP requests run with bounded concurrency/timeouts;
+404/410 and server errors fail, while blocked/time-out requests are unverified.
+Static parsing is not a full browser parser: unusual markup, CSS escape forms,
+reference-style Markdown links, and runtime-computed URLs need manual review.
+Curriculum source: `Curriculum Specifications (CS) Physics SP015.pdf`; SP025's
+specification is absent from the current checkout.

@@ -4,11 +4,18 @@
 
 See `docs/architecture.md` §2 for the current folder tree. The naming rules:
 
-- **Folder = chapter, nested by topic.** Sims live under
-  `animations/<chapter-number>-<chapter-name>/<topic-number>-<short-name>/`,
+- **Current disk layout:** existing sims live under
+  `animations/<chapter-number>-<chapter-name>/<lo-group>-<short-name>/`,
   including single-topic chapters such as
   `05-circular-motion/5-uniform-circular-motion/`. The specific LO is still
   cited in a comment/kicker.
+- **Approved target, migration pending:**
+  `simulations/<sp015|sp025>/<chapter-number>-<chapter-name>/<lo-group>-<short-name>/`.
+  Retain combined LO folders. Existing simulations stay in their current locations
+  until their migration phase is approved. The prepared template targets four
+  levels and uses `../../../../shared/` and `../../../../vendor/`; three-level
+  current pages retain `../../../`. Avoid root-absolute asset URLs so repository
+  prefixes such as `/SP015/` work. Do not change the GitHub repository name.
 - **One folder, self-contained.** Own HTML, own CSS, own JS. Nothing
   sim-specific lives in `shared/`; nothing shared lives inside a sim's
   folder — a helper needed by two sims moves to `shared/`.
@@ -26,7 +33,11 @@ See `docs/architecture.md` §2 for the current folder tree. The naming rules:
 - **Landing page:** Keep `landing/index.html`, `landing/style.css`, and
   `landing/app.js` self-contained. `app.js` owns the simulation metadata and
   landing-only SVG templates; do not move topic physics or simulation
-  rendering into the landing page.
+  rendering into the landing page. The approved semester tabs are not implemented
+  yet. Later, use explicit literal `semester` metadata, group by semester and
+  chapter, and qualify generated IDs by semester. Default to SP015; retain
+  separate search, chapter, and status state for each semester. Preserve the
+  existing visual design and withhold unpublished launch links.
 
 ### File responsibilities
 
@@ -140,17 +151,16 @@ There is no hard line-count threshold and no requirement to use every role in
 
 **Fonts, colors, spacing**
 - Fonts: `DM Sans` (display/labels), `Space Mono` (mono/readouts/formulas)
-  — loaded via Google Fonts, declared as `--display`/`--mono` CSS vars.
+  — loaded locally through `shared/fonts.css`, declared as `--display`/`--mono` CSS vars.
 - The landing page follows the same palette and typography while using a
   distinct index composition. Completed card hover/focus feedback must match
   its whole-card launch target; planned cards must remain visibly inert.
 
 **Math notation — KaTeX (repo-wide convention)**
 - Every sim links KaTeX 0.18.2 in its `<head>` (CSS + JS) — copy the
-  canonical `<link>`/`<script>` tags with their SRI integrity attributes
-  verbatim from `shared/sim-style.css`'s KaTeX comment block (the single
-  source of truth for version + hashes; never retype them) — and renders
-  math through `renderMath()` in `shared/sim-utils.js`.
+  pinned local tags from `templates/index.html`, adjusted for the page's
+  directory depth. Versions/checksums live in `vendor/README.md` and
+  `vendor/SHA256SUMS`. Render math through `renderMath()` in `shared/sim-utils.js`.
 - Theory-strip equations are `<span class="formula" data-latex="...">…</span>`
   — rendered in displayMode (centered, full-size).
 - Inline notation in readout/control labels and prose uses

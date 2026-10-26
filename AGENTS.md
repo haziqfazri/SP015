@@ -1,8 +1,8 @@
-# AGENTS.md — SP015 Physics Simulation Project
+# AGENTS.md — SP015 + SP025 Physics Simulation Library
 
 ## What this repo is
 
-A library of interactive [p5.js](https://p5js.org/) simulations for teaching **Physics 1 (SP015)** at pre-university level (SP025 to follow). Each sim is a standalone teaching tool: sliders map to real physical quantities, readouts use correct SI units and notation, and theory text matches cited learning outcomes (LOs), e.g. `SP015 7.1(c.iii)`.
+A library of interactive [p5.js](https://p5js.org/) simulations for teaching **Physics 1 (SP015)** and **Physics 2 (SP025)** at pre-university level. The current simulations are SP015; SP025 content awaits its verified curriculum specification. Each sim is a standalone teaching tool: sliders map to real physical quantities, readouts use correct SI units and notation, and theory text matches cited learning outcomes (LOs), e.g. `SP015 7.1(c.iii)`.
 
 Two things matter equally: **pedagogical correctness** and **reusability**. The repo is maintained solo with heavy AI coding assistant use — predictable structure matters more than cleverness.
 
@@ -10,13 +10,34 @@ The source of truth for architecture and data flow is `docs/architecture.md`. Re
 
 ---
 
+## Migration status: preparation only
+
+The approved destination is one SP015 + SP025 Physics Simulation Library:
+`simulations/<semester>/<chapter>/<combined-learning-outcome-folder>/`, where
+`<semester>` is `sp015` or `sp025`. Existing simulations currently remain in
+`animations/<chapter>/<combined-learning-outcome-folder>/`; no folders have
+moved and the semester tabs are not implemented. Preserve combined LO folders.
+
+The unified landing page will preserve its existing visual design, default to
+SP015, and keep search, chapter filter, and status filter state separately for
+each semester. Qualify catalogue grouping keys and generated HTML IDs by semester.
+Shared assets, vendor libraries, styles, and templates remain common to both.
+Thermodynamics Workbench stays unpublished until its existing release criteria
+are met. The GitHub repository keeps its current name. No old-URL compatibility
+tree is required; retain and relocate the existing redirect files according to
+the migration map rather than deleting them.
+
+The active plan and complete source/destination map are in
+[the migration plan](docs/plan/active/physics-library-migration-plan.md).
+This preparation does not authorize moving simulations or implementing tabs.
+
 ## Running a simulation
 
 Static pages — no build step, no bundler. Open a sim's HTML file directly in a browser, or serve the repo root with any static file server. Runtime libraries and fonts are loaded from the pinned local assets in `vendor/` and `shared/`, so simulations remain usable offline.
 
 ---
 
-## Folder layout
+## Current on-disk folder layout
 
 ```
 SP015/
@@ -34,6 +55,11 @@ SP015/
       7.7-doppler-effect/       <- Level 3, uses KaTeX (all sims now do)
     08-physics-of-matter/
       8.1-8.2-materials-testing/ <- Level 3, global mode
+      8.3-heat-conduction/
+      8.4-thermal-expansion/
+    09-kinetic-theory-and-thermodynamics/
+      9.1-9.2-molecular-gas-lab/
+      9.3-9.5-thermodynamics-workbench/ <- unpublished
   docs/
     architecture.md             <- authoritative architecture/patterns
   instructions/
@@ -139,7 +165,8 @@ Call `ui.updateReadouts(...)` from the callback that actually changes the values
 
 ### Naming
 
-- Folders: `animations/<chapter-number>-<chapter-name>/<topic-number>-<short-name>/`
+- Current folders: `animations/<chapter-number>-<chapter-name>/<lo-group>-<short-name>/`.
+- Approved target: `simulations/<sp015|sp025>/<chapter-number>-<chapter-name>/<lo-group>-<short-name>/`. Use the target convention for newly authorized work; preserve existing locations until its migration phase is approved.
 - Files: `<topic-slug>-<role>.js` (e.g. `progressive-wave-shm-physics.js`, `progressive-wave-shm-ui.js`, `progressive-wave-shm-controller.js`, `progressive-wave-shm-renderer.js`, `progressive-wave-shm-sketch.js`)
 - HTML: `index.html` for every simulation entry point
 - CSS: `<topic>.css`

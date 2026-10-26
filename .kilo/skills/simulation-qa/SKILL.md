@@ -31,7 +31,7 @@ GO/NO-GO verdict. Do not write anything to disk.
 ## 2. Physics accuracy
 
 - Equations match the SP015/SP025 spec — check against
-  `SP015-curriculum-spec.md` at the repo root, not memory. Units, symbols,
+  `Curriculum Specifications (CS) Physics SP015.pdf` at the repo root, not memory. Units, symbols,
   sign conventions all correct.
 - Every non-obvious equation has a comment citing the LO
   (`SP015 7.1(c.iii)`).
@@ -95,6 +95,18 @@ GO/NO-GO verdict. Do not write anything to disk.
 - `docs/architecture.md` updated if this sim introduced a new pattern,
   shared module, or file-split convention.
 - Tested at desktop width and the `800px` / `460px` responsive breakpoints.
+
+## Unified-library migration acceptance (future implementation)
+
+Follow the migration gates in `instructions/checklist.md` and the active plan.
+Current files remain under `animations/`; the approved target is
+`simulations/<sp015|sp025>/<chapter>/<combined-lo-folder>/`. Check literal
+catalogue URLs, HTML/CSS assets, redirects, and static duplicate IDs at `/` and
+`/SP015/`. Enable `--require-semesters` after metadata conversion. In a browser,
+verify semester-qualified grouping/generated IDs and independent search,
+chapter/status state across tab round trips, with SP015 initially selected.
+Preserve landing design and keep Thermodynamics Workbench unpublished.
+Do not treat a preparation pass as evidence that future tabs work.
 
 ## Verdict
 

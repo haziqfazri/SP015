@@ -91,3 +91,26 @@
 - [ ] Related audit findings are marked resolved only after evidence exists
 - [ ] Completed plans and phase records are moved from `docs/plan/active/` to
       `docs/plan/completed/`; unfinished work stays active
+
+## Unified-library migration gates (planned implementation)
+
+- [ ] Current and approved target layouts remain explicitly distinguished in docs.
+- [ ] Every canonical simulation and retained alias matches the migration map.
+- [ ] Run link/asset validation at `/` and `--base-path=/SP015/`; no new failures.
+- [ ] After catalogue conversion, `--require-semesters` passes for literal records.
+- [ ] Group keys use semester + chapter; heading/tab/panel/card/SVG IDs are unique
+      across simultaneously rendered or hidden panels; no grouping by name alone.
+- [ ] Initial load selects SP015. Search/chapter/status state survives SP015 →
+      SP025 → SP015 and the reverse, with independent values in both semesters.
+- [ ] Switching tabs updates visible form values, chapter options, counts, ARIA
+      tab state, and keyboard focus without resetting the other semester's state.
+- [ ] Empty SP025 content has an honest empty state; no invented curriculum items.
+- [ ] Thermodynamics Workbench remains unpublished until Chapter 9 gates pass.
+- [ ] Preserve landing design at desktop, 800, 460, and 320 px and 200% zoom.
+- [ ] Check runtime generated IDs and console/network errors in a browser;
+      static duplicate-ID checks do not validate dynamically rendered markup.
+- [ ] Shared assets stay local; physics behavior and script order are preserved.
+
+See `docs/plan/active/physics-library-migration-plan.md` for the phase-specific
+commands and known pre-existing checker findings. These gates do not authorize
+migration or tab implementation during preparation.

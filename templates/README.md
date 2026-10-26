@@ -6,8 +6,13 @@ the full rationale — this is just the condensed checklist.
 ## Setup
 
 1. Copy the files you need into a topic folder at
-   `animations/<chapter>/<topic>/`. Keep the simulation self-contained inside
-   that topic folder. The starter HTML assumes this three-level layout.
+   `simulations/<sp015|sp025>/<chapter>/<combined-lo-folder>/` for newly
+   authorized work. The starter is prepared for this approved four-level target;
+   existing simulations remain under `animations/` until migration is approved.
+   Keep each complete simulation self-contained and preserve combined LOs.
+   Do not preview the starter directly from `templates/`. For an explicitly
+   authorized legacy three-level destination, remove one `../` from its shared
+   asset references after copying, without changing existing simulations.
 2. Find-and-replace `Template` → `YourSimName` (classes) and `template-` →
    `your-sim-name-` (filenames) across all files.
 3. Rename the files themselves to match.
@@ -50,16 +55,22 @@ and the decision rule for choosing between them.
 
 ## Reminders
 
-Runtime libraries and fonts are local: use `../../../vendor/p5/p5.min.js`,
-`../../../vendor/katex/`, and `../../../shared/fonts.css` in generated pages. Keep the
+Runtime libraries and fonts are local: use `../../../../vendor/p5/p5.min.js`,
+`../../../../vendor/katex/`, and `../../../../shared/fonts.css` in generated pages. Keep the
 `SP015Runtime.requireDependencies(['p5', 'katex'])` guard in the sketch
 bootstrap so a missing asset produces a readable error rather than a blank
 simulation.
 
+- The unified catalogue is planned, not implemented. Later supply explicit
+  literal `semester` metadata (`sp015`/`sp025`), use semester-qualified grouping
+  and IDs, and preserve per-semester search/chapter/status state. Do not publish
+  unfinished entries; Thermodynamics Workbench remains unpublished.
+- Verify the relevant semester's curriculum; the SP025 specification is currently
+  missing. Keep libraries and shared assets common to both semesters.
 - Only sim-specific CSS goes in the topic `.css` file — everything generic
   is already in `shared/sim-style.css`.
 - Math notation uses KaTeX, not HTML entities: use the local KaTeX
-  `<link>`/`<script>` head tags from `../../../vendor/katex/`, author notation as
+  `<link>`/`<script>` head tags from `../../../../vendor/katex/`, author notation as
   `data-latex` attributes, and let the template's `_renderStaticMath()`
   render them via the shared `renderMath()` helper. Theory-strip equations
   use `.formula` (displayMode); inline label symbols use `.katex-inline`.

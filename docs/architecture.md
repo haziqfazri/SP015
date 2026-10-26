@@ -2,7 +2,7 @@
 
 Reference doc for `haziqfazri/SP015`. Read this before adding or
 modifying a simulation — it describes the patterns actually in use across the
-repo, not an aspirational spec.
+repo. Approved future changes are explicitly labelled and do not describe the current disk layout.
 
 AGENTS.md contains the active Codex execution contract; this document remains
 authoritative for architecture and data flow. Dated audits and active plans
@@ -11,10 +11,10 @@ record status and evidence, but do not override the current architecture.
 ## 1. Project philosophy
 
 This repo is a growing library of interactive p5.js simulations for teaching
-**Physics 1 (SP015)** at pre-university level, with **SP025** to follow later.
+**Physics 1 (SP015)** and **Physics 2 (SP025)** at pre-university level. Current implemented simulations are SP015; SP025 content awaits a verified specification.
 Each simulation is a standalone teaching tool built against the official
 curriculum specification (SP015 in `Curriculum Specifications (CS) Physics SP015.pdf` at the repo
-root; the SP025 spec is not yet converted to markdown) — sliders map to real
+root; the SP025 spec is absent from the current checkout) — sliders map to real
 physical quantities, readouts use correct units and notation, and theory text
 matches the learning outcomes (LOs) cited in code comments (e.g.
 "SP015 7.1(c.iii)").
@@ -27,7 +27,7 @@ predictable structure matters more than any single sim's cleverness.
 
 ## 2. Folder layout & responsibilities
 
-The repository currently uses the following structure:
+The repository currently uses the following structure (not the approved migration target):
 
 ```text
 SP015/
@@ -45,9 +45,14 @@ SP015/
 │   │   ├── 7.5-superposition-shm/
 │   │   ├── 7.6-application-of-standing-waves/
 │   │   └── 7.7-doppler-effect/
-│   └── 08-physics-of-matter/
-│       ├── 8.1-8.2-materials-testing/
-│       └── 8.3-heat-conduction/
+│   ├── 08-physics-of-matter/
+│   │   ├── 8.1-8.2-materials-testing/
+│   │   ├── 8.3-heat-conduction/
+│   │   └── 8.4-thermal-expansion/
+│   ├── 08-physics-of-matters/     <- legacy redirect only
+│   └── 09-kinetic-theory-and-thermodynamics/
+│       ├── 9.1-9.2-molecular-gas-lab/
+│       └── 9.3-9.5-thermodynamics-workbench/ <- unpublished
 ├── docs/
 │   ├── architecture.md
 │   ├── audits/                    <- repository and page audits
@@ -80,6 +85,43 @@ The canonical entry point for every simulation is `index.html`. A small set of
 legacy HTML paths remains as relative redirect stubs after the organization
 migration; completed audits and plans may still mention those former paths as
 historical evidence.
+
+### Approved target: migration pending
+
+```text
+simulations/
+  sp015/<chapter-number>-<chapter-name>/<lo-group>-<simulation-slug>/
+  sp025/<chapter-number>-<chapter-name>/<lo-group>-<simulation-slug>/
+```
+
+`sp015` means Semester 1 and `sp025` means Semester 2. Combined LO folders remain
+intact, including 8.1–8.2, 9.1–9.2, and 9.3–9.5. Do not split their implementations.
+Shared assets, templates, and vendor libraries retain their current root locations.
+A target page is four levels deep and uses `../../../../shared/` and
+`../../../../vendor/`; existing three-level pages still use `../../../`.
+Use relative URLs that work from files and when hosted below `/SP015/`.
+
+The single landing page will gain accessible semester tabs, initially SP015,
+while retaining its existing visual design. Add explicit `semester: 'sp015'`
+or `'sp025'` to each literal catalogue record. Use `${semester}:${chapter}` as
+the grouping identity and `chapter-${semester}-${chapter}` for headings, with
+semester-qualified tab, panel, card, and SVG IDs wherever they coexist. Chapter
+names are display text, not identities. Search, chapter, and status filters
+belong to separate per-semester state objects and must survive tab round trips.
+Reset the rendered form fields from the selected semester's state, not from the
+previous tab. Planned/unpublished items expose no launch link. Thermodynamics
+Workbench remains unlisted until its Chapter 9 release criteria are met.
+
+No legacy `animations/` compatibility tree is required. Existing redirect files
+must be retained and relocated with the canonical simulations as listed in the
+[complete map](plan/active/physics-library-migration-map.json). The repository
+name and remote stay unchanged. Preserve historical reports and their original
+path references. Local ignored scratch tests have stale paths; they are not
+production dependencies and need separate review rather than automatic deletion.
+
+The [active migration plan](plan/active/physics-library-migration-plan.md) defines
+the pilot, gates, state-retention scenarios, and validation commands. Preparation
+does not authorize migration or tab implementation.
 
 ### Folder responsibilities
 
@@ -387,9 +429,9 @@ rules, see `instructions/coding.md` for the day-to-day UI conventions.
 
   **KaTeX — math notation is a repo-wide convention, not a per-sim choice.**
   Every sim links KaTeX 0.18.2 in its `<head>` (CSS + JS) — copy the
-  canonical `<link>`/`<script>` tags with their SRI integrity attributes
-  verbatim from `shared/sim-style.css`'s KaTeX comment block (single source
-  of truth for version + hashes) — and renders math via
+  pinned local `<link>`/`<script>` tags from `templates/index.html`, adjusted
+  to the page's current or target depth. Versions and checksums are recorded in
+  `vendor/README.md` and `vendor/SHA256SUMS`. Render math via
   `renderMath(el, latex, displayMode)` from `sim-utils.js`. Two element
   conventions (mirrored by the `.formula .katex` / `.katex-inline` rules in
   `sim-style.css`):
@@ -440,10 +482,9 @@ Duplication observed that should be reconciled next time it's touched:
 ## 7. Future expansion
  
 More SP015 topics will be added using the patterns in §3–4, and SP025 sims
-will start once SP015 coverage is far enough along — they'll live
-alongside SP015's `animations/` chapters. If SP025 later becomes large enough
-to need a separate root, document that decision here when it becomes an actual
-requirement. Every new sim should:
+will use `simulations/sp025/` within the same repository after migration. SP015
+will use `simulations/sp015/`. Those are approved target paths; the current
+`animations/` tree remains until the reviewed migration steps are implemented. Every new sim should:
  
 1. Reuse `shared/sim-style.css` and `shared/sim-utils.js` where they fit,
    adding only topic-specific CSS/JS to the simulation folder.

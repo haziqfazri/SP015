@@ -1,6 +1,6 @@
 # SP015 Physics Simulation Landing Page
 
-This folder contains the static landing page for the SP015 Physics Simulation Project. It indexes every current simulation by chapter and topic, with searchable metadata-driven cards and curriculum coverage.
+This folder contains the static landing page for the SP015 Physics Simulation Project. It indexes the published SP015 simulations by chapter and topic, with searchable metadata-driven cards and curriculum coverage.
 
 ## Run locally
 
@@ -36,3 +36,22 @@ The inline SVGs are compact recognition diagrams. They use the repository
 palette and must be checked against the linked simulation's theory and first
 frame before changing their geometry. Final evidence and the archived phased
 plan are in [`../docs/plan/completed/`](../docs/plan/completed/).
+
+## Approved unified catalogue (not implemented yet)
+
+Keep this single page and its existing visual design. Add SP015/SP025 semester
+tabs with SP015 selected initially. Catalogue records will declare `semester`
+explicitly; their target URLs use `../simulations/<semester>/<chapter>/<lo-group>/index.html`.
+Use semester + chapter grouping and semester-qualified generated IDs. Keep
+separate `{ query, chapter, status }` state for each semester and restore form
+values/options when switching tabs. The SP025 empty state must remain usable
+before its first simulation exists. Thermodynamics Workbench stays unlisted
+until its existing release criteria pass.
+
+The current JavaScript still uses the SP015-only metadata and one state object.
+See the [migration plan](../docs/plan/active/physics-library-migration-plan.md)
+for acceptance scenarios. The validator reads actual literal catalogue URLs,
+HTML assets/redirects, CSS URLs, and duplicate static IDs. Run it from the repo
+root with `--skip-external`, then with `--base-path=/SP015/`. After catalogue
+conversion, also enable `--require-semesters`; runtime grouping, generated IDs,
+and state retention still require browser checks.

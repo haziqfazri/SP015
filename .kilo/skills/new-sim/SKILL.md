@@ -51,8 +51,9 @@ Guides building a new SP015/SP025 sim in this repo. Source of truth:
    Instance: `DOMContentLoaded` bootstrap. Sim must start paused but never
    blank (`noLoop(); redraw();` or equivalent first-frame render).
 7. **Wire theory strip + readouts** to the LO text and correct units,
-   cross-checked against the curriculum spec (`SP015-curriculum-spec.md`) at
-   the repo root.
+   cross-checked against `Curriculum Specifications (CS) Physics SP015.pdf`
+   for SP015. The SP025 specification is absent; verify its authoritative source
+   before SP025 authoring.
 8. **Check for duplication.** Second copy of a helper (arrows, dashed
    guides, trail dots, readout diffing) → fold into `shared/` — never
    re-implement locally.
@@ -63,13 +64,21 @@ Start from `templates/`. Copy ONLY the files the chosen level needs:
 
 - Find-and-replace `Template` → `YourSimName` (classes), `template-` →
   `your-sim-name-` (filenames) in every copied file; rename files to match.
-- Folder: `animations/<chapter-number>-<chapter-name>/<topic-number>-<short-name>/`.
-- File naming: `<topic-prefix>-<role>.js`; HTML `index.html` or
-  `<topic>.html`; CSS `<topic>.css`.
+- Current files stay in `animations/<chapter>/<combined-lo-folder>/`.
+  Approved target: `simulations/<sp015|sp025>/<chapter>/<combined-lo-folder>/`.
+  Preserve combined LOs. No folder moves are authorized by preparation alone.
+- The starter is prepared for the target four-level depth; use
+  `../../../../shared/` and `../../../../vendor/`. Existing pages retain
+  `../../../` until their approved move. Validate under `/` and `/SP015/`.
+- Planned landing tabs default to SP015 and retain independent search and
+  chapter/status state per semester. Use literal semester metadata and
+  semester-qualified grouping/IDs; keep the visual design and withhold
+  Thermodynamics Workbench until its release gates pass.
+- See `docs/plan/active/physics-library-migration-plan.md` and its migration map.
+- File naming: `<topic-prefix>-<role>.js`; HTML `index.html`; CSS `<topic>.css`. Existing aliases are retained files, not canonical entry points.
 - Script load order in HTML: `shared/sim-utils.js` → physics → renderer →
   controller → ui-manager → sketch.
-- KaTeX: copy the canonical `<link>`/`<script>` tags (version + SRI) from
-  `shared/sim-style.css`'s KaTeX comment block verbatim — never retype them.
+- KaTeX: copy the pinned local tags from the prepared `templates/index.html`; preserve offline operation and shared `renderMath()`.
 
 ## Hard conventions (checklist)
 
@@ -86,8 +95,10 @@ Start from `templates/`. Copy ONLY the files the chosen level needs:
 
 ## Self-review gate (before calling it done)
 
-1. `node .kilo/scripts/check-shared-usage.mjs` — no hex literals, no `var`.
-2. `node .kilo/scripts/check-dt.mjs` — dt clamps present, single clock.
+1. `node .kilo/scripts/check-shared-usage.mjs <sim-folder>` — interpret fixture findings separately; no new canvas-code hex literals or `var`.
+2. `node .kilo/scripts/check-dt.mjs <sim-folder>` — verify clock rules against source.
+   Run `check-links.mjs --skip-external` at root and with `--base-path=/SP015/`.
+   After catalogue conversion add `--require-semesters`; check runtime IDs/grouping in a browser.
 3. Run the `simulation-qa` skill for the full pre-release checklist.
 4. Update `docs/architecture.md` only if a genuinely new pattern was
    introduced; add the new sim to `instructions/physics.md` §4's LO table.

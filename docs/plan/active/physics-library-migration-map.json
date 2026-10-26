@@ -1,0 +1,161 @@
+{
+  "status": "preparation-only",
+  "sourceBaseline": "5732a0f",
+  "targetRoot": "simulations",
+  "semesters": [
+    "sp015",
+    "sp025"
+  ],
+  "defaultSemester": "sp015",
+  "simulations": [
+    {
+      "semester": "sp015",
+      "currentFolder": "animations/02-kinematics-of-linear-motion/2.3-projectile-motion",
+      "targetFolder": "simulations/sp015/02-kinematics-of-linear-motion/2.3-projectile-motion",
+      "entrypoint": "index.html",
+      "published": true,
+      "currentCatalogueHref": "../animations/02-kinematics-of-linear-motion/2.3-projectile-motion/index.html",
+      "targetCatalogueHref": "../simulations/sp015/02-kinematics-of-linear-motion/2.3-projectile-motion/index.html"
+    },
+    {
+      "semester": "sp015",
+      "currentFolder": "animations/05-circular-motion/5-uniform-circular-motion",
+      "targetFolder": "simulations/sp015/05-circular-motion/5-uniform-circular-motion",
+      "entrypoint": "index.html",
+      "published": true,
+      "currentCatalogueHref": "../animations/05-circular-motion/5-uniform-circular-motion/index.html",
+      "targetCatalogueHref": "../simulations/sp015/05-circular-motion/5-uniform-circular-motion/index.html"
+    },
+    {
+      "semester": "sp015",
+      "currentFolder": "animations/07-simple-harmonic-motion/7.1-kinematics-of-shm",
+      "targetFolder": "simulations/sp015/07-simple-harmonic-motion/7.1-kinematics-of-shm",
+      "entrypoint": "index.html",
+      "published": true,
+      "currentCatalogueHref": "../animations/07-simple-harmonic-motion/7.1-kinematics-of-shm/index.html",
+      "targetCatalogueHref": "../simulations/sp015/07-simple-harmonic-motion/7.1-kinematics-of-shm/index.html"
+    },
+    {
+      "semester": "sp015",
+      "currentFolder": "animations/07-simple-harmonic-motion/7.2-graphs-shm",
+      "targetFolder": "simulations/sp015/07-simple-harmonic-motion/7.2-graphs-shm",
+      "entrypoint": "index.html",
+      "published": true,
+      "currentCatalogueHref": "../animations/07-simple-harmonic-motion/7.2-graphs-shm/index.html",
+      "targetCatalogueHref": "../simulations/sp015/07-simple-harmonic-motion/7.2-graphs-shm/index.html"
+    },
+    {
+      "semester": "sp015",
+      "currentFolder": "animations/07-simple-harmonic-motion/7.4-progressive-wave-shm",
+      "targetFolder": "simulations/sp015/07-simple-harmonic-motion/7.4-progressive-wave-shm",
+      "entrypoint": "index.html",
+      "published": true,
+      "currentCatalogueHref": "../animations/07-simple-harmonic-motion/7.4-progressive-wave-shm/index.html",
+      "targetCatalogueHref": "../simulations/sp015/07-simple-harmonic-motion/7.4-progressive-wave-shm/index.html"
+    },
+    {
+      "semester": "sp015",
+      "currentFolder": "animations/07-simple-harmonic-motion/7.5-superposition-shm",
+      "targetFolder": "simulations/sp015/07-simple-harmonic-motion/7.5-superposition-shm",
+      "entrypoint": "index.html",
+      "published": true,
+      "currentCatalogueHref": "../animations/07-simple-harmonic-motion/7.5-superposition-shm/index.html",
+      "targetCatalogueHref": "../simulations/sp015/07-simple-harmonic-motion/7.5-superposition-shm/index.html"
+    },
+    {
+      "semester": "sp015",
+      "currentFolder": "animations/07-simple-harmonic-motion/7.6-application-of-standing-waves",
+      "targetFolder": "simulations/sp015/07-simple-harmonic-motion/7.6-application-of-standing-waves",
+      "entrypoint": "index.html",
+      "published": true,
+      "currentCatalogueHref": "../animations/07-simple-harmonic-motion/7.6-application-of-standing-waves/index.html",
+      "targetCatalogueHref": "../simulations/sp015/07-simple-harmonic-motion/7.6-application-of-standing-waves/index.html"
+    },
+    {
+      "semester": "sp015",
+      "currentFolder": "animations/07-simple-harmonic-motion/7.7-doppler-effect",
+      "targetFolder": "simulations/sp015/07-simple-harmonic-motion/7.7-doppler-effect",
+      "entrypoint": "index.html",
+      "published": true,
+      "currentCatalogueHref": "../animations/07-simple-harmonic-motion/7.7-doppler-effect/index.html",
+      "targetCatalogueHref": "../simulations/sp015/07-simple-harmonic-motion/7.7-doppler-effect/index.html"
+    },
+    {
+      "semester": "sp015",
+      "currentFolder": "animations/08-physics-of-matter/8.1-8.2-materials-testing",
+      "targetFolder": "simulations/sp015/08-physics-of-matter/8.1-8.2-materials-testing",
+      "entrypoint": "index.html",
+      "published": true,
+      "currentCatalogueHref": "../animations/08-physics-of-matter/8.1-8.2-materials-testing/index.html",
+      "targetCatalogueHref": "../simulations/sp015/08-physics-of-matter/8.1-8.2-materials-testing/index.html"
+    },
+    {
+      "semester": "sp015",
+      "currentFolder": "animations/08-physics-of-matter/8.3-heat-conduction",
+      "targetFolder": "simulations/sp015/08-physics-of-matter/8.3-heat-conduction",
+      "entrypoint": "index.html",
+      "published": true,
+      "currentCatalogueHref": "../animations/08-physics-of-matter/8.3-heat-conduction/index.html",
+      "targetCatalogueHref": "../simulations/sp015/08-physics-of-matter/8.3-heat-conduction/index.html"
+    },
+    {
+      "semester": "sp015",
+      "currentFolder": "animations/08-physics-of-matter/8.4-thermal-expansion",
+      "targetFolder": "simulations/sp015/08-physics-of-matter/8.4-thermal-expansion",
+      "entrypoint": "index.html",
+      "published": true,
+      "currentCatalogueHref": "../animations/08-physics-of-matter/8.4-thermal-expansion/index.html",
+      "targetCatalogueHref": "../simulations/sp015/08-physics-of-matter/8.4-thermal-expansion/index.html"
+    },
+    {
+      "semester": "sp015",
+      "currentFolder": "animations/09-kinetic-theory-and-thermodynamics/9.1-9.2-molecular-gas-lab",
+      "targetFolder": "simulations/sp015/09-kinetic-theory-and-thermodynamics/9.1-9.2-molecular-gas-lab",
+      "entrypoint": "index.html",
+      "published": true,
+      "currentCatalogueHref": "../animations/09-kinetic-theory-and-thermodynamics/9.1-9.2-molecular-gas-lab/index.html",
+      "targetCatalogueHref": "../simulations/sp015/09-kinetic-theory-and-thermodynamics/9.1-9.2-molecular-gas-lab/index.html"
+    },
+    {
+      "semester": "sp015",
+      "currentFolder": "animations/09-kinetic-theory-and-thermodynamics/9.3-9.5-thermodynamics-workbench",
+      "targetFolder": "simulations/sp015/09-kinetic-theory-and-thermodynamics/9.3-9.5-thermodynamics-workbench",
+      "entrypoint": "index.html",
+      "published": false,
+      "currentCatalogueHref": null,
+      "targetCatalogueHref": null
+    }
+  ],
+  "aliases": [
+    {
+      "currentPath": "animations/05-circular-motion/circular-motion.html",
+      "targetPath": "simulations/sp015/05-circular-motion/5-uniform-circular-motion/circular-motion.html",
+      "targetCanonicalPath": "simulations/sp015/05-circular-motion/5-uniform-circular-motion/index.html",
+      "plannedRedirectHref": "index.html"
+    },
+    {
+      "currentPath": "animations/07-simple-harmonic-motion/7.5-superposition-shm/wave-superposition.html",
+      "targetPath": "simulations/sp015/07-simple-harmonic-motion/7.5-superposition-shm/wave-superposition.html",
+      "targetCanonicalPath": "simulations/sp015/07-simple-harmonic-motion/7.5-superposition-shm/index.html",
+      "plannedRedirectHref": "index.html"
+    },
+    {
+      "currentPath": "animations/07-simple-harmonic-motion/7.6-application-of-standing-waves/standing-waves.html",
+      "targetPath": "simulations/sp015/07-simple-harmonic-motion/7.6-application-of-standing-waves/standing-waves.html",
+      "targetCanonicalPath": "simulations/sp015/07-simple-harmonic-motion/7.6-application-of-standing-waves/index.html",
+      "plannedRedirectHref": "index.html"
+    },
+    {
+      "currentPath": "animations/07-simple-harmonic-motion/7.7-doppler-effect/doppler-effect.html",
+      "targetPath": "simulations/sp015/07-simple-harmonic-motion/7.7-doppler-effect/doppler-effect.html",
+      "targetCanonicalPath": "simulations/sp015/07-simple-harmonic-motion/7.7-doppler-effect/index.html",
+      "plannedRedirectHref": "index.html"
+    },
+    {
+      "currentPath": "animations/08-physics-of-matters/8.1-8.2-materials-testing/index.html",
+      "targetPath": "simulations/sp015/08-physics-of-matter/8.1-8.2-materials-testing/materials-testing.html",
+      "targetCanonicalPath": "simulations/sp015/08-physics-of-matter/8.1-8.2-materials-testing/index.html",
+      "plannedRedirectHref": "index.html"
+    }
+  ]
+}

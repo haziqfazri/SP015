@@ -48,15 +48,15 @@ PASS/FAIL recommendation but the human confirms them.
   `--teal #35b9ad`, `--muted #617075` (+ `--accent #bf5a00`, `--path #b4beb2`
   additions). No new hex colors when one of these fits.
 - Fonts: DM Sans (display/labels), Space Mono (mono/readouts/formulas) via
-  `--display`/`--mono` CSS vars, loaded from Google Fonts.
+  `--display`/`--mono` CSS vars, loaded locally through `shared/fonts.css`.
 - Spacing rhythm: `.control-row` margin-bottom `21px`, `.stage`/`.controls`
   padding `28px`, `.button-grid` gap `9px`. Flag new ad hoc values.
 
 ## 4. KaTeX math notation
 
-- Every sim links KaTeX 0.18.2 in `<head>` (CSS + JS) with the canonical
-  `<link>`/`<script>` tags (SRI integrity attributes) copied verbatim from
-  `shared/sim-style.css`'s KaTeX comment block.
+- Every sim links local KaTeX 0.18.2 in `<head>` (CSS + JS), using the tags
+  in `templates/index.html` adjusted for current/target depth. Do not introduce
+  CDN dependencies; check versions and hashes against the vendor records.
 - Theory-strip equations: `<span class="formula" data-latex="...">…</span>`
   rendered in displayMode.
 - Inline notation: `<span class="katex-inline" data-latex="...">fallback</span>`.

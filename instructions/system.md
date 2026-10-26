@@ -3,7 +3,10 @@
 ## 1. What this repo is
 
 A growing library of standalone, interactive p5.js simulations teaching
-**Physics 1 (SP015)** at pre-university level (SP025 to follow). Built and
+**Physics 1 (SP015)** and **Physics 2 (SP025)** at pre-university level. Current
+simulation files remain under `animations/`; the approved target is
+`simulations/<sp015|sp025>/<chapter>/<combined-lo-folder>/`. The migration is in
+preparation, with no folder moves or semester tabs implemented yet. Built and
 maintained solo, with heavy use of AI coding assistants.
 
 **Audience:** SP015/SP025 students and their teachers, using each sim as a
@@ -31,6 +34,11 @@ Every simulation should:
 - Be honest about simplifications (e.g. "exact sine term, not small-angle,"
   "λ is derived, never a slider") via a code comment or on-screen note,
   rather than silently faking a relationship.
+
+The unified landing page will preserve its current design, default to SP015,
+and retain each semester's search and chapter/status state across tab switches.
+Keep Thermodynamics Workbench unpublished until its release criteria are met.
+The SP025 curriculum source must be verified before authoring SP025 content.
 
 The landing index should preserve those same standards at the discovery step:
 topic diagrams are recognition aids, card copy names the learning outcome, and
