@@ -1,0 +1,83 @@
+/* =========================================================================
+   THERMODYNAMICS.CSS — SP015 9.3 Energy Transfers mode.
+   Topic-only additions; shared shell and controls come from sim-style.css.
+   ========================================================================= */
+
+.canvas-shell.thermodynamics-canvas-shell {
+  height: 460px;
+}
+
+.thermodynamics-readouts .readout:last-child .readout-value {
+  font-size: 13px;
+}
+
+.scenario-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 9px;
+  margin-top: 9px;
+}
+
+.scenario-button {
+  min-height: 42px;
+}
+
+.scenario-button.is-active {
+  background: var(--ink);
+  color: var(--panel);
+  box-shadow: 3px 3px 0 var(--orange);
+}
+
+.scenario-button.is-active:hover {
+  box-shadow: 3px 3px 0 var(--orange);
+}
+
+.category-switch {
+  margin-top: 4px;
+}
+
+.process-switch {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 9px;
+}
+
+.process-switch .system-option {
+  min-height: 40px;
+}
+
+#process-definition {
+  min-height: 38px;
+  margin-top: 10px;
+}
+
+.validation-message {
+  margin: 0 0 18px;
+  padding: 10px 12px;
+  border-left: 3px solid var(--orange);
+  background: var(--paper);
+  color: var(--ink);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+@media (max-width: 800px) {
+  .canvas-shell.thermodynamics-canvas-shell {
+    height: 460px;
+  }
+}
+
+@media (max-width: 460px) {
+  .canvas-shell.thermodynamics-canvas-shell {
+    height: 520px;
+  }
+
+  .scenario-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .process-switch {
+    grid-template-columns: 1fr;
+  }
+}

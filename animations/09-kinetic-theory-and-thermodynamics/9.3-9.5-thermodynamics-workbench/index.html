@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="An interactive SP015 workbench for the First Law of Thermodynamics, signed heat, work, and internal energy.">
+  <title>Thermodynamics Workbench — Topics 9.3–9.5 | SP015</title>
+
+  <link rel="stylesheet" href="../../../shared/fonts.css">
+  <script src="../../../vendor/p5/p5.min.js"></script>
+  <link rel="stylesheet" href="../../../vendor/katex/katex.min.css">
+  <script src="../../../vendor/katex/katex.min.js"></script>
+  <link rel="stylesheet" href="../../../shared/sim-style.css">
+  <link rel="stylesheet" href="thermodynamics.css">
+</head>
+<body>
+  <div class="app-shell">
+    <div class="lab-frame">
+      <header class="topbar">
+        <div>
+          <p class="kicker">SP015 · Topics 9.3–9.5</p>
+          <h1>Thermodynamics Workbench</h1>
+        </div>
+        <div class="live-chip"><span class="pulse" aria-hidden="true"></span><span>Live Simulation</span></div>
+      </header>
+
+      <nav class="system-bar" aria-label="Thermodynamics teaching mode">
+        <span class="system-label">Investigate</span>
+        <div class="system-switch">
+          <button class="system-option is-active" data-thermodynamics-mode="energyTransfers" type="button" aria-pressed="true">Energy Transfers</button>
+          <button class="system-option" data-thermodynamics-mode="pvProcesses" type="button" aria-pressed="false">P–V Processes</button>
+        </div>
+      </nav>
+
+      <main class="sim-grid">
+        <section class="stage" aria-labelledby="stage-heading">
+          <div class="stage-top">
+            <h2 id="stage-heading">First Law of Thermodynamics</h2>
+          </div>
+
+          <div class="canvas-shell compare-tall thermodynamics-canvas-shell">
+            <div id="canvas-holder" role="img" aria-label="Thermodynamics diagram showing either signed energy transfers or a piston-cylinder with its P–V process graph"></div>
+          </div>
+          <p id="canvas-summary" class="visual-note" aria-live="polite">Heat and work are selected net transfers; no specific thermodynamic path is assumed.</p>
+
+          <section class="readouts readouts--dense thermodynamics-readouts" aria-label="First Law results">
+            <div class="readout"><span class="readout-label" data-readout-label>Applied heat, <span class="katex-inline" data-latex="Q">Q</span></span><output class="readout-value" data-readout-value>+0 J</output></div>
+            <div class="readout"><span class="readout-label" data-readout-label>Applied work, <span class="katex-inline" data-latex="W">W</span></span><output class="readout-value" data-readout-value>+0 J</output></div>
+            <div class="readout"><span class="readout-label" data-readout-label>Internal-energy change, <span class="katex-inline" data-latex="\Delta U">ΔU</span></span><output class="readout-value" data-readout-value>+0 J</output></div>
+            <div class="readout"><span class="readout-label" data-readout-label>Initial internal energy, <span class="katex-inline" data-latex="U_1">U₁</span></span><output class="readout-value" data-readout-value>6.23 kJ</output></div>
+            <div class="readout"><span class="readout-label" data-readout-label>Final internal energy, <span class="katex-inline" data-latex="U_2">U₂</span></span><output class="readout-value" data-readout-value>6.63 kJ</output></div>
+            <div class="readout"><span class="readout-label" data-readout-label>Initial temperature, <span class="katex-inline" data-latex="T_1">T₁</span></span><output class="readout-value" data-readout-value>300 K</output></div>
+            <div class="readout"><span class="readout-label" data-readout-label>Final temperature, <span class="katex-inline" data-latex="T_2">T₂</span></span><output class="readout-value" data-readout-value>319.3 K</output></div>
+            <div class="readout"><span class="readout-label" data-readout-label>Energy outcome</span><output class="readout-value" data-readout-value>No transfer applied yet</output></div>
+          </section>
+        </section>
+
+        <aside class="controls" aria-labelledby="controls-heading">
+          <h2 id="controls-heading" class="control-title">Energy controls</h2>
+
+          <section class="control-section" data-mode-panel="energyTransfers" aria-labelledby="transfer-heading">
+            <h3 id="transfer-heading" class="control-section-label">Net transfers</h3>
+            <div class="control-row">
+              <div class="control-meta"><label for="heat">Heat transferred, <span class="katex-inline" data-latex="Q">Q</span></label><output id="heat-value" class="control-value">+600 J</output></div>
+              <input id="heat" type="range" min="-1500" max="1500" step="50" value="600" aria-describedby="validation-message">
+              <p class="control-note">Positive enters the gas; negative leaves the gas.</p>
+            </div>
+            <div class="control-row">
+              <div class="control-meta"><label for="work">Work done by gas, <span class="katex-inline" data-latex="W">W</span></label><output id="work-value" class="control-value">+200 J</output></div>
+              <input id="work" type="range" min="-1500" max="1500" step="50" value="200" aria-describedby="validation-message">
+              <p class="control-note">Positive is done by the gas; negative is done on the gas.</p>
+            </div>
+          </section>
+
+          <section class="control-section" data-mode-panel="energyTransfers" aria-labelledby="scenario-heading">
+            <h3 id="scenario-heading" class="control-section-label">Try a sign pattern</h3>
+            <div class="scenario-grid" role="group" aria-label="Signed transfer pattern">
+              <button class="action scenario-button" data-scenario="heating" type="button" aria-pressed="false">Heating</button>
+              <button class="action scenario-button" data-scenario="expansion" type="button" aria-pressed="false">Expansion</button>
+              <button class="action scenario-button" data-scenario="compression" type="button" aria-pressed="false">Compression</button>
+              <button class="action scenario-button" data-scenario="cooling" type="button" aria-pressed="false">Cooling</button>
+            </div>
+            <p class="control-note">These presets demonstrate transfer signs; they do not select a thermodynamic path.</p>
+          </section>
+
+          <section class="control-section" data-mode-panel="energyTransfers" aria-labelledby="state-heading">
+            <h3 id="state-heading" class="control-section-label">Initial gas state</h3>
+            <div class="control-row">
+              <div class="control-meta"><label for="initial-temperature">Initial temperature, <span class="katex-inline" data-latex="T_1">T₁</span></label><output id="initial-temperature-value" class="control-value">300 K</output></div>
+              <input id="initial-temperature" type="range" min="200" max="600" step="10" value="300" aria-describedby="validation-message">
+            </div>
+            <div class="control-row">
+              <div class="control-meta"><label for="amount">Amount, <span class="katex-inline" data-latex="n">n</span></label><output id="amount-value" class="control-value">1.00 mol</output></div>
+              <input id="amount" type="range" min="0.5" max="2" step="0.05" value="1" aria-describedby="validation-message">
+            </div>
+            <div class="category-switch system-switch compact" aria-label="Molecular category">
+              <button class="system-option" data-category="monatomic" type="button" aria-pressed="false">Monatomic · f = 3</button>
+              <button class="system-option is-active" data-category="diatomic" type="button" aria-pressed="true">Diatomic · f = 5</button>
+              <button class="system-option" data-category="polyatomic" type="button" aria-pressed="false">Polyatomic · f = 6</button>
+            </div>
+          </section>
+
+          <section class="control-section" data-mode-panel="pvProcesses" hidden aria-labelledby="process-heading">
+            <h3 id="process-heading" class="control-section-label">Thermodynamic process</h3>
+            <div class="process-switch system-switch compact" aria-label="P–V process type">
+              <button class="system-option is-active" data-process="isothermal" type="button" aria-pressed="true">Isothermal</button>
+              <button class="system-option" data-process="isobaric" type="button" aria-pressed="false">Isobaric</button>
+              <button class="system-option" data-process="isochoric" type="button" aria-pressed="false">Isochoric</button>
+              <button class="system-option" data-process="adiabatic" type="button" aria-pressed="false">Adiabatic</button>
+            </div>
+            <p id="process-definition" class="control-note">Temperature remains constant; the path follows <span class="katex-inline" data-latex="PV=\mathrm{constant}">PV = constant</span>.</p>
+          </section>
+
+          <section class="control-section" data-mode-panel="pvProcesses" hidden aria-labelledby="process-state-heading">
+            <h3 id="process-state-heading" class="control-section-label">Initial gas state</h3>
+            <div class="control-row">
+              <div class="control-meta"><label for="process-amount">Amount, <span class="katex-inline" data-latex="n">n</span></label><output id="process-amount-value" class="control-value">1.00 mol</output></div>
+              <input id="process-amount" type="range" min="0.5" max="2" step="0.05" value="1" aria-describedby="validation-message">
+            </div>
+            <div class="control-row">
+              <div class="control-meta"><label for="initial-pressure">Initial pressure, <span class="katex-inline" data-latex="P_1">P₁</span></label><output id="initial-pressure-value" class="control-value">100 kPa</output></div>
+              <input id="initial-pressure" type="range" min="50" max="300" step="10" value="100" aria-describedby="validation-message">
+            </div>
+            <div class="control-row">
+              <div class="control-meta"><label for="initial-volume">Initial volume, <span class="katex-inline" data-latex="V_1">V₁</span></label><output id="initial-volume-value" class="control-value">10.0 L</output></div>
+              <input id="initial-volume" type="range" min="5" max="30" step="0.5" value="10" aria-describedby="validation-message">
+            </div>
+          </section>
+
+          <section class="control-section" data-mode-panel="pvProcesses" hidden aria-labelledby="target-heading">
+            <h3 id="target-heading" class="control-section-label">Path target</h3>
+            <div id="target-volume-row" class="control-row">
+              <div class="control-meta"><label for="target-volume">Final volume, <span class="katex-inline" data-latex="V_2">V₂</span></label><output id="target-volume-value" class="control-value">20.0 L</output></div>
+              <input id="target-volume" type="range" min="5" max="30" step="0.5" value="20" aria-describedby="validation-message">
+            </div>
+            <div id="target-pressure-row" class="control-row" hidden>
+              <div class="control-meta"><label for="target-pressure">Final pressure, <span class="katex-inline" data-latex="P_2">P₂</span></label><output id="target-pressure-value" class="control-value">150 kPa</output></div>
+              <input id="target-pressure" type="range" min="50" max="300" step="10" value="150" aria-describedby="validation-message">
+            </div>
+            <div id="adiabatic-category-row" class="category-switch system-switch compact" aria-label="Adiabatic molecular category" hidden>
+              <button class="system-option" data-process-category="monatomic" type="button" aria-pressed="false">Monatomic · γ = 5/3</button>
+              <button class="system-option is-active" data-process-category="diatomic" type="button" aria-pressed="true">Diatomic · γ = 7/5</button>
+              <button class="system-option" data-process-category="polyatomic" type="button" aria-pressed="false">Polyatomic · γ = 4/3</button>
+            </div>
+          </section>
+
+          <p id="validation-message" class="validation-message" role="alert" hidden></p>
+
+          <div class="button-grid">
+            <button id="play-button" class="action primary" type="button">▶ Play</button>
+            <button id="reset-button" class="action" type="button">Reset</button>
+            <button id="step-button" class="action col-span-2" type="button">Step transfer</button>
+          </div>
+        </aside>
+      </main>
+
+      <footer class="theory-strip">
+        <section class="theory-card" data-theory-mode="energyTransfers">
+          <h2>Learning outcome — 9.3</h2>
+          <p>State and apply the First Law of Thermodynamics to account for heat transferred to a gas and work done by the gas.</p>
+          <span class="formula" data-latex="\Delta U=Q-W" aria-label="delta U equals Q minus W">ΔU = Q − W</span>
+        </section>
+        <section class="theory-card" data-theory-mode="energyTransfers">
+          <h2>Sign convention</h2>
+          <p><strong>Q &gt; 0</strong> means heat enters the gas. <strong>W &gt; 0</strong> means work is done by the gas on the surroundings.</p>
+          <p>The ledger connects two states without claiming an isothermal, isobaric, isochoric, or adiabatic path.</p>
+        </section>
+        <section class="theory-card" data-theory-mode="pvProcesses" hidden>
+          <h2>Learning outcomes — 9.4 and 9.5</h2>
+          <p>Define isothermal, isobaric, isochoric, and adiabatic processes, analyse their P–V graphs, and derive work from the P–V graph.</p>
+          <span class="formula" data-latex="W=\int P\,dV" aria-label="W equals the integral of P dV">W = ∫ P dV</span>
+        </section>
+        <section class="theory-card" data-theory-mode="pvProcesses" hidden>
+          <h2>Path and signed work</h2>
+          <p>Expansion gives positive work done by the gas; compression gives negative work. The shaded area is assessed for isothermal, isobaric, and isochoric paths only.</p>
+          <p>For an ideal adiabatic comparison, <span class="katex-inline" data-latex="PV^\gamma=\mathrm{constant}">PVᵞ = constant</span> and <span class="katex-inline" data-latex="Q=0">Q = 0</span>.</p>
+        </section>
+      </footer>
+    </div>
+  </div>
+
+  <script src="../../../shared/sim-utils.js"></script>
+  <script src="../../../shared/offline-runtime.js"></script>
+  <script src="thermodynamics-physics.js"></script>
+  <script src="thermodynamics-renderer.js"></script>
+  <script src="thermodynamics-ui.js"></script>
+  <script src="thermodynamics-controller.js"></script>
+  <script src="thermodynamics-sketch.js"></script>
+</body>
+</html>
