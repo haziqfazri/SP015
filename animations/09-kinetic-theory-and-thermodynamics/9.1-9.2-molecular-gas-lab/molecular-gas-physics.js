@@ -59,6 +59,9 @@ const DISPLAY = Object.freeze({
   visualSpeedMax: 0.62,
   labelSize: 10,
   compactLabelSize: 9,
+  rotationAngularSpeeds: Object.freeze({ r1: 0.85, r2: 0.63, r3: 0.51 }),
+  rotationGuideRadius: 0.58,
+  rotationGuideSamples: 72,
 });
 
 function assertFiniteInRange(name, value, config) {

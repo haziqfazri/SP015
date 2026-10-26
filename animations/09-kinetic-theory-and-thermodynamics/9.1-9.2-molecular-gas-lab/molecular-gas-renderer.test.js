@@ -20,6 +20,8 @@ const {
   computeEnergyMotion,
   rotatePoint3D,
   moleculeGeometryForCategory,
+  rotationGuidePoint3D,
+  computeRotationGuide,
 } = context.module.exports;
 
 function assertInside(box, width, height) {
@@ -60,6 +62,12 @@ function assertInside(box, width, height) {
   assert.ok(perspective.back.width < perspective.front.width);
   assert.ok(perspective.back.height < perspective.front.height);
   assert.ok(perspective.back.y < perspective.front.y);
+  perspective.frontCorners.forEach((frontCorner, index) => {
+    const backCorner = perspective.backCorners[index];
+    const toBack = { x: backCorner.x - frontCorner.x, y: backCorner.y - frontCorner.y };
+    const toVanishing = { x: perspective.vanishingPoint.x - frontCorner.x, y: perspective.vanishingPoint.y - frontCorner.y };
+    assert.ok(Math.abs(toBack.x * toVanishing.y - toBack.y * toVanishing.x) < 1e-9);
+  });
   [-0.9, 0, 0.9].forEach((x) => {
     [-0.9, 0, 0.9].forEach((y) => {
       [-1, 0, 1].forEach((z) => {
@@ -122,5 +130,65 @@ assert.notEqual(allDiatomic.position.z, 0);
 assert.notEqual(allDiatomic.rotations.r1, 0);
 assert.notEqual(allDiatomic.rotations.r2, 0);
 assert.equal(allDiatomic.rotations.r3, 0);
+
+['r1', 'r2', 'r3'].forEach((rotationKey) => {
+  const focus = `rotate-${rotationKey}`;
+  const snapshotForTime = (animationTime) => computeEnergyMotion({
+    animationTime,
+    degreeFocus: focus,
+    category: 'polyatomic',
+    supportedDegreeFocuses: physics.degreeFocusesForCategory('polyatomic'),
+  });
+  const start = snapshotForTime(0);
+  const first = snapshotForTime(0.5);
+  const second = snapshotForTime(1);
+  assert.equal(start.rotations[rotationKey], 0, `${rotationKey} starts from the reference pose`);
+  assert.ok(first.rotations[rotationKey] > 0);
+  assert.ok(second.rotations[rotationKey] > first.rotations[rotationKey], `${rotationKey} advances monotonically`);
+  ['r1', 'r2', 'r3'].filter((key) => key !== rotationKey)
+    .forEach((key) => assert.equal(second.rotations[key], 0));
+
+  const period = Math.PI * 2 / DISPLAY.rotationAngularSpeeds[rotationKey];
+  const afterPeriod = snapshotForTime(period);
+  moleculeGeometryForCategory('polyatomic').atoms.forEach((atom) => {
+    const rotated = rotatePoint3D(atom, afterPeriod.rotations);
+    assert.ok(Math.hypot(rotated.x - atom.x, rotated.y - atom.y, rotated.z - atom.z) < 1e-12);
+  });
+});
+
+assert.equal(physics.isDegreeFocusSupported('diatomic', 'rotate-r3'), false);
+
+const guideCenter = Object.freeze({ x: 0.08, y: -0.12, z: 0.18 });
+const guidePanel = computeEnergyPanel(900, 460);
+const guideChamber = computePerspectiveChamber(guidePanel);
+const projectedCenter = projectEnergyPoint(guideChamber, guideCenter);
+[
+  ['rotate-r1', 'y'],
+  ['rotate-r2', 'z'],
+  ['rotate-r3', 'x'],
+].forEach(([focus, fixedAxis]) => {
+  const point = rotationGuidePoint3D(focus, guideCenter, 0.73);
+  assert.ok(Math.abs(point[fixedAxis] - guideCenter[fixedAxis]) < 1e-12, `${focus} ring is perpendicular to ${fixedAxis}`);
+  assert.ok(Math.abs(Math.hypot(
+    point.x - guideCenter.x,
+    point.y - guideCenter.y,
+    point.z - guideCenter.z,
+  ) - DISPLAY.rotationGuideRadius) < 1e-12);
+
+  const guide = computeRotationGuide(guideChamber, focus, guideCenter);
+  assert.equal(guide.points.length, DISPLAY.rotationGuideSamples + 1);
+  assert.ok(guide.segments.some((segment) => segment.layer === 'back'));
+  assert.ok(guide.segments.some((segment) => segment.layer === 'front'));
+  assert.ok(guide.arrowSegment);
+  assert.ok(Math.abs(guide.center.x - projectedCenter.x) < 1e-12);
+  assert.ok(Math.abs(guide.center.y - projectedCenter.y) < 1e-12);
+  guide.points.forEach(({ projected }) => {
+    assert.ok(Number.isFinite(projected.x) && Number.isFinite(projected.y));
+    assert.ok(projected.x >= guideChamber.front.x && projected.x <= guideChamber.front.x + guideChamber.front.width);
+    assert.ok(projected.y >= guideChamber.front.y && projected.y <= guideChamber.front.y + guideChamber.front.height);
+  });
+});
+assert.equal(computeRotationGuide(guideChamber, 'all', guideCenter), null);
+assert.throws(() => rotationGuidePoint3D('all', guideCenter, 0), /Unsupported rotation focus/);
 
 console.log('molecular-gas renderer tests passed');

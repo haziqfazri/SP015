@@ -271,11 +271,15 @@ function drawEnergyMode(ctx, snapshot, panel) {
   });
 
   const chamber = computePerspectiveChamber(panel);
+  const motion = computeEnergyMotion(snapshot);
+  const rotationGuide = computeRotationGuide(chamber, snapshot.degreeFocus, motion.position);
   drawPerspectiveChamberBack(ctx, chamber);
-  const molecule = drawMoleculeInChamber(ctx, snapshot, chamber);
+  drawRotationGuideLayer(ctx, rotationGuide, 'back');
+  drawMoleculeInChamber(ctx, snapshot, chamber, motion);
+  drawRotationGuideLayer(ctx, rotationGuide, 'front');
   drawPerspectiveChamberFront(ctx, chamber);
   drawEnergyAxes(ctx, snapshot.degreeFocus, chamber);
-  drawRotationFocus(ctx, snapshot, molecule, chamber);
+  drawRotationGuideAnnotation(ctx, rotationGuide, chamber);
 
   drawLabel(ctx, 'SCHEMATIC 2D PROJECTION OF 3D MOTION', panel.x + panel.width / 2, panel.y + panel.height - 13, {
     fill: PALETTE.mutedRGB,
@@ -289,39 +293,59 @@ function computePerspectiveChamber(panel) {
   const sideMargin = compact ? 14 : 24;
   const header = compact ? 58 : 64;
   const footer = compact ? 27 : 32;
-  const depthX = Math.min(compact ? 32 : 54, panel.width * 0.11);
-  const depthY = Math.min(compact ? 28 : 44, panel.height * 0.13);
   const front = Object.freeze({
     x: panel.x + sideMargin,
-    y: panel.y + header + depthY,
-    width: panel.width - 2 * sideMargin - depthX,
-    height: panel.height - header - footer - depthY,
+    y: panel.y + header + (compact ? 28 : 36),
+    width: panel.width - 2 * sideMargin - (compact ? 32 : 54),
+    height: panel.height - header - footer - (compact ? 28 : 44),
   });
-  const backScale = compact ? 0.84 : 0.82;
-  const backWidth = front.width * backScale;
-  const backHeight = front.height * backScale;
-  const frontCenterX = front.x + front.width / 2;
-  const frontCenterY = front.y + front.height / 2;
+
+  const frontCorners = Object.freeze([
+    Object.freeze({ x: front.x, y: front.y }),
+    Object.freeze({ x: front.x + front.width, y: front.y }),
+    Object.freeze({ x: front.x + front.width, y: front.y + front.height }),
+    Object.freeze({ x: front.x, y: front.y + front.height }),
+  ]);
+
+  // All depth edges converge toward one point, preventing the chamber from
+  // looking skewed when the back face is smaller than the front face.
+  const vanishingPoint = Object.freeze({
+    x: front.x + front.width * (compact ? 0.72 : 0.78),
+    y: front.y - front.height * (compact ? 0.55 : 0.62),
+  });
+  const depthFraction = compact ? 0.17 : 0.19;
+  const backCorners = Object.freeze(frontCorners.map((corner) => Object.freeze({
+    x: corner.x + (vanishingPoint.x - corner.x) * depthFraction,
+    y: corner.y + (vanishingPoint.y - corner.y) * depthFraction,
+  })));
+  const backX = Math.min(...backCorners.map((corner) => corner.x));
+  const backY = Math.min(...backCorners.map((corner) => corner.y));
+  const backRight = Math.max(...backCorners.map((corner) => corner.x));
+  const backBottom = Math.max(...backCorners.map((corner) => corner.y));
   const back = Object.freeze({
-    x: frontCenterX + depthX - backWidth / 2,
-    y: frontCenterY - depthY - backHeight / 2,
-    width: backWidth,
-    height: backHeight,
+    x: backX,
+    y: backY,
+    width: backRight - backX,
+    height: backBottom - backY,
   });
-  return Object.freeze({ front, back, depthX, depthY });
+  return Object.freeze({ front, back, frontCorners, backCorners, vanishingPoint });
 }
 
 function projectEnergyPoint(chamber, point) {
   const depth = Math.max(0, Math.min(1, (point.z + 1) / 2));
-  const centerX = chamber.front.x + chamber.front.width / 2
-    + (chamber.back.x + chamber.back.width / 2 - (chamber.front.x + chamber.front.width / 2)) * depth;
-  const centerY = chamber.front.y + chamber.front.height / 2
-    + (chamber.back.y + chamber.back.height / 2 - (chamber.front.y + chamber.front.height / 2)) * depth;
-  const width = chamber.front.width + (chamber.back.width - chamber.front.width) * depth;
-  const height = chamber.front.height + (chamber.back.height - chamber.front.height) * depth;
+  const faceCorners = chamber.frontCorners.map((frontCorner, index) => ({
+    x: frontCorner.x + (chamber.backCorners[index].x - frontCorner.x) * depth,
+    y: frontCorner.y + (chamber.backCorners[index].y - frontCorner.y) * depth,
+  }));
+  const u = 0.5 + point.x * 0.36;
+  const v = 0.5 - point.y * 0.34;
+  const topX = faceCorners[0].x + (faceCorners[1].x - faceCorners[0].x) * u;
+  const topY = faceCorners[0].y + (faceCorners[1].y - faceCorners[0].y) * u;
+  const bottomX = faceCorners[3].x + (faceCorners[2].x - faceCorners[3].x) * u;
+  const bottomY = faceCorners[3].y + (faceCorners[2].y - faceCorners[3].y) * u;
   return Object.freeze({
-    x: centerX + point.x * width * 0.36,
-    y: centerY - point.y * height * 0.34,
+    x: topX + (bottomX - topX) * v,
+    y: topY + (bottomY - topY) * v,
     scale: 1 - depth * 0.22,
     alpha: 255 - depth * 80,
     depth,
@@ -339,9 +363,13 @@ function computeEnergyMotion(snapshot) {
     z: all ? 0.52 * Math.sin(t * 0.83 + 1.2) : focus === 'translate-z' ? 0.68 * Math.sin(t * 0.83) : 0,
   };
   const rotations = {
-    r1: (all && supported.includes('rotate-r1')) || focus === 'rotate-r1' ? t * 0.85 : 0,
-    r2: (all && supported.includes('rotate-r2')) || focus === 'rotate-r2' ? t * 0.63 : 0,
-    r3: (all && supported.includes('rotate-r3')) || focus === 'rotate-r3' ? t * 0.51 : 0,
+    // Constant angular phase shows rotation; a sine here would depict torsional oscillation.
+    r1: ((all && supported.includes('rotate-r1')) || focus === 'rotate-r1')
+      ? t * DISPLAY.rotationAngularSpeeds.r1 : 0,
+    r2: ((all && supported.includes('rotate-r2')) || focus === 'rotate-r2')
+      ? t * DISPLAY.rotationAngularSpeeds.r2 : 0,
+    r3: ((all && supported.includes('rotate-r3')) || focus === 'rotate-r3')
+      ? t * DISPLAY.rotationAngularSpeeds.r3 : 0,
   };
   return Object.freeze({ position: Object.freeze(position), rotations: Object.freeze(rotations) });
 }
@@ -392,16 +420,20 @@ function moleculeGeometryForCategory(category) {
 }
 
 function drawPerspectiveChamberBack(ctx, chamber) {
-  const { front, back } = chamber;
+  const { frontCorners, backCorners } = chamber;
   ctx.push();
   ctx.fill(PALETTE.paper);
   ctx.stroke(PALETTE.line);
   ctx.strokeWeight(1);
-  ctx.rect(back.x, back.y, back.width, back.height);
-  ctx.line(front.x, front.y, back.x, back.y);
-  ctx.line(front.x + front.width, front.y, back.x + back.width, back.y);
-  ctx.line(front.x, front.y + front.height, back.x, back.y + back.height);
-  ctx.line(front.x + front.width, front.y + front.height, back.x + back.width, back.y + back.height);
+  ctx.quad(
+    backCorners[0].x, backCorners[0].y,
+    backCorners[1].x, backCorners[1].y,
+    backCorners[2].x, backCorners[2].y,
+    backCorners[3].x, backCorners[3].y,
+  );
+  frontCorners.forEach((frontCorner, index) => {
+    ctx.line(frontCorner.x, frontCorner.y, backCorners[index].x, backCorners[index].y);
+  });
   ctx.pop();
 }
 
@@ -414,9 +446,8 @@ function drawPerspectiveChamberFront(ctx, chamber) {
   ctx.pop();
 }
 
-function drawMoleculeInChamber(ctx, snapshot, chamber) {
+function drawMoleculeInChamber(ctx, snapshot, chamber, motion = computeEnergyMotion(snapshot)) {
   const geometry = moleculeGeometryForCategory(snapshot.category);
-  const motion = computeEnergyMotion(snapshot);
   const atomScale = 0.57;
   const atoms = geometry.atoms.map((atom, index) => {
     const rotated = rotatePoint3D(atom, motion.rotations);
@@ -438,7 +469,10 @@ function drawMoleculeInChamber(ctx, snapshot, chamber) {
     ctx.pop();
   });
 
-  atoms.slice().sort((a, b) => b.world.z - a.world.z).forEach((atom) => {
+  atoms.slice().sort((a, b) => {
+    const depthDifference = b.world.z - a.world.z;
+    return Math.abs(depthDifference) < 1e-9 ? a.index - b.index : depthDifference;
+  }).forEach((atom) => {
     const radius = baseRadius * atom.radius * atom.projected.scale;
     ctx.push();
     ctx.drawingContext.globalAlpha = atom.projected.alpha / 255;
@@ -493,27 +527,109 @@ function drawEnergyAxes(ctx, focus, chamber) {
   });
 }
 
-function drawRotationFocus(ctx, snapshot, molecule, chamber) {
-  if (!snapshot.degreeFocus.startsWith('rotate-')) return;
-  const center = projectEnergyPoint(chamber, molecule.motion.position);
-  const radius = Math.min(chamber.front.width, chamber.front.height) * 0.18;
-  const start = -Math.PI * 0.9;
-  const end = Math.PI * 0.55;
+const ROTATION_GUIDE_CONFIG = Object.freeze({
+  'rotate-r1': Object.freeze({ axis: 'y', label: 'R₁ · about y' }),
+  'rotate-r2': Object.freeze({ axis: 'z', label: 'R₂ · about z' }),
+  'rotate-r3': Object.freeze({ axis: 'x', label: 'R₃ · about x' }),
+});
+
+function rotationGuidePoint3D(focus, center, angle, radius = DISPLAY.rotationGuideRadius) {
+  const cosine = Math.cos(angle) * radius;
+  const sine = Math.sin(angle) * radius;
+  if (focus === 'rotate-r1') return Object.freeze({ x: center.x + cosine, y: center.y, z: center.z + sine });
+  if (focus === 'rotate-r2') return Object.freeze({ x: center.x + cosine, y: center.y + sine, z: center.z });
+  if (focus === 'rotate-r3') return Object.freeze({ x: center.x, y: center.y + cosine, z: center.z + sine });
+  throw new RangeError('Unsupported rotation focus');
+}
+
+function computeRotationGuide(chamber, focus, center) {
+  const config = ROTATION_GUIDE_CONFIG[focus];
+  if (!config) return null;
+  const points = Array.from({ length: DISPLAY.rotationGuideSamples + 1 }, (_, index) => {
+    const angle = index / DISPLAY.rotationGuideSamples * Math.PI * 2;
+    const world = rotationGuidePoint3D(focus, center, angle);
+    return Object.freeze({ angle, world, projected: projectEnergyPoint(chamber, world) });
+  });
+  const segments = points.slice(0, -1).map((point, index) => {
+    const next = points[index + 1];
+    const depthOffset = (point.world.z + next.world.z) / 2 - center.z;
+    const middleAngle = (point.angle + next.angle) / 2;
+    const layer = Math.abs(depthOffset) < 1e-9
+      ? (Math.sin(middleAngle) >= 0 ? 'back' : 'front')
+      : (depthOffset > 0 ? 'back' : 'front');
+    return Object.freeze({ start: point.projected, end: next.projected, layer });
+  });
+  const projectedPoints = points.map((point) => point.projected);
+  const bounds = Object.freeze({
+    minX: Math.min(...projectedPoints.map((point) => point.x)),
+    maxX: Math.max(...projectedPoints.map((point) => point.x)),
+    minY: Math.min(...projectedPoints.map((point) => point.y)),
+    maxY: Math.max(...projectedPoints.map((point) => point.y)),
+  });
+  const frontSegments = segments.filter((segment) => segment.layer === 'front');
+  const arrowSegment = frontSegments.reduce(
+    (selected, segment) => (!selected || segment.end.x > selected.end.x ? segment : selected),
+    null,
+  );
+  return Object.freeze({
+    focus,
+    config,
+    center: projectEnergyPoint(chamber, center),
+    points: Object.freeze(points),
+    segments: Object.freeze(segments),
+    bounds,
+    arrowSegment,
+  });
+}
+
+function drawRotationGuideLayer(ctx, guide, layer) {
+  if (!guide) return;
   ctx.push();
   ctx.noFill();
   ctx.stroke(PALETTE.orange);
-  ctx.strokeWeight(2);
-  ctx.arc(center.x, center.y, radius * 2, radius * 1.25, start, end);
+  ctx.strokeWeight(layer === 'front' ? 2 : 1.25);
+  ctx.drawingContext.globalAlpha = layer === 'front' ? 0.95 : 0.28;
+  guide.segments.filter((segment) => segment.layer === layer).forEach((segment) => {
+    ctx.line(segment.start.x, segment.start.y, segment.end.x, segment.end.y);
+  });
   ctx.pop();
-  const endX = center.x + Math.cos(end) * radius;
-  const endY = center.y + Math.sin(end) * radius * 0.625;
-  drawArrowCtx(ctx, endX - 10, endY - 3, endX, endY, PALETTE.orange, 2, 6);
-  const label = snapshot.degreeFocus === 'rotate-r1' ? 'R₁' : snapshot.degreeFocus === 'rotate-r2' ? 'R₂' : 'R₃';
-  drawLabel(ctx, `${label} SELECTED`, center.x + radius + 10, center.y - radius * 0.6, {
+}
+
+function drawRotationGuideAnnotation(ctx, guide, chamber) {
+  if (!guide) return;
+  const arrow = guide.arrowSegment;
+  if (arrow) {
+    const dx = arrow.end.x - arrow.start.x;
+    const dy = arrow.end.y - arrow.start.y;
+    const length = Math.hypot(dx, dy) || 1;
+    drawArrowCtx(
+      ctx,
+      arrow.end.x - dx / length * 12,
+      arrow.end.y - dy / length * 12,
+      arrow.end.x,
+      arrow.end.y,
+      PALETTE.orange,
+      2,
+      6,
+    );
+  }
+  const fontSize = chamber.front.width < 300 ? 7 : 9;
+  const label = `${guide.config.label} SELECTED`;
+  const estimatedWidth = label.length * fontSize * 0.62;
+  const labelClearance = Math.min(chamber.front.width, chamber.front.height) * 0.10 + fontSize;
+  const labelX = Math.min(
+    chamber.front.x + chamber.front.width - estimatedWidth / 2 - 6,
+    Math.max(chamber.front.x + estimatedWidth / 2 + 6, (guide.bounds.minX + guide.bounds.maxX) / 2),
+  );
+  const labelY = Math.min(
+    chamber.front.y + chamber.front.height - 8,
+    Math.max(chamber.front.y + fontSize + 6, guide.bounds.minY - labelClearance),
+  );
+  drawLabel(ctx, label, labelX, labelY, {
     fill: PALETTE.orangeRGB,
-    size: chamber.front.width < 300 ? 7 : 9,
+    size: fontSize,
     weight: 'BOLD',
-    align: ['LEFT', 'CENTER'],
+    align: ['CENTER', 'BOTTOM'],
   });
 }
 
@@ -528,5 +644,7 @@ if (typeof module !== 'undefined' && module.exports) {
     computeEnergyMotion,
     rotatePoint3D,
     moleculeGeometryForCategory,
+    rotationGuidePoint3D,
+    computeRotationGuide,
   };
 }

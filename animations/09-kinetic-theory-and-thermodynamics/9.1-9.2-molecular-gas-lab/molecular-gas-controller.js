@@ -63,6 +63,7 @@ class SimulationController {
 
   _onModeChange(mode) {
     if (!MOLECULAR_GAS_MODES.includes(mode)) throw new RangeError('Unknown molecular-gas mode');
+    if (mode === 'energy' && this.mode !== 'energy') this.animationTime = 0;
     this.mode = mode;
     this.ui.setMode(mode);
     this._refreshUI();
@@ -95,6 +96,7 @@ class SimulationController {
     if (!config) throw new RangeError('Unknown molecule category');
     this.state.setDegreesOfFreedom(config.degreesOfFreedom);
     if (!isDegreeFocusSupported(category, this.degreeFocus)) this.degreeFocus = 'all';
+    this.animationTime = 0;
     this.ui.setCategory(category);
     this.ui.setDegreeAvailability(category);
     this.ui.setDegreeFocus(this.degreeFocus);
@@ -107,6 +109,7 @@ class SimulationController {
       throw new RangeError(`${DEGREE_FOCUS_OPTIONS[focus].label} is unavailable for ${this.state.category}`);
     }
     this.degreeFocus = focus;
+    this.animationTime = 0;
     this.ui.setDegreeFocus(focus);
     this._refreshSummary();
     this._requestRedrawIfPaused();
@@ -156,7 +159,6 @@ class SimulationController {
   }
 
   _advanceVisual(dt) {
-    this.animationTime += dt;
     this.collisionFlashes = this.collisionFlashes
       .map((flash) => ({ ...flash, age: flash.age + dt }))
       .filter((flash) => flash.age < LIMITS.collisionFlashes.lifetimeSeconds);
@@ -166,6 +168,8 @@ class SimulationController {
       if (this.collisionFlashes.length > LIMITS.collisionFlashes.max) {
         this.collisionFlashes.splice(0, this.collisionFlashes.length - LIMITS.collisionFlashes.max);
       }
+    } else {
+      this.animationTime += dt;
     }
   }
 

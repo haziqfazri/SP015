@@ -4,27 +4,26 @@
 
 **Created:** 2026-09-07
 
-**Last reviewed:** 2026-09-07
+**Last reviewed:** 2026-09-13
 
 **Curriculum source:** `Curriculum Specifications (CS) Physics SP015.pdf`, Topic 9 (effective from the 2022/2023 session)
 
 ## 1. Summary
 
-Implement three standalone simulations under `animations/09-kinetic-theory-and-thermodynamics/`:
+Implement two standalone simulations under `animations/09-kinetic-theory-and-thermodynamics/`:
 
 1. **Molecular Gas Laboratory** — SP015 9.1 and 9.2
-2. **First Law Energy Ledger** — SP015 9.3
-3. **Thermodynamic Process Workbench** — SP015 9.4 and 9.5
+2. **Thermodynamics Workbench** — SP015 9.3, 9.4, and 9.5, presented through two related main modes
 
-The three-simulation split is deliberate. Topics 9.1 and 9.2 use the same ideal-gas state and are strongest when molecular motion, rms speed, equipartition, and internal energy can be compared in one laboratory. Topic 9.3 needs a focused sign-convention and energy-accounting tool. Topics 9.4 and 9.5 belong together because process definitions, P–V paths, and work as area under a curve are inseparable.
+The two-simulation split is deliberate. Topics 9.1 and 9.2 use the same ideal-gas state and are strongest when molecular motion, rms speed, equipartition, and internal energy can be compared in one laboratory. Topics 9.3–9.5 share the thermodynamic sign convention, ideal-gas state variables, playback model, and work vocabulary, so they belong in one Thermodynamics Workbench. Its two main modes remain separate implementation phases so the path-independent First Law ledger is not conflated with path-dependent P–V work.
 
-Build in curriculum order. The Molecular Gas Laboratory establishes the chapter's gas-state notation and 3D-model caveats. The First Law Energy Ledger then establishes the repository-wide thermodynamic sign convention before the Process Workbench applies that convention to expansion and compression paths.
+Build in curriculum order. The Molecular Gas Laboratory establishes the chapter's gas-state notation and 3D-model caveats. Phase 2 builds the Workbench's Energy Transfers mode and establishes the thermodynamic sign convention. Phase 3 then adds the P–V Processes mode and applies that convention to expansion and compression paths.
 
 | Simulation | Primary teaching question | Provisional architecture |
 | --- | --- | --- |
 | Molecular Gas Laboratory | How do temperature, molecular mass, and degrees of freedom determine molecular speed and gas energy? | Level 3, one global-mode canvas |
-| First Law Energy Ledger | How do signed heat and work transfers change a gas's internal energy? | Level 2, one global-mode canvas |
-| Thermodynamic Process Workbench | How do constraints shape P–V paths and determine work done by a gas? | Level 3, one global-mode canvas |
+| Thermodynamics Workbench — Energy Transfers mode | How do signed heat and work transfers change a gas's internal energy? | Level 3 page, one global-mode canvas |
+| Thermodynamics Workbench — P–V Processes mode | How do constraints shape P–V paths and determine work done by a gas? | Same Level 3 page and canvas, with four process submodes |
 
 Recheck each architecture decision when implementation begins. Reduce the split if a proposed class or file would contain only boilerplate. None of the simulations needs synchronized independent canvases, so instance mode is not planned.
 
@@ -35,8 +34,8 @@ Recheck each architecture decision when implementation begins. Reduce the split 
 | Simulation | Learning outcomes covered |
 | --- | --- |
 | Molecular Gas Laboratory | 9.1(a–d): assumptions of kinetic theory, rms speed, `v_rms = sqrt(<v²>)`, `v_rms = sqrt(3kT/m) = sqrt(3RT/M)`, `PV = (1/3)Nmv_rms²`, and `P = (1/3)rho v_rms²`; 9.2(a–f): translational kinetic energy, degrees of freedom, equipartition, and `U = (f/2)NkT` |
-| First Law Energy Ledger | 9.3(a–b): `Delta U = Q - W` and quantitative energy accounting |
-| Thermodynamic Process Workbench | 9.4(a–b): isothermal, isochoric, isobaric, and adiabatic processes and their P–V graphs; 9.5(a–b): work derived from P–V area for isothermal, isobaric, and isochoric processes |
+| Thermodynamics Workbench — Energy Transfers mode | 9.3(a–b): `Delta U = Q - W` and quantitative energy accounting |
+| Thermodynamics Workbench — P–V Processes mode | 9.4(a–b): isothermal, isochoric, isobaric, and adiabatic processes and their P–V graphs; 9.5(a–b): work derived from P–V area for isothermal, isobaric, and isochoric processes |
 
 ### Chapter-wide notation and sign convention
 
@@ -66,12 +65,11 @@ Recheck each architecture decision when implementation begins. Reduce the split 
 
 - Create one self-contained folder per simulation:
   - `9.1-9.2-molecular-gas-lab/`
-  - `9.3-first-law-energy-ledger/`
-  - `9.4-9.5-thermodynamic-process-workbench/`
+  - `9.3-9.5-thermodynamics-workbench/`
 - Use ordinary dependency-ordered scripts and pinned local runtime assets. Do not introduce ES modules, a framework, a build step, or a network dependency.
 - Keep `PHYSICS`, `LIMITS`, and `DISPLAY` blocks as the single source of truth. HTML range attributes are fallbacks and are configured from `LIMITS` at startup.
 - In Level 3 simulations, physics remains free of DOM/p5 access, renderer functions remain stateless, the UI manager is the sole DOM accessor, and the controller is the only bridge between UI and physics.
-- For the provisional Level 2 First Law simulation, keep its energy model in a separate physics file. A compact application file may own DOM binding and orchestration if splitting UI and controller responsibilities would only create boilerplate; drawing remains in the sketch/renderer layer.
+- The combined Thermodynamics Workbench is Level 3 because it has two substantial visual modes and several process submodes. Keep `FirstLawState` and `ThermodynamicProcessState` as separate physics responsibilities inside the same page; do not force path-independent energy accounting and path-dependent process calculation into one flag-heavy model.
 - Use `shared/sim-style.css`, `shared/sim-utils.js`, `PALETTE`, `updateReadout`, `renderMath`, `PlaybackState`, and the existing arrow/guide helpers. Add a shared graph helper only after at least two simulations demonstrate the same ctx-explicit abstraction.
 - Start each simulation paused with a complete, nonblank frame. Play/Pause, Step, Reset, parameter changes, mode changes, and resize must redraw correctly while paused.
 - Clamp every animation `dt` to at most 0.03 s. Bound visual particle state and any graph/history buffers.
@@ -119,12 +117,13 @@ Tablet/mobile
 
 **Tasks:**
 
-- Create the Chapter 9 folder and the three topic folders only when implementation begins; do not add empty scaffolding solely to mark progress.
+- Create the Chapter 9 folder and the two simulation folders only when implementation begins; do not add empty scaffolding solely to mark progress.
 - Transcribe the exact Topic 9 LO wording and equations from the local curriculum PDF into implementation notes and theory-strip copy.
 - Fix the `N`/`n`, `m`/`M`, `Q`, and `W` naming conventions from Section 2 before defining public physics interfaces.
 - Define a common P–V graph grammar: axes always include units, active path is solid, comparison paths use distinct dash patterns and direct labels, current state has a visible marker, process direction has an arrow, and work area uses a labelled signed treatment.
 - Define chapter accessibility language for projected particle motion, heat-flow direction, piston motion, graph paths, and current numerical state so canvas visuals remain supplementary.
-- Add one planned landing metadata entry per lab after titles and paths are fixed. Use chapter name `Kinetic Theory of Gases and Thermodynamics`, `href: null`, and `status: 'planned'` until that lab passes its own QA.
+- Add one planned landing metadata entry per simulation after titles and paths are fixed. Use chapter name `Kinetic Theory of Gases and Thermodynamics`, `href: null`, and `status: 'planned'` until that simulation passes its own QA. The Thermodynamics Workbench receives one card covering 9.3–9.5; its two main modes are not separate landing entries.
+- Freeze the combined-page mode contract: `Energy Transfers` is the 9.3 top-level mode; `P–V Processes` is the 9.4–9.5 top-level mode with `Isothermal`, `Isobaric`, `Isochoric`, and `Adiabatic` process submodes. Switching top-level modes pauses and resets progress while preserving valid shared gas values and mode-specific settings.
 - Confirm whether P–V axes and current-point rendering duplicate a proven helper in another simulation. Promote code into `shared/` only after two real consumers share the same interface.
 
 **Exit criteria:**
@@ -220,13 +219,13 @@ Energy mode — wide canvas
 - Extended deterministic tests for focus validation and availability, fallback and persistence, readout-write isolation, full-width chamber bounds, perspective projection, rotation-length preservation, non-overlapping resting geometry, and isolated versus combined motion.
 - Rechecked desktop, 800, 460, and 320 CSS-pixel layouts in the browser. The chamber, molecule, axes, focus labels, readouts, and controls remain legible without horizontal overflow; the 320-pixel check also covers the effective narrow layout at 200% zoom. Native buttons and disabled states expose the expected pressed and unavailable semantics.
 
-### Phase 2 — First Law Energy Ledger (SP015 9.3)
+### Phase 2 — Thermodynamics Workbench: Energy Transfers mode (SP015 9.3)
 
-**Goal:** Make the signs and balance in `Delta U = Q - W` unambiguous for heating, cooling, expansion work, and work done on a gas.
+**Goal:** Build the first top-level mode of the combined Thermodynamics Workbench and make the signs and balance in `Delta U = Q - W` unambiguous for heating, cooling, expansion work, and work done on a gas.
 
 #### Controls and interaction
 
-- Use one free-exploration mode with signed target controls:
+- This is the `Energy Transfers` top-level mode in the shared `9.3-9.5-thermodynamics-workbench/` page. Use one free-exploration mode with signed target controls:
   - heat transferred to the gas `Q`: −1500 to +1500 J, default +600 J;
   - work done by the gas `W`: −1500 to +1500 J, default +200 J;
   - initial temperature `T1`: 200–600 K, default 300 K;
@@ -248,6 +247,7 @@ Energy mode — wide canvas
 
 - Reverse arrow direction and update `into/out of gas` or `by/on gas` wording when a transfer changes sign. Never indicate sign using color alone.
 - Show a central three-term ledger with the currently applied values, not only the targets.
+- Keep the piston/load animation symbolic: it communicates work-transfer direction but does not define a volume, pressure, or thermodynamic path. Label the canvas as path-independent energy accounting.
 - Use a stable readout grid for applied `Q`, applied `W`, `Delta U`, `U1`, `U2`, `T1`, `T2`, and the current verbal energy outcome.
 - The theory strip states the sign convention in words alongside `Delta U = Q - W`.
 
@@ -271,15 +271,15 @@ Energy mode — wide canvas
 - Every sign combination produces matching arrows, words, equation values, and final temperature.
 - Invalid non-positive final-temperature targets are rejected without corrupting previous state.
 - Parameter-only readouts do not update every frame; only progress-dependent transfer/readout values do.
-- Promote the landing card only after physics, browser, responsive, keyboard, and accessibility checks pass.
+- Do not promote the combined landing card yet. Phase 2 is complete only when the Energy Transfers mode is implemented and locally verifiable, while the shared page remains ready for the P–V Processes mode in Phase 3.
 
-### Phase 3 — Thermodynamic Process Workbench (SP015 9.4 and 9.5)
+### Phase 3 — Thermodynamics Workbench: P–V Processes mode (SP015 9.4 and 9.5)
 
-**Goal:** Compare the defining constraints and P–V paths of four thermodynamic processes, then connect signed work to area under the curve for the three processes required by SP015 9.5.
+**Goal:** Add the second top-level mode to the combined Thermodynamics Workbench, comparing the defining constraints and P–V paths of four thermodynamic processes, then connecting signed work to area under the curve for the three processes required by SP015 9.5.
 
 #### Modes and controls
 
-- Four process modes in the system bar: `Isothermal`, `Isobaric`, `Isochoric`, and `Adiabatic`.
+- This is the `P–V Processes` top-level mode in the same page as Phase 2. Its process submodes are `Isothermal`, `Isobaric`, `Isochoric`, and `Adiabatic`.
 - Common initial-state controls:
   - amount `n`: 0.50–2.00 mol, default 1.00 mol;
   - initial pressure `P1`: 50–300 kPa, default 100 kPa;
@@ -317,6 +317,7 @@ Compact canvas (<560 px)
 #### Physics model and public interface
 
 - Implement one `ThermodynamicProcessState` parameterized by process type rather than four mostly duplicated classes.
+- Keep `FirstLawState` from Phase 2 as a separate mode-specific model. The controller may share playback and page state, but must not treat selected 9.3 `Q`/`W` targets as the path-derived work of a P–V process.
 - Store independent initial values `n`, `P1`, `V1`, process type, and the mode-appropriate target. Derive `T1 = P1V1 / (nR)`.
 - At normalized progress `s` in `[0, 1]`, derive the current state from an explicit path parameter:
   - isothermal: interpolate volume, then `P = P1V1 / V` and `T = T1`;
@@ -339,7 +340,16 @@ Compact canvas (<560 px)
 - The adiabatic comparison passes through the same initial state and, for expansion, falls more steeply than the isothermal path without being presented as a required 9.5 work derivation.
 - Piston direction, graph arrow, state labels, shaded area, and signed work always agree.
 - Mode changes preserve common initial-state values, configure relevant controls, synchronize `aria-pressed`, and redraw immediately while paused.
-- Promote the landing card only after physics, browser, responsive, keyboard, and accessibility checks pass.
+- Switching between the two top-level modes pauses and resets progress, preserves valid shared gas values and each mode's settings, and never silently carries 9.3 transfer targets into process-derived work. Promote the combined landing card only after both Phase 2 and Phase 3 acceptance checks pass.
+
+#### Implementation record — completed 2026-09-13
+
+- Added the `P–V Processes` mode to the existing Thermodynamics Workbench without changing the path-independent `FirstLawState` model used by Energy Transfers.
+- Implemented one validated `ThermodynamicProcessState` for isothermal, isobaric, isochoric, and adiabatic paths. It derives state values from SI inputs and exposes only SP015 9.5 work for isothermal, isobaric, and isochoric paths; adiabatic work is explicitly scoped as supporting context.
+- Added process-specific controls, a stable eight-cell readout grid, process/invariant labels, and an accessible summary that synchronizes piston direction, path direction, signed work, and current state.
+- Added responsive piston-cylinder and P–V graph rendering with current/start/target markers, signed work shading for assessed paths, explicit zero-width isochoric treatment, and a dashed isothermal comparison curve for adiabatic paths.
+- Deterministic tests pass for all defining invariants, signed work, numerical isothermal P–V area agreement, target validation, process switching, cross-mode state isolation, compact/wide renderer geometry, and direction handling. Browser checks at 800 px and 460 px confirmed both top-level modes, all four process buttons, play/step/reset behavior, compression’s negative work, isochoric zero work, adiabatic scope wording, and no console warnings or errors.
+- Landing promotion and Chapter 9 catalogue/documentation updates remain Phase 4 work.
 
 ### Phase 4 — Repository integration and documentation
 
@@ -347,13 +357,12 @@ Compact canvas (<560 px)
 
 **Tasks:**
 
-- Replace each planned Chapter 9 landing entry with a completed link only after that simulation's phase exit criteria pass.
+- Replace each planned Chapter 9 landing entry with a completed link only after that simulation's phase exit criteria pass. The Thermodynamics Workbench gets one completed link after both mode phases pass.
 - Add recognizable landing diagrams:
   - molecule container with velocity vectors for Molecular Gas Laboratory;
-  - central energy ledger with inward/outward arrows for First Law Energy Ledger;
-  - piston plus labelled P–V path for Thermodynamic Process Workbench.
+  - Thermodynamics Workbench: central energy ledger with inward/outward arrows plus a piston and labelled P–V path, representing its two main modes.
 - Update README curriculum coverage and landing filters/search after each completed simulation, not before.
-- Add three Chapter 9 rows to `instructions/physics.md` with exact LO scope, sign convention, and simplifications after the implementations exist.
+- Add two Chapter 9 rows to `instructions/physics.md` with exact LO scope, sign convention, and simplifications after the implementations exist. The Thermodynamics Workbench row must name both main modes and distinguish net-transfer accounting from path-derived work.
 - Update `docs/architecture.md` only if Chapter 9 introduces a new reusable pattern used by at least two simulations, such as a shared graph-axis/path helper. Do not document planned abstractions as current architecture.
 - Audit repeated gas constants, unit conversion, P–V plotting, current-point markers, and direction-arrow code. Extract only stable, ctx-explicit behavior with at least two actual consumers.
 
@@ -396,13 +405,13 @@ Compact canvas (<560 px)
 
 - Save reproducible QA evidence under `docs/plan/completed/evidence/chapter-09-kinetic-theory-thermodynamics/`, grouped by simulation and viewport.
 - Record implementation summaries, final checks, and accepted limitations in this plan as each phase completes.
-- Move this plan to `docs/plan/completed/` only when all three simulations, landing integration, documentation, and cross-simulation QA exit criteria pass.
+- Move this plan to `docs/plan/completed/` only when both simulations, both Thermodynamics Workbench modes, landing integration, documentation, and cross-simulation QA exit criteria pass.
 
 ## 5. Interfaces and callback conventions
 
 Use these lifecycle callback names where applicable:
 
-- `onModeChange(mode)` or `onProcessChange(process)`;
+- `onModeChange(mode)` for the two Thermodynamics Workbench top-level modes (`energyTransfers` and `pvProcesses`), plus `onProcessChange(process)` for its four P–V process submodes;
 - `onPlayToggle(isPlaying)`;
 - `onStep()`;
 - `onReset()`.
@@ -415,12 +424,12 @@ Controllers preserve the last valid state, reject unknown modes and invalid phys
 
 ## 6. Assumptions and exclusions
 
-- The three-simulation split is fixed unless implementation reveals a concrete usability problem. Do not revive a separate 9.5-only area-under-the-curve page; that would duplicate the Process Workbench's graph and state model.
+- The two-simulation split is fixed unless implementation reveals a concrete usability problem. Keep SP015 9.3, 9.4, and 9.5 in one Thermodynamics Workbench; do not revive a separate 9.5-only area-under-the-curve page or separate First Law page.
 - All gases are ideal. Molecular volume, intermolecular forces outside elastic collisions, phase changes, and real-gas equations are excluded.
 - The molecular animation is illustrative, projected, time-scaled, and based on a fixed representative sample. It is not a molecular-dynamics solver and does not numerically estimate macroscopic pressure.
 - The generic degree-of-freedom model uses `f = 3`, `5`, and `6`; vibrational modes, heat-capacity variation, and linear-versus-nonlinear polyatomic distinctions are outside SP015 scope for this plan.
-- The First Law Energy Ledger models net energy transfers between states. It does not assign a thermodynamic path or calculate path-dependent work.
-- The Process Workbench quantitatively calculates work only for isothermal, isobaric, and isochoric processes as required by SP015 9.5. Adiabatic behavior is included for definition and P–V comparison under 9.4.
+- The Thermodynamics Workbench `Energy Transfers` mode models net energy transfers between states. It does not assign a thermodynamic path or calculate path-dependent work.
+- The Thermodynamics Workbench `P–V Processes` mode quantitatively calculates work only for isothermal, isobaric, and isochoric processes as required by SP015 9.5. Adiabatic behavior is included for definition and P–V comparison under 9.4.
 - Entropy, the Second Law, cyclic processes, heat engines, refrigerators, Carnot efficiency, and thermodynamic potentials are excluded.
 - No backend, persistence, audio, export, framework, build system, or network dependency is added.
 - Existing public APIs and shared styles remain compatible. Shared extraction requires at least two proven consumers and must be documented only after implementation.

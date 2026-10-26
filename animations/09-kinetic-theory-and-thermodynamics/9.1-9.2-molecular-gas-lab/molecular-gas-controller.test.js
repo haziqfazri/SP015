@@ -70,11 +70,13 @@ assert.equal(controller.ui.category, 'polyatomic');
 assert.ok(redrawCalls > redrawBeforeParameter, 'parameter changes redraw while paused');
 
 const readsBeforeAnimation = controller.ui.readoutUpdates;
+const ensembleBeforeMotionUpdate = JSON.stringify(controller.ensemble.snapshot());
 controller._onPlayToggle(true);
 assert.equal(controller.isPlaying, true);
 assert.equal(loopCalls, 1);
 controller.update(2);
-assert.equal(controller.animationTime, physics.LIMITS.playback.maxDt, 'update clamps dt');
+assert.equal(controller.animationTime, 0, 'motion mode does not advance the energy-view phase');
+assert.notEqual(JSON.stringify(controller.ensemble.snapshot()), ensembleBeforeMotionUpdate);
 assert.equal(controller.ui.readoutUpdates, readsBeforeAnimation, 'animation does not rewrite parameter readouts');
 controller._onPlayToggle(false);
 assert.equal(controller.ui.isPlaying, false);
@@ -83,21 +85,28 @@ assert.ok(noLoopCalls > 0);
 const snapshotBeforeStep = JSON.stringify(controller.ensemble.snapshot());
 controller._onStep();
 assert.equal(controller.isPlaying, false);
-assert.equal(controller.animationTime, physics.LIMITS.playback.maxDt + physics.LIMITS.playback.stepSeconds);
+assert.equal(controller.animationTime, 0, 'motion stepping leaves the energy-view phase unchanged');
 assert.notEqual(JSON.stringify(controller.ensemble.snapshot()), snapshotBeforeStep);
 
 controller._onModeChange('energy');
 assert.equal(controller.mode, 'energy');
 assert.equal(controller.ui.mode, 'energy');
 assert.equal(controller.ui.readouts.values[1], '6');
+assert.equal(controller.animationTime, 0, 'entering energy mode starts from the reference pose');
+controller._onPlayToggle(true);
+controller.update(2);
+assert.equal(controller.animationTime, physics.LIMITS.playback.maxDt, 'energy phase advances with clamped dt');
+controller._onPlayToggle(false);
 const readsBeforeFocusChange = controller.ui.readoutUpdates;
 controller._onDegreeFocusChange('rotate-r3');
 assert.equal(controller.degreeFocus, 'rotate-r3');
 assert.equal(controller.ui.degreeFocus, 'rotate-r3');
+assert.equal(controller.animationTime, 0, 'focus changes reset the energy phase');
 assert.equal(controller.ui.readoutUpdates, readsBeforeFocusChange, 'focus changes do not rewrite energy readouts');
 assert.match(controller.ui.summary.canvasSummary, /R₃ rotation/);
 const energyEnsembleBefore = JSON.stringify(controller.ensemble.snapshot());
 controller._onStep();
+assert.equal(controller.animationTime, physics.LIMITS.playback.stepSeconds);
 assert.equal(JSON.stringify(controller.ensemble.snapshot()), energyEnsembleBefore, 'energy animation leaves ensemble unchanged');
 
 const preserved = {
@@ -124,13 +133,17 @@ assert.deepEqual({
 
 controller._onCategoryChange('diatomic');
 assert.equal(controller.degreeFocus, 'all', 'category downgrade falls back to all');
+assert.equal(controller.animationTime, 0, 'category changes reset the energy phase');
 assert.equal(controller.ui.degreeFocus, 'all');
 assert.equal(controller.ui.availableDegreeFocuses.includes('rotate-r3'), false);
 controller._onDegreeFocusChange('rotate-r2');
+controller._onStep();
+assert.equal(controller.animationTime, physics.LIMITS.playback.stepSeconds);
 controller._onModeChange('motion');
 assert.equal(controller.degreeFocus, 'rotate-r2', 'mode changes preserve focus');
 controller._onModeChange('energy');
 assert.equal(controller.degreeFocus, 'rotate-r2');
+assert.equal(controller.animationTime, 0, 're-entering energy mode resets the reference pose');
 controller._onCategoryChange('monatomic');
 assert.equal(controller.degreeFocus, 'all');
 assert.throws(() => controller._onDegreeFocusChange('rotate-r1'), /unavailable/);
