@@ -99,8 +99,8 @@ GO/NO-GO verdict. Do not write anything to disk.
 ## Unified-library migration acceptance (future implementation)
 
 Follow the migration gates in `instructions/checklist.md` and the active plan.
-Current files remain under `animations/`; the approved target is
-`simulations/<sp015|sp025>/<chapter>/<combined-lo-folder>/`. Check literal
+All current SP015 files use `simulations/sp015/<chapter>/<combined-lo-folder>/`;
+the semester convention also reserves `sp025`. Check literal
 catalogue URLs, HTML/CSS assets, redirects, and static duplicate IDs at `/` and
 `/SP015/`. Enable `--require-semesters` after metadata conversion. In a browser,
 verify semester-qualified grouping/generated IDs and independent search,

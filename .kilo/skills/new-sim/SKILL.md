@@ -64,12 +64,12 @@ Start from `templates/`. Copy ONLY the files the chosen level needs:
 
 - Find-and-replace `Template` → `YourSimName` (classes), `template-` →
   `your-sim-name-` (filenames) in every copied file; rename files to match.
-- Current files stay in `animations/<chapter>/<combined-lo-folder>/`.
-  Approved target: `simulations/<sp015|sp025>/<chapter>/<combined-lo-folder>/`.
-  Preserve combined LOs. No folder moves are authorized by preparation alone.
+- All current SP015 simulations use `simulations/sp015/<chapter>/<combined-lo-folder>/`.
+  Use `simulations/<sp015|sp025>/<chapter>/<combined-lo-folder>/` for authorized
+  new content. Preserve combined LOs; SP025 requires a verified curriculum.
 - The starter is prepared for the target four-level depth; use
-  `../../../../shared/` and `../../../../vendor/`. Existing pages retain
-  `../../../` until their approved move. Validate under `/` and `/SP015/`.
+  `../../../../shared/` and `../../../../vendor/`, as do existing simulations.
+  Validate under `/` and `/SP015/`.
 - Planned landing tabs default to SP015 and retain independent search and
   chapter/status state per semester. Use literal semester metadata and
   semester-qualified grouping/IDs; keep the visual design and withhold

@@ -10,13 +10,15 @@ The source of truth for architecture and data flow is `docs/architecture.md`. Re
 
 ---
 
-## Migration status: controlled batches in progress
+## Migration status: SP015 folders migrated; semester UI pending
 
 The approved destination is one SP015 + SP025 Physics Simulation Library:
 `simulations/<semester>/<chapter>/<combined-learning-outcome-folder>/`, where
-`<semester>` is `sp015` or `sp025`. Chapters 02, 05, 07, and 08 now live under
-`simulations/sp015/`. Chapter 09 remains under `animations/` until its batch is
-approved. Semester tabs are not implemented. Preserve combined LO folders.
+`<semester>` is `sp015` or `sp025`. All 13 SP015 simulation folders, including
+the unpublished Workbench, now live under `simulations/sp015/`. No simulation
+files remain on disk under `animations/`; ignored local `.DS_Store` files may
+keep that directory present. Semester metadata and tabs are not implemented.
+Preserve combined LO folders.
 
 The unified landing page will preserve its existing visual design, default to
 SP015, and keep search, chapter filter, and status filter state separately for
@@ -57,7 +59,6 @@ SP015/
       8.1-8.2-materials-testing/ <- Level 3, global mode
       8.3-heat-conduction/
       8.4-thermal-expansion/
-  animations/                   <- Chapter 09, pending approval
     09-kinetic-theory-and-thermodynamics/
       9.1-9.2-molecular-gas-lab/
       9.3-9.5-thermodynamics-workbench/ <- unpublished
@@ -166,7 +167,7 @@ Call `ui.updateReadouts(...)` from the callback that actually changes the values
 
 ### Naming
 
-- Current folders: migrated Chapters 02, 05, 07, and 08 use `simulations/sp015/<chapter>/<lo-group>-<short-name>/`; Chapter 09 retains `animations/<chapter>/<lo-group>-<short-name>/`.
+- Current folders: all SP015 simulations use `simulations/sp015/<chapter>/<lo-group>-<short-name>/`.
 - Approved target: `simulations/<sp015|sp025>/<chapter-number>-<chapter-name>/<lo-group>-<short-name>/`. Use the target convention for newly authorized work; preserve existing locations until its migration phase is approved.
 - Files: `<topic-slug>-<role>.js` (e.g. `progressive-wave-shm-physics.js`, `progressive-wave-shm-ui.js`, `progressive-wave-shm-controller.js`, `progressive-wave-shm-renderer.js`, `progressive-wave-shm-sketch.js`)
 - HTML: `index.html` for every simulation entry point

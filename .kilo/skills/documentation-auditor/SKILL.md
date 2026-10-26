@@ -15,9 +15,11 @@ and a concrete fix suggestion per item. Do not edit files unless asked.
 ## 1. Folder tree vs. reality
 
 - Compare the folder tree in `docs/architecture.md` §2 and README against
-  `animations/` and any approved pilot directories under `simulations/`.
-  Compare both with `docs/plan/active/physics-library-migration-map.json`; during
-  a pilot, mixed locations are expected only for the mapped folders.
+  `simulations/sp015/`, which now contains all SP015 simulation folders.
+  Compare it with `docs/plan/active/physics-library-migration-map.json`; original
+  `currentFolder`/`currentPath` values are preserved source-path evidence, while
+  the mapped target locations must exist. Ignored local metadata under
+  `animations/` is not a simulation or a required compatibility tree.
 - Every existing sim must appear; flag missing additions and stale entries.
 - New sims must be reflected in `instructions/physics.md` §4's LO table and
   README's curriculum-coverage table.

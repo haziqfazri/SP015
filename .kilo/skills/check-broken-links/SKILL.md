@@ -12,7 +12,7 @@ still resolve against the repository and each owning page/stylesheet.
 node .kilo/scripts/check-links.mjs --skip-external
 node .kilo/scripts/check-links.mjs --skip-external --base-path=/SP015/
 node .kilo/scripts/check-links.mjs --html-only --skip-external
-node .kilo/scripts/check-links.mjs animations --skip-external
+node .kilo/scripts/check-links.mjs simulations --skip-external
 node --test .kilo/scripts/check-links.test.mjs
 ```
 

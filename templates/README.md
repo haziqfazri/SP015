@@ -8,11 +8,10 @@ the full rationale — this is just the condensed checklist.
 1. Copy the files you need into a topic folder at
    `simulations/<sp015|sp025>/<chapter>/<combined-lo-folder>/` for newly
    authorized work. The starter is prepared for this approved four-level target;
-   existing simulations remain under `animations/` until migration is approved.
+   all current SP015 simulations now use this layout.
    Keep each complete simulation self-contained and preserve combined LOs.
-   Do not preview the starter directly from `templates/`. For an explicitly
-   authorized legacy three-level destination, remove one `../` from its shared
-   asset references after copying, without changing existing simulations.
+   Do not preview the starter directly from `templates/`. Preserve its
+   four-level shared/vendor references when copying to the semester layout.
 2. Find-and-replace `Template` → `YourSimName` (classes) and `template-` →
    `your-sim-name-` (filenames) across all files.
 3. Rename the files themselves to match.

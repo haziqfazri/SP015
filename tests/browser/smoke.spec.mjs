@@ -3,6 +3,7 @@ import { test, openPage, expectCanvas, expectLayout } from './fixtures.mjs';
 
 const projectilePath = 'simulations/sp015/02-kinematics-of-linear-motion/2.3-projectile-motion/index.html';
 const circularPath = 'simulations/sp015/05-circular-motion/5-uniform-circular-motion/index.html';
+const molecularPath = 'simulations/sp015/09-kinetic-theory-and-thermodynamics/9.1-9.2-molecular-gas-lab/index.html';
 const matterPaths = [
   ['Materials Testing', '8.1-8.2-materials-testing'],
   ['Heat Conduction', '8.3-heat-conduction'],
@@ -16,6 +17,11 @@ test('landing search, chapter filters, and migrated launch destinations', async 
   await expect(page.getByRole('link', { name: 'Launch Uniform Circular Motion simulation', exact: true })).toHaveAttribute('href', `../${circularPath}`);
   const search = page.getByRole('searchbox', { name: 'Search simulations' });
   const cards = page.locator('#simulation-groups .sim-card');
+  await expect(cards).toHaveCount(12);
+  await expect(cards.filter({ hasText: 'Thermodynamics Workbench' })).toHaveCount(0);
+  await expect(page.getByRole('link', { name: /Thermodynamics Workbench/ })).toHaveCount(0);
+  await expect(page.locator('#simulation-groups a[href*="animations/"]')).toHaveCount(0);
+  await expect(page.getByRole('link', { name: 'Launch Molecular Gas Laboratory simulation', exact: true })).toHaveAttribute('href', `../${molecularPath}`);
   await search.fill('projectile');
   await expect(cards).toHaveCount(1);
   await expect(cards.first()).toContainText('Projectile Motion');
@@ -40,6 +46,10 @@ test('landing search, chapter filters, and migrated launch destinations', async 
   await openPage(page, health, 'landing/');
   await page.getByRole('link', { name: 'Launch Materials Testing simulation', exact: true }).click();
   await expect(page).toHaveURL(new URL(matterPaths[0][1], baseURL).href);
+  await expectCanvas(page);
+  await openPage(page, health, 'landing/');
+  await page.getByRole('link', { name: 'Launch Molecular Gas Laboratory simulation', exact: true }).click();
+  await expect(page).toHaveURL(new URL(molecularPath, baseURL).href);
   await expectCanvas(page);
 });
 

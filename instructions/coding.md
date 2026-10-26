@@ -4,16 +4,15 @@
 
 See `docs/architecture.md` §2 for the current folder tree. The naming rules:
 
-- **Current disk layout:** Chapters 02, 05, 07, and 08 use
+- **Current disk layout:** all 13 SP015 simulations use
   `simulations/sp015/<chapter-number>-<chapter-name>/<lo-group>-<short-name>/`.
-  Chapter 09 still uses `animations/<chapter>/<lo-group>-<short-name>/` pending
-  its separately approved batch. The specific LO is cited in a comment/kicker.
-- **Approved target, migration in progress:**
+  The specific LO is cited in a comment/kicker. Workbench remains unpublished.
+- **Approved semester convention:**
   `simulations/<sp015|sp025>/<chapter-number>-<chapter-name>/<lo-group>-<short-name>/`.
-  Retain combined LO folders. Existing simulations stay in their current locations
-  until their migration phase is approved. The prepared template targets four
-  levels and uses `../../../../shared/` and `../../../../vendor/`; three-level
-  current pages retain `../../../`. Avoid root-absolute asset URLs so repository
+  Retain combined LO folders. Preserve existing locations unless a further
+  structure change is approved. The prepared template targets four
+  levels and uses `../../../../shared/` and `../../../../vendor/`, as do all
+  current simulation pages. Avoid root-absolute asset URLs so repository
   prefixes such as `/SP015/` work. Do not change the GitHub repository name.
 - **One folder, self-contained.** Own HTML, own CSS, own JS. Nothing
   sim-specific lives in `shared/`; nothing shared lives inside a sim's

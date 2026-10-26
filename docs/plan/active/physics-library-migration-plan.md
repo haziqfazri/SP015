@@ -1,10 +1,11 @@
 # SP015 + SP025 library migration plan
 
-**Status:** Controlled migration in progress; semester tabs remain unimplemented.
+**Status:** SP015 folder migration implemented in the working tree for review;
+semester metadata and tabs remain unimplemented. This unified-library plan stays active.
 Projectile Motion (`9470406`), Circular Motion (`304e72e`), and browser infrastructure
-(`f6c4cfb`) are committed. Chapter 07 is committed as `4c9071c`. The approved
-Chapter 08 batch is in the working tree for review; do not stage, commit, push,
-or start Chapter 09 without further authorization.
+(`f6c4cfb`) are committed. Chapter 07 is committed as `4c9071c`, Chapter 08 as
+`a8ed1d4`. The approved Chapter 09 batch is in the working tree for review;
+do not stage, commit, push, publish Workbench, or implement semester UI.
 **Baseline:** `5732a0f` on `main`; working tree clean at preparation start.
 **Superposition:** restored and committed; `index.html` blob is
 `b941d62415d825f8941a2da86dd3b578fc1f183b`.
@@ -28,18 +29,18 @@ or start Chapter 09 without further authorization.
 
 At preparation time all 13 simulation implementations lived under `animations/`.
 There are still 12 published landing entries and five retained redirect files.
-The current mixed layout has Chapters 02, 05, 07, and 08 (eleven simulations)
-under `simulations/sp015/`; Chapter 09 (two simulations) remains under
-`animations/`. No SP025 simulations exist. SP025 chapter names and LOs
+All 13 canonical simulations and all five retained aliases now live under
+`simulations/sp015/`. No simulation files remain on disk under `animations/`;
+two ignored `.DS_Store` files keep that local directory present and are preserved.
+No SP025 simulations exist. SP025 chapter names and LOs
 must be checked against an authoritative specification, currently missing.
 
 ```text
 # CURRENT
-animations/09-kinetic-theory-and-thermodynamics/<combined-lo-folder>/
-simulations/sp015/<chapter-02-05-07-or-08>/<combined-lo-folder>/
+simulations/sp015/<chapter-02-05-07-08-or-09>/<combined-lo-folder>/
 landing/                      # current SP015-only catalogue
 
-# APPROVED TARGET — pending implementation
+# SEMESTER STRUCTURE — SP015 folders implemented; SP025 and tabs pending
 simulations/
   sp015/<chapter>/<combined-lo-folder>/
   sp025/<chapter>/<combined-lo-folder>/
@@ -49,10 +50,10 @@ vendor/                       # same pinned local assets
 templates/                    # starter prepared for target depth
 ```
 
-Existing pages are three levels deep and use `../../../shared/` and
-`../../../vendor/`. Target pages are four levels deep and require
-`../../../../shared/` and `../../../../vendor/`. Local sibling references stay
-unchanged. The current template has been prepared for the four-level target;
+At preparation, pages were three levels deep and used `../../../shared/` and
+`../../../vendor/`. All current simulation pages are four levels deep and use
+`../../../../shared/` and `../../../../vendor/`. Local sibling references remain
+unchanged. The current template uses the four-level semester layout;
 it is copy-only and not a runnable page from `templates/`. The link checker
 validates it at a virtual target location and maps sibling files to templates/.
 
@@ -179,6 +180,51 @@ Chapter 09 and semester tabs are outside this batch. Keep the Workbench
 unpublished, preserve ignored scratch files and historical reports, and stop
 for review without staging, committing, or pushing.
 
+### Chapter 09 review checkpoint
+
+The approved final SP015 folder batch moves the complete Molecular Gas and
+Thermodynamics Workbench folders (20 files) to the mapped Chapter 09 destinations.
+Only seven shared/vendor references in each canonical HTML page change (14
+total). All other 18 files, including physics, UI, controllers, renderers, CSS,
+and existing tests, remain byte-identical. Only Molecular Gas's existing href
+changes; the catalogue remains at exactly 12 entries with no Workbench card or
+launch link. All five existing aliases stay in their previously migrated locations.
+
+Three browser cases add Molecular Gas and the two Workbench modes to the
+existing matrix, for 120 Chromium cases. They cover representative controls,
+First Law readouts, invalid-state recovery, process work signs/scope, retained
+settings and mode isolation, nonblank canvases, and resize round trips. Workbench
+tests account for pixelDensity(2) and open its page directly. These smoke checks
+do not close its active release plan or authorize publication.
+
+Current-layout guidance and commands now use `simulations/`. The map retains
+all original source paths as historical evidence, and its existing map test
+supports the final target-only layout without validator changes. Semester
+metadata and the strict future gate remain a separate phase. Ignored scratch
+scripts and both `.DS_Store` files are preserved; historical reports and synthetic
+validator fixtures are unchanged. No simulation files remain on disk under
+`animations/`, and no runtime catalogue link depends on that path. Git source
+deletions remain unstaged until review; the index is not changed in this batch.
+
+Validation on 2026-10-26: the clean `a8ed1d4` baseline passed all 22 migration/map
+tests, 15 simulation tests, both-prefix link scans, and 96 Chromium cases (5.1
+minutes). After migration, all 22 migration/map tests, 15 simulation tests, and
+120 Chromium cases passed (6.9 minutes). Both-prefix link scans pass with 154
+files, 441 references, 12 catalogue entries, zero failures, and the same 15
+historical anchor warnings. Both HTML-only scans pass with 20 files, 208
+references, and no warnings. Static scans ran after browser recording exited.
+
+HEAD comparisons verified all 20 relocated files with only 14 HTML path changes;
+18 files are byte-identical, and the landing diff is one mapped href. All 13
+canonical target folders and five retained aliases exist, with no source
+simulation files left on disk. Syntax passes for 26 affected/config/validator
+files; timestep scanning covers 25 controller/sketch files without findings.
+Shared-usage still exits 1 for the same five fixture color findings, all now
+under `simulations/`; none is new. Tracked/new-file whitespace checks pass.
+Hashes confirm both ignored `.DS_Store` files and all three scratch scripts are
+unchanged. Publication checks confirm exactly 12 completed entries, no Workbench
+record/link, and no semester metadata. The Workbench release plan stays Active.
+
 ## Catalogue contract and acceptance criteria
 
 Continue to use one literal `SIMULATIONS` metadata array in `landing/app.js`.
@@ -264,21 +310,19 @@ node --test .kilo/scripts/check-links.test.mjs
 node .kilo/scripts/check-links.mjs --skip-external
 node .kilo/scripts/check-links.mjs --skip-external --base-path=/SP015/
 node .kilo/scripts/check-links.mjs --html-only --skip-external
-find animations simulations -type f -name '*.test.js' -exec node --test {} +
-node .kilo/scripts/check-dt.mjs animations
+find simulations -type f -name '*.test.js' -exec node --test {} +
 node .kilo/scripts/check-dt.mjs simulations
-node .kilo/scripts/check-shared-usage.mjs animations
 node .kilo/scripts/check-shared-usage.mjs simulations
 npm run test:browser
 git diff --check
 ```
 
-During mixed migration, run syntax/tests and convention checks for both existing
-roots using `find animations simulations ...` or scope to each existing root;
-do not pass a nonexistent root to a scanner. The new map test accepts either
-source or destination for each mapped file/folder and rejects duplicates or
-missing locations. It verifies all catalogue URLs and all redirect files remain
-accounted for. At final target layout, run these checks against `simulations/`.
+Run syntax/tests and convention checks against `simulations/`; ignored metadata
+under `animations/` must not be mistaken for remaining simulations. The map test
+accepts either source or destination for each mapped file/folder and rejects
+duplicates or missing locations; the final migration review additionally requires
+every mapped target to exist and every mapped source to be absent. All catalogue
+URLs and redirect files must remain accounted for.
 
 After catalogue metadata conversion (expected to fail before that phase):
 
@@ -348,6 +392,6 @@ No new current-layout validation failures remain.
 
 ## Stop condition
 
-Stop for review after preparation and verification. No commits, pushes, folder
-moves, runtime landing changes, simulation behavior changes, or semester tabs
-are authorized by this preparation task.
+Stop for review after the approved Chapter 09 folder migration and verification.
+Do not stage, commit, push, publish Workbench, or implement semester metadata/tabs
+without further authorization. The Workbench release plan remains active.

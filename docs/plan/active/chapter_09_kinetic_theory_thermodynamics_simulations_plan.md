@@ -6,11 +6,18 @@
 
 **Last reviewed:** 2026-09-13
 
+**Folder migration checkpoint — 2026-10-26:** Both implementations now live
+under `simulations/sp015/09-kinetic-theory-and-thermodynamics/`, pending migration
+review. Thermodynamics Workbench remains absent from the 12-entry catalogue.
+This location change and browser smoke coverage do not complete Phase 4/5,
+approve publication, or close this active release plan. Original implementation
+paths in dated records below remain historical evidence.
+
 **Curriculum source:** `Curriculum Specifications (CS) Physics SP015.pdf`, Topic 9 (effective from the 2022/2023 session)
 
 ## 1. Summary
 
-Implement two standalone simulations under `animations/09-kinetic-theory-and-thermodynamics/`:
+The two standalone simulations now live under `simulations/sp015/09-kinetic-theory-and-thermodynamics/`:
 
 1. **Molecular Gas Laboratory** — SP015 9.1 and 9.2
 2. **Thermodynamics Workbench** — SP015 9.3, 9.4, and 9.5, presented through two related main modes

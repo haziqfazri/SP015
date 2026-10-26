@@ -4,10 +4,10 @@
 
 A growing library of standalone, interactive p5.js simulations teaching
 **Physics 1 (SP015)** and **Physics 2 (SP025)** at pre-university level.
-Chapters 02, 05, 07, and 08 use `simulations/sp015/`; Chapter 09 remains under
-`animations/` until its migration is approved. The approved final target is
-`simulations/<sp015|sp025>/<chapter>/<combined-lo-folder>/`. Migration proceeds
-in controlled batches; semester tabs remain unimplemented. Built and
+All 13 SP015 simulation folders use `simulations/sp015/`; the Workbench remains
+unpublished. The semester convention is
+`simulations/<sp015|sp025>/<chapter>/<combined-lo-folder>/`. Semester metadata
+and tabs remain unimplemented. Built and
 maintained solo, with heavy use of AI coding assistants.
 
 **Audience:** SP015/SP025 students and their teachers, using each sim as a

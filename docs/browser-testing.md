@@ -26,13 +26,14 @@ Existing Node tests and `.kilo` validators keep their original commands:
 
 ```sh
 node --test .kilo/scripts/check-links.test.mjs
-find animations simulations -type f -name '*.test.js' -exec node --test {} +
+find simulations -type f -name '*.test.js' -exec node --test {} +
 node .kilo/scripts/check-links.mjs --skip-external
 node .kilo/scripts/check-links.mjs --skip-external --base-path=/SP015/
 git diff --check
 ```
 
-During the migration, only pass roots that actually exist. Browser smoke tests
+SP015 folder migration is complete; use `simulations/` as the simulation scan
+root even if ignored local metadata keeps `animations/` present. Browser smoke tests
 complement these checks; they do not replace or weaken migration gates.
 
 Run static link scans after Playwright has exited. During recording, temporary
@@ -47,7 +48,7 @@ link checks unchanged and rerun them against the settled checkout.
 # List the matrix without opening a browser or starting a server.
 npm run test:browser:list
 
-# Run all 96 Chromium cases headlessly.
+# Run all 120 Chromium cases headlessly.
 npm run test:browser
 
 # Run just desktop checks for both hosting mounts.
@@ -86,8 +87,8 @@ cache, compression, or redirect rules. Production serving remains independent.
 
 ## Coverage and failure artifacts
 
-Twelve smoke tests run at both hosting prefixes, each at 1440, 800, 460, and
-320 CSS pixels (eight projects, 96 cases):
+Fifteen smoke tests run at both hosting prefixes, each at 1440, 800, 460, and
+320 CSS pixels (eight projects, 120 cases):
 
 - Landing: document/assets/fonts, initial content, search, chapter filtering,
   empty results, both migrated hrefs, and launch through the Projectile card.
@@ -119,10 +120,22 @@ Twelve smoke tests run at both hosting prefixes, each at 1440, 800, 460, and
   inputs, heating/cooling, full/partial fill and overflow, playback/reset, and
   selected-mode/parameter retention.
 
-Each Chapter 08 case resizes to another breakpoint and back, requiring the
+- Molecular Gas: motion/energy modes, temperature/amount/volume/molar mass,
+  molecular category and supported degree-focus controls, Step/playback/reset,
+  and retained parameters/focus.
+- Workbench Energy Transfers: all four signed presets, manual heat/work,
+  First Law readouts, invalid-state recovery, playback/reset, and retained targets.
+- Workbench P–V Processes: all four processes, signed expansion/compression
+  work, isochoric zero work, adiabatic scope, target validation, playback/reset,
+  and isolation from Energy Transfers settings. Its fixed pixelDensity(2) is
+  checked against CSS holder dimensions. Workbench is opened directly and
+  remains absent from landing cards and launch links; the catalogue stays at 12.
+
+Each Chapter 08/09 case resizes to another breakpoint and back, requiring the
 canvas width to follow both changes and retaining nonblank rendering, unique
 IDs, and no horizontal page overflow. Landing also checks all three Chapter 08
-hrefs, chapter filtering, and launch through the Materials Testing card.
+hrefs, chapter filtering, and launch through the Materials Testing and Molecular
+Gas cards. No runtime catalogue link may still point into `animations/`.
 
 Every case checks uncaught page errors, console errors, failed requests and
 HTTP errors, loaded script/stylesheet MIME types, local font responses, unique
@@ -197,3 +210,10 @@ The Chapter 08 migration was validated on 2026-10-26: the unchanged 72-case
 baseline passed, followed by all 96 expanded cases in 5.2 minutes with the same
 pinned runtime. The new 24 cases cover both hosting prefixes, all four widths,
 and resize round trips. No simulation JavaScript or CSS changes were needed.
+
+The Chapter 09 folder migration was validated on 2026-10-26: the unchanged
+96-case baseline passed in 5.1 minutes, followed by all 120 expanded cases in
+6.9 minutes. The added 24 cases cover Molecular Gas and both Workbench modes
+at both prefixes and all four widths, including resize round trips and the
+Workbench's pixelDensity(2). Catalogue checks confirm 12 cards and no Workbench
+card/link. Workbench remains unpublished, with its release plan still active.

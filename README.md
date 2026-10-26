@@ -6,11 +6,12 @@ A growing library of interactive [p5.js](https://p5js.org/) simulations for teac
 
 ---
 
-## Approved migration target — controlled batches in progress
+## Simulation layout and pending semester interface
 
-Chapters 02, 05, 07, and 08 now use `simulations/sp015/`; Chapter 09 remains
-under `animations/` pending its separately approved batch. `landing/` is still
-the SP015 catalogue, without semester tabs. The approved final destination is:
+All 13 SP015 simulation folders now use `simulations/sp015/`, including the
+unpublished Thermodynamics Workbench. The catalogue still has 12 entries.
+`landing/` remains SP015-only, without semester metadata or tabs. The approved
+semester structure and future interface are:
 
 ```text
 simulations/
@@ -31,14 +32,13 @@ files within the new simulation folders.
 
 See the [active migration plan](docs/plan/active/physics-library-migration-plan.md)
 and [complete migration map](docs/plan/active/physics-library-migration-map.json).
-Each remaining migration batch requires separate approval.
+Further structural changes and semester UI work require separate approval.
 
 ## Current on-disk folder overview
 
 ```text
 SP015/
-  simulations/sp015/     <- migrated Chapters 02, 05, 07, 08
-  animations/            <- remaining Chapter 09 (see docs/architecture.md for the per-topic list)
+  simulations/sp015/     <- all SP015 simulations, including unpublished Workbench
   docs/
     architecture.md      <- repository structure and simulation architecture
     audits/               <- evidence-based repository and landing-page reviews
@@ -85,7 +85,7 @@ To run the landing page locally from the repository root:
 python3 -m http.server 8000
 ```
 
-Then open <http://localhost:8000/landing/>. Serving the root preserves the landing page's relative paths to `simulations/`, `animations/`, `shared/`, and the curriculum PDF.
+Then open <http://localhost:8000/landing/>. Serving the root preserves the landing page's relative paths to `simulations/`, `shared/`, and the curriculum PDF. Ignored local `.DS_Store` files may leave an `animations/` directory on disk; no simulation depends on it.
 
 ### Browser smoke tests (development only)
 
@@ -116,7 +116,7 @@ any remaining limitations in the handoff.
 
 ## Adding a new simulation
 
-Start from [`templates/`](templates/README.md), which has the full build order and setup steps. Copy only the structure you need into the approved destination described in the template guide (Chapter 09 retains its current location until separately approved), follow the lifecycle in [`docs/architecture.md`](docs/architecture.md), reuse `shared/` where it fits, and check `instructions/checklist.md` before calling it done.
+Start from [`templates/`](templates/README.md), which has the full build order and setup steps. Copy only the structure you need into the approved semester destination described in the template guide, follow the lifecycle in [`docs/architecture.md`](docs/architecture.md), reuse `shared/` where it fits, and check `instructions/checklist.md` before calling it done.
 
 ---
 

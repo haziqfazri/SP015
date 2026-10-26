@@ -27,7 +27,8 @@ predictable structure matters more than any single sim's cleverness.
 
 ## 2. Folder layout & responsibilities
 
-The repository currently uses a mixed layout during controlled migration:
+All 13 SP015 simulations now use the semester-qualified layout. The tracked
+application structure is:
 
 ```text
 SP015/
@@ -45,11 +46,10 @@ SP015/
 │   │   ├── 7.5-superposition-shm/
 │   │   ├── 7.6-application-of-standing-waves/
 │   │   └── 7.7-doppler-effect/
-│   └── 08-physics-of-matter/
+│   ├── 08-physics-of-matter/
 │   │   ├── 8.1-8.2-materials-testing/
 │   │   ├── 8.3-heat-conduction/
 │   │   └── 8.4-thermal-expansion/
-├── animations/
 │   └── 09-kinetic-theory-and-thermodynamics/
 │       ├── 9.1-9.2-molecular-gas-lab/
 │       └── 9.3-9.5-thermodynamics-workbench/ <- unpublished
@@ -86,7 +86,10 @@ legacy HTML paths remains as relative redirect stubs after the organization
 migration; completed audits and plans may still mention those former paths as
 historical evidence.
 
-### Approved target: migration in progress
+Ignored local `.DS_Store` files may leave an `animations/` directory on disk.
+It contains no simulation files and is not a runtime compatibility tree.
+
+### Semester convention: SP015 layout implemented; SP025 content pending
 
 ```text
 simulations/
@@ -98,7 +101,7 @@ simulations/
 intact, including 8.1–8.2, 9.1–9.2, and 9.3–9.5. Do not split their implementations.
 Shared assets, templates, and vendor libraries retain their current root locations.
 A target page is four levels deep and uses `../../../../shared/` and
-`../../../../vendor/`; existing three-level pages still use `../../../`.
+`../../../../vendor/`; all current SP015 pages use this four-level depth.
 Use relative URLs that work from files and when hosted below `/SP015/`.
 
 The single landing page will gain accessible semester tabs, initially SP015,
@@ -125,8 +128,7 @@ does not authorize migration or tab implementation.
 
 ### Folder responsibilities
 
-- **`simulations/sp015/`** — migrated Chapters 02, 05, 07, and 08, grouped by chapter/topic.
-- **`animations/`** — remaining Chapter 09, pending its separately approved batch.
+- **`simulations/sp015/`** — all SP015 simulations, grouped by chapter/topic.
 - **`shared/`** — code genuinely reused by multiple simulations.
 - **`vendor/`** — pinned third-party browser assets required at runtime. These
   are local so simulations remain usable without network access; do not add a
@@ -482,10 +484,10 @@ Duplication observed that should be reconciled next time it's touched:
 
 ## 7. Future expansion
  
-More SP015 topics will be added using the patterns in §3–4, and SP025 sims
-will use `simulations/sp025/` within the same repository after migration. SP015
-will use `simulations/sp015/`. Those are approved target paths; the current
-`animations/` tree remains until the reviewed migration steps are implemented. Every new sim should:
+More SP015 topics will use the patterns in §3–4 under `simulations/sp015/`.
+SP025 sims will use `simulations/sp025/` within the same repository after its
+curriculum is verified. SP015 folder migration is implemented; semester metadata
+and tabs remain pending. Every new sim should:
  
 1. Reuse `shared/sim-style.css` and `shared/sim-utils.js` where they fit,
    adding only topic-specific CSS/JS to the simulation folder.
@@ -517,8 +519,11 @@ The browser setup uses `playwright.config.mjs` and `tests/browser/*.mjs`.
 The local Node server exposes the same checkout at `/` and `/SP015/` without
 copies, a bundler, or changes to production assets. Chromium smoke tests cover
 the landing page, Projectile Motion, Circular Motion, all six Chapter 07
-simulations, and all three Chapter 08 simulations, using four viewport widths
-at each hosting prefix. Chapter 08 also exercises viewport resize round trips.
+simulations, all three Chapter 08 simulations, Molecular Gas, and both modes of
+the unpublished Thermodynamics Workbench, using four viewport widths at each
+hosting prefix. Chapters 08 and 09 also exercise viewport resize round trips;
+Workbench checks account for its fixed pixel density of 2. Its direct-page
+coverage does not publish it or complete its release plan.
 They check critical responses, browser errors, actual canvas rendering,
 representative controls, generated IDs, and horizontal overflow. Failure
 screenshots/traces stay in ignored `test-results/`; they are not release
