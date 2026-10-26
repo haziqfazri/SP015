@@ -6,10 +6,11 @@ A growing library of interactive [p5.js](https://p5js.org/) simulations for teac
 
 ---
 
-## Approved migration target — not yet implemented
+## Approved migration target — controlled batches in progress
 
-Existing pages remain under `animations/`, and `landing/` is still the SP015
-catalogue. The approved destination is:
+Chapters 02, 05, and 07 now use `simulations/sp015/`; Chapters 08 and 09 remain
+under `animations/`. Chapter 07 awaits review before commit. `landing/` is still
+the SP015 catalogue, without semester tabs. The approved final destination is:
 
 ```text
 simulations/
@@ -30,13 +31,14 @@ files within the new simulation folders.
 
 See the [active migration plan](docs/plan/active/physics-library-migration-plan.md)
 and [complete migration map](docs/plan/active/physics-library-migration-map.json).
-Implementation requires a separate review after preparation.
+Each remaining migration batch requires separate approval.
 
 ## Current on-disk folder overview
 
 ```text
 SP015/
-  animations/            <- simulations, grouped by chapter (see docs/architecture.md for the current per-topic list)
+  simulations/sp015/     <- migrated Chapters 02, 05, 07
+  animations/            <- remaining Chapters 08, 09 (see docs/architecture.md for the per-topic list)
   docs/
     architecture.md      <- repository structure and simulation architecture
     audits/               <- evidence-based repository and landing-page reviews

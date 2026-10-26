@@ -47,7 +47,7 @@ link checks unchanged and rerun them against the settled checkout.
 # List the matrix without opening a browser or starting a server.
 npm run test:browser:list
 
-# Run all 24 Chromium cases headlessly.
+# Run all 72 Chromium cases headlessly.
 npm run test:browser
 
 # Run just desktop checks for both hosting mounts.
@@ -86,8 +86,8 @@ cache, compression, or redirect rules. Production serving remains independent.
 
 ## Coverage and failure artifacts
 
-Three smoke tests run at both hosting prefixes, each at 1440, 800, 460, and
-320 CSS pixels (eight projects, 24 cases):
+Nine smoke tests run at both hosting prefixes, each at 1440, 800, 460, and
+320 CSS pixels (eight projects, 72 cases):
 
 - Landing: document/assets/fonts, initial content, search, chapter filtering,
   empty results, both migrated hrefs, and launch through the Projectile card.
@@ -96,6 +96,19 @@ Three smoke tests run at both hosting prefixes, each at 1440, 800, 460, and
 - Circular: first canvas frame, radius input, direction-button state, compare
   mode, and Play/Pause/Reset. This simulation has Release rather than Step;
   Release is outside this initial smoke suite.
+- SHM Kinematics: spring, pendulum, and reference modes, mass input, Step,
+  Play/Pause/Reset, and nonblank canvases after mode changes.
+- SHM Graphs: five initial canvases, amplitude, energy toggle, Step and playback,
+  plus the lazy phase canvas and reversible phase controls.
+- Progressive Wave: spatial/time canvases, amplitude, direction state, Step,
+  and Play/Pause/Reset.
+- Superposition: relocated alias, pulse amplitude/scrubber and playback/reset;
+  lazy three-canvas interference mode, both directions, Step, playback/reset,
+  and returning to pulse mode.
+- Standing Waves: relocated alias, string harmonic/length, playback/reset,
+  open/closed columns, and an odd closed-column harmonic.
+- Doppler: relocated alias, observer mode, frequency, Step and playback/reset.
+  Audio remains off; sound output is outside the headless smoke suite.
 
 Every case checks uncaught page errors, console errors, failed requests and
 HTTP errors, loaded script/stylesheet MIME types, local font responses, unique
@@ -160,3 +173,8 @@ and its Chromium 156.0.8078.4 runtime. After approved network/process access,
 all 24 browser cases passed in 1.4 minutes. The default-sandbox server attempt
 failed before browser tests with the EPERM error described above; it was not
 counted as a browser result. Application files were unchanged by this setup.
+That record covers the original infrastructure checkpoint. On 2026-10-26 the
+Chapter 07 migration added 48 cases: all 72 cases passed in 3.5 minutes with the
+same pinned runtime and approved local server/browser process access. This
+includes both hosting prefixes and all four viewport widths; no simulation
+JavaScript or CSS changes were needed.

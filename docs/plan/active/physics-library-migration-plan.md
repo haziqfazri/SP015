@@ -1,6 +1,9 @@
 # SP015 + SP025 library migration plan
 
-**Status:** Preparation only; no folder moves or semester tabs implemented.
+**Status:** Controlled migration in progress; semester tabs remain unimplemented.
+Projectile Motion (`9470406`), Circular Motion (`304e72e`), and browser infrastructure
+(`f6c4cfb`) are committed. Chapter 07 is migrated in the working tree for review;
+do not commit or start another chapter without approval.
 **Baseline:** `5732a0f` on `main`; working tree clean at preparation start.
 **Superposition:** restored and committed; `index.html` blob is
 `b941d62415d825f8941a2da86dd3b578fc1f183b`.
@@ -22,14 +25,17 @@
 
 ## Current disk layout versus planned layout
 
-All 13 simulation implementations still live under `animations/`. There are 12
-published landing entries and five redirect files. No SP025 simulations or
-`simulations/` directory exist at preparation time. SP025 chapter names and LOs
+At preparation time all 13 simulation implementations lived under `animations/`.
+There are still 12 published landing entries and five retained redirect files.
+The current mixed layout has Chapters 02, 05, and 07 (eight simulations) under
+`simulations/sp015/`; Chapters 08 and 09 (five simulations) remain under
+`animations/`. No SP025 simulations exist. SP025 chapter names and LOs
 must be checked against an authoritative specification, currently missing.
 
 ```text
 # CURRENT
-animations/<chapter>/<combined-lo-folder>/
+animations/<chapter-08-or-09>/<combined-lo-folder>/
+simulations/sp015/<chapter-02-05-or-07>/<combined-lo-folder>/
 landing/                      # current SP015-only catalogue
 
 # APPROVED TARGET — pending implementation
@@ -78,7 +84,12 @@ For each published row, the exact current catalogue href is
 The Workbench has a mapped canonical page but both catalogue href fields are
 `null`. Its existing source, tests, and active release plan are retained.
 
-## Complete alias map (proposed placement for migration review)
+## Complete alias map and placement approvals
+
+Circular Motion's placement is approved and committed. The user approved all
+three Chapter 07 placements below on 2026-10-26; they move with their complete
+topic folders and retain sibling `index.html` targets. The materials alias
+placement remains proposed and requires approval before its later batch.
 
 | Current redirect file | Target redirect file | Future destination |
 |---|---|---|
@@ -93,9 +104,34 @@ need only their enclosing folder move. Circular Motion moves from the chapter
 root into its canonical topic and changes its destination to `index.html`.
 The misspelled materials chapter alias moves into the canonical materials topic
 as `materials-testing.html`, also pointing to `index.html`. Update meta-refresh,
-canonical link, and fallback anchor together for these two aliases. This is a
-file-preservation proposal, not preservation of their former URLs. No moves or
-redirect changes happen in preparation.
+canonical link, and fallback anchor together for these two aliases. The mapped
+placements preserve files rather than their former URLs. Circular Motion and
+Chapter 07 are approved as noted above; the materials relocation is still a
+proposal. No redirect changes were made during preparation.
+
+### Chapter 07 review checkpoint
+
+The batch moves only the six mapped Chapter 07 topic folders, including the
+restored Superposition page, Doppler controller test, and three approved aliases.
+Each canonical HTML changes only its seven shared/vendor references to the new
+four-level depth; six catalogue hrefs change. Simulation JavaScript, CSS, local
+imports, and alias contents remain byte-identical. The JSON map retains its
+preparation baseline source/destination fields; actual location is validated in
+the mixed-state map tests. The full semester gate remains unchanged and pending.
+
+Browser coverage now includes all six pages, lazy graph/interference canvases,
+representative controls, and all three relocated redirects, at both prefixes
+and widths 1440, 800, 460, and 320. See [browser testing](../../browser-testing.md)
+for commands and limits. Run static link scans after Playwright exits.
+
+Validation on 2026-10-26: 22 migration/map tests, 15 simulation tests, and all
+72 Chromium cases passed. Byte comparisons verified all 46 moved files, allowing
+only the 42 shared/vendor path changes; normalizing Superposition's paths
+reproduces its restored blob above. Link checks at both prefixes report no
+failures and the same 15 historical source-line anchor warnings. The dt checks
+and migrated-root shared-usage check pass; the remaining `animations/` root
+still reports five historical hex-color findings in unchanged test fixtures.
+No migration validator was weakened. Chapter 07 remains uncommitted for review.
 
 ## Catalogue contract and acceptance criteria
 
@@ -182,9 +218,12 @@ node --test .kilo/scripts/check-links.test.mjs
 node .kilo/scripts/check-links.mjs --skip-external
 node .kilo/scripts/check-links.mjs --skip-external --base-path=/SP015/
 node .kilo/scripts/check-links.mjs --html-only --skip-external
-find animations -type f -name '*.test.js' -exec node --test {} +
+find animations simulations -type f -name '*.test.js' -exec node --test {} +
 node .kilo/scripts/check-dt.mjs animations
+node .kilo/scripts/check-dt.mjs simulations
 node .kilo/scripts/check-shared-usage.mjs animations
+node .kilo/scripts/check-shared-usage.mjs simulations
+npm run test:browser
 git diff --check
 ```
 

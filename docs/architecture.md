@@ -27,13 +27,13 @@ predictable structure matters more than any single sim's cleverness.
 
 ## 2. Folder layout & responsibilities
 
-The repository currently uses the following structure (not the approved migration target):
+The repository currently uses a mixed layout during controlled migration:
 
 ```text
 SP015/
 ├── README.md
 ├── Curriculum Specifications (CS) Physics SP015.pdf
-├── animations/
+├── simulations/sp015/
 │   ├── 02-kinematics-of-linear-motion/
 │   │   └── 2.3-projectile-motion/
 │   ├── 05-circular-motion/
@@ -45,6 +45,7 @@ SP015/
 │   │   ├── 7.5-superposition-shm/
 │   │   ├── 7.6-application-of-standing-waves/
 │   │   └── 7.7-doppler-effect/
+├── animations/
 │   ├── 08-physics-of-matter/
 │   │   ├── 8.1-8.2-materials-testing/
 │   │   ├── 8.3-heat-conduction/
@@ -86,7 +87,7 @@ legacy HTML paths remains as relative redirect stubs after the organization
 migration; completed audits and plans may still mention those former paths as
 historical evidence.
 
-### Approved target: migration pending
+### Approved target: migration in progress
 
 ```text
 simulations/
@@ -125,7 +126,8 @@ does not authorize migration or tab implementation.
 
 ### Folder responsibilities
 
-- **`animations/`** — all simulation projects, grouped by chapter/topic.
+- **`simulations/sp015/`** — migrated Chapters 02, 05, and 07, grouped by chapter/topic.
+- **`animations/`** — remaining Chapters 08 and 09, pending separately approved batches.
 - **`shared/`** — code genuinely reused by multiple simulations.
 - **`vendor/`** — pinned third-party browser assets required at runtime. These
   are local so simulations remain usable without network access; do not add a
@@ -146,7 +148,7 @@ The `landing/` directory is the static simulation index. It owns the page
 structure, one metadata array for cards/search/filtering, landing-specific SVG
 recognition diagrams, and the landing responsive styles. It may link to any
 simulation, but simulation physics and shared drawing utilities stay under
-`animations/` and `shared/` respectively. Completed cards expose one semantic
+the topic folders and `shared/` respectively. Completed cards expose one semantic
 launch anchor stretched across the card; planned entries remain inert.
 
 Each simulation is self-contained inside its topic folder. It owns its HTML,
@@ -515,11 +517,13 @@ The browser setup uses `playwright.config.mjs` and `tests/browser/*.mjs`.
 
 The local Node server exposes the same checkout at `/` and `/SP015/` without
 copies, a bundler, or changes to production assets. Chromium smoke tests cover
-the landing page and the two migrated simulations, using four viewport widths.
+the landing page, Projectile Motion, Circular Motion, and all six Chapter 07
+simulations, using four viewport widths at each hosting prefix.
 They check critical responses, browser errors, actual canvas rendering,
 representative controls, generated IDs, and horizontal overflow. Failure
 screenshots/traces stay in ignored `test-results/`; they are not release
-sign-off for simulations outside this suite or pending migration aliases.
+sign-off for simulations outside this suite. Chapter 07 tests also navigate
+through its three retained aliases to their canonical pages.
 
 See [browser-testing.md](browser-testing.md) for installation, commands, and
 limitations. Existing static validators, migration gates, and physics tests
