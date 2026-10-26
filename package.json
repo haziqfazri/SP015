@@ -1,0 +1,12 @@
+{
+  "name": "physics-simulation-library",
+  "private": true,
+  "scripts": {
+    "test:browser": "playwright test",
+    "test:browser:list": "playwright test --list",
+    "test:browser:install": "playwright install chromium"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.64.1"
+  }
+}

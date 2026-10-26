@@ -85,6 +85,22 @@ python3 -m http.server 8000
 
 Then open <http://localhost:8000/landing/>. Serving the root preserves the landing page's relative paths to `animations/`, `shared/`, and the curriculum PDF.
 
+### Browser smoke tests (development only)
+
+Chromium smoke tests cover the landing page and migrated Projectile/Circular
+Motion pages at both `/` and `/SP015/`, across desktop, 800, 460, and 320 px.
+The test server starts automatically; simulation pages still need no build step.
+
+```sh
+npm ci
+npm run test:browser:install
+npm run test:browser
+```
+
+See [browser testing](docs/browser-testing.md) for prerequisites, filtered runs,
+failure screenshots/traces, sandbox restrictions, and coverage limits. Existing
+Node tests and migration validators remain separate and unchanged.
+
 ### Codex development loop
 
 Before a change, inspect `git status`, read `AGENTS.md` and

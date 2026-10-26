@@ -2,3 +2,8 @@
 .codex/
 scratch/
 .DS_Store
+
+# Development dependencies and browser-test artifacts
+/node_modules/
+/test-results/
+/playwright-report/

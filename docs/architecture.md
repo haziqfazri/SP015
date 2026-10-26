@@ -505,3 +505,23 @@ will use `simulations/sp015/`. Those are approved target paths; the current
 5. Update this file if the architecture actually changes shape (new file
    split, new shared module, new folder convention) — it should stay a
    description of what's true, not what was once planned.
+
+## 8. Development-only browser validation
+
+`@playwright/test` is a pinned development dependency; it is not loaded by any
+simulation or landing page. The root package manifest has no `type` setting,
+so existing CommonJS `.test.js` modules continue to use Node's test runner.
+The browser setup uses `playwright.config.mjs` and `tests/browser/*.mjs`.
+
+The local Node server exposes the same checkout at `/` and `/SP015/` without
+copies, a bundler, or changes to production assets. Chromium smoke tests cover
+the landing page and the two migrated simulations, using four viewport widths.
+They check critical responses, browser errors, actual canvas rendering,
+representative controls, generated IDs, and horizontal overflow. Failure
+screenshots/traces stay in ignored `test-results/`; they are not release
+sign-off for simulations outside this suite or pending migration aliases.
+
+See [browser-testing.md](browser-testing.md) for installation, commands, and
+limitations. Existing static validators, migration gates, and physics tests
+remain required. No browser test authorizes a folder migration or publishes
+Thermodynamics Workbench.
